@@ -1,0 +1,14 @@
+
+2020/11/23
+1.Function_define_ML51.h      Added PIT both edge interrupt define
+
+2020/12/11
+1.TK library                  Update TK lib with Power down Scan function.
+2.RTC                         Update rtc.lib with tick select.
+3.TK_Utility                  Update NuSendj.exe to support Power down function.
+4.NK_ML56SD                   Added power down process for NuMaker. Display status same.
+
+2021/1
+1. TK library                 Updated TK lib with scan resolution.
+2. ML51.h                     Updated for chm release
+3. Document                   Added NuMicro ML51 Series Driver Reference Guide.chm
