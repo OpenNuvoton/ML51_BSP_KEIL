@@ -215,15 +215,13 @@ void main(void)
 {
     int8_t i8TKChan = -1;
     static int8_t i8LedChan = -1;
-    xdata int8_t ai8Signal[TKLIB_TOL_NUM_KEY];
+    int8_t ai8Signal[TKLIB_TOL_NUM_KEY];
 
   if(i8Ret < 0)
     {
         /* DBG_PRINTF("Please run target TK_Application first to calibrate touchkey\n"); */
         while(1);
     }
-    /* Init TK Controller */
-    TK_Init();
 
     /* Initialize Multiple Function Pins for TK */
     SetTkMultiFun(u32ChanelMsk);
@@ -242,6 +240,9 @@ void main(void)
 
     /* Initial LCD Sub board */
     LCD_Init_Setting();
+		
+    /* Init TK Controller */	
+    TK_Init();
 
     g_u8IsPress = 0;
     g_u8MainState = eMAIN_APP_IDLE_STATE;
@@ -257,25 +258,28 @@ void main(void)
         if(g_u8IsPress == 0) i8LedChan = -1;
 TKRECHECK:				
         i8Ret = TK_ScanKey(&ai8Signal[0]);
-				if (i8Ret != -1)
+				if (i8Ret != -1)                    /* TK0 was pressed  */
         {
-          TK_lightLED(FALSE, i8LedChan);    /* TK0 LEDG2 display status */
+          TK_lightLED(FALSE, i8LedChan);    /* TK0 LEDG2 display ON status */
           if (i8LedChan != i8Ret)
-            {
-                i8LedChan = i8Ret;
-                i8TKChan = i8Ret;
-                goto TKCHECKEND;
-            }
-					goto TKRECHECK;
+          {
+              i8LedChan = i8Ret;
+              i8TKChan = i8Ret;
+              goto TKCHECKEND;           /* to avoid continues counting, only the first press action  */
+          }
+					else 
+					{
+					    goto TKRECHECK;
+					}
         }
         else
         {
             i8LedChan = i8Ret;
-            TK_lightLED(TRUE, i8LedChan);    /* TK0 LEDG2 display status */
+            TK_lightLED(TRUE, i8LedChan);    /* TK0 LEDG2 display OFF status */
         }
 
-        TK_ConfigPowerDown(5);              /* Small value will get more sensitivity performance than larger value. Suggest range from 0 ~ 5*/
-        set_PCON_PD;
+				TK_ConfigPowerDown(5);              /* Small value will get more sensitivity performance than larger value. Suggest range from 0 ~ 5*/
+				set_PCON_PD;
       }
       i8TKChan = -1;
 

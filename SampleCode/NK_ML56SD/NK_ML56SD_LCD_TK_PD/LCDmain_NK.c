@@ -71,7 +71,7 @@ void LCD_Init_Setting (void)
 /* As defaut all multi function define as GPIO */ 
   LCD_IO_Init();
 
-  LCD_Open(TYPE_B, Internal_VCP, LCD_CPVOL_4_4V, BIAS_1_4, LCD_8COM );
+  LCD_Open(TYPE_B, Internal_VCP, LCD_CPVOL_4_6V, BIAS_1_4, LCD_8COM );
   LCD_Clock_Setting(LIRC, LCD_FREQ_DIV2);
   LCD_Current_Mode(Buffer_PowerSave_Mode,TurnOn_2_4);
   LCD_Blink(Disable,0);
@@ -108,8 +108,7 @@ void LCD_frame1 (void)
 
 void LCD_frame2 (void)
 {
-
-//  LCD_SetAllPixels(Enable);
+//  LCD_SetAllPixels(Enable);
 /* Show logo and battery level */
     LCDLIB_SetSymbol(3, 20, 1);
     LCDLIB_SetSymbol(3, 23, 1);
