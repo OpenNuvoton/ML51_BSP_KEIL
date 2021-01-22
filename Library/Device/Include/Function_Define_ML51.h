@@ -120,14 +120,14 @@ typedef signed long           int32_t;
 #define nop _nop_();
 
 /****************************************************************************/
-/* Software loop delay by HIRC, about 3ms 
+/* Software loop delay by HIRC 24MHz, about 1ms 
 /****************************************************************************/
 #define _delay_()                      \
 {                                      \
   unsigned char data i,j;              \
-    for (j=0;j<0x01;j++)               \
+    for (j=0;j<5;j++)                  \
     {                                  \
-       for (i=0;i<0x01;i++)            \
+       for (i=0;i<0xE5;i++)            \
        {                               \
           _nop_();                     \
        }                               \
