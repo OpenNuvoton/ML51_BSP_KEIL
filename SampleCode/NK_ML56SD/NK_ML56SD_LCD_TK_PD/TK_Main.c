@@ -269,6 +269,7 @@ TKRECHECK:
           }
 					else 
 					{
+						  nop;
 					    goto TKRECHECK;
 					}
         }
