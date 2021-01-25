@@ -19,7 +19,7 @@
 #define   TMPCAL        0x2A3000       /*    675*4096     */
 #define   VTEMPCOMDIV   7694           /*    4096*1.83    */
 
-unsigned long internal_Temperature () 
+unsigned long  internal_Temperature () 
 {
 /* GPIO initial setting 
   * include gpio.c in Library for GPIO mode setting 

@@ -6,11 +6,17 @@
 
 #define OPT_USE_LED
 /**********************************************************************************
-Board 1:
+Tim:
  P25 = LED3 for TK3
  P24 = LED2 for TK4
  P23 = LED1 for TK5
  P22 = LED0 for TK6
+
+ PY:
+ P13 = LED3 for TK3
+ P12 = LED2 for TK4
+ P11 = LED1 for TK5
+ P10 = LED0 for TK6
  **********************************************************************************/
 #ifdef OPT_USE_LED
 typedef struct tagLEG
@@ -30,8 +36,9 @@ typedef struct tagLEG
 void TK_lightLED(unsigned char onOff, int chanN)
 {
 #ifdef BOARD_TIM
-       
+    /* Removed @ 20200828 */    
 #else
+    /* PY */
     if( (chanN >= 3) && (chanN <= 6) )
     {
         if(onOff == 1)      //On
@@ -57,9 +64,24 @@ void InitLEDIO(void)
 {
 
 #ifdef BOARD_TIM
-    
+    /* Removed @ 20200828 */
 #else
-
+    /* PY */
+    /*
+    If P13 set to 1,  KEY4 LED will be turn off. If P13 set to 0,  KEY4 LED will be turn on.
+    If P12 set to 1,  KEY3 LED will be turn off. If P12 set to 0,  KEY3 LED will be turn on.
+    If P11 set to 1,  KEY2 LED will be turn off. If P11 set to 0,  KEY2 LED will be turn on.
+    If P10 set to 1,  KEY1 LED will be turn off. If P10 set to 0,  KEY1 LED will be turn on.
+    */
+    P1 = P1 | 0x0F;
+    //P10_PUSHPULL_MODE;
+    //P11_PUSHPULL_MODE;
+    //P12_PUSHPULL_MODE;
+    //P13_PUSHPULL_MODE;
+    P10_QUASI_MODE;
+    P11_QUASI_MODE;
+    P12_QUASI_MODE;
+    P13_QUASI_MODE;
 #endif
 }
 #endif

@@ -128,7 +128,7 @@ void TK_RawDataView(void)
 }
 
 
-void main(void)
+int32_t main(void)
 {
     uint32_t u32ChanelMsk;
     int8_t i8Ret = 0;
@@ -222,7 +222,7 @@ void main(void)
     }
     while (1);
 #endif  /* DEMO_FREERUN */
-
+    return 0;
 }
 
 

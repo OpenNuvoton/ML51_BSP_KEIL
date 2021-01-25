@@ -1,6 +1,6 @@
 
 extern unsigned char tkct;
-unsigned char internal_Temperature (); 
+extern unsigned long internal_Temperature (); 
 
 void LCD_Init_Setting();
 void LCD_frame1();

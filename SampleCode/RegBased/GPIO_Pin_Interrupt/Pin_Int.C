@@ -16,7 +16,7 @@
 #include "ML51.h"
 
 /* IMPORTANT !! This define for printf code only. Disable this define to reduce code size. */
-#define print_function 
+//#define print_function 
 /******************************************************************************
 Pin interrupt subroutine.
 ******************************************************************************/

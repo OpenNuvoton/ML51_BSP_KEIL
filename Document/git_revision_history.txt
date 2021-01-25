@@ -12,3 +12,4 @@
 1. TK library                 Updated TK lib with scan resolution.
 2. ML51.h                     Updated for chm release
 3. Document                   Added NuMicro ML51 Series Driver Reference Guide.chm
+4. LX51                       All project use LX51 instead of BL51.
