@@ -1,49 +1,4 @@
-/********************************************************************/
-/*  <Define rule I> set or clr _ regsiter name _ register bit name  */
-/********************************************************************/
-/******************************************************************************/
-/*                         Keil C51 include files                            */
-/******************************************************************************/
-#include <intrins.h>
-#include <stdio.h>
-#include <absacc.h>
-#include <string.h>
-#include <stdlib.h>
 
-/******************************************************************************/
-/******************************************************************************/
-/*                         Peripheral header files                            */
-/******************************************************************************/
-
-#include "acmp.h"
-#include "adc.h"
-#include "bod.h"
-#include "capture.h"
-#include "delay.h"
-#include "eeprom.h"
-#include "eeprom_sprom.h"
-#include "exint.h"
-#include "gpio.h"
-#include "i2c.h"
-#include "IAP.h"
-#include "IAP_sprom.h"
-#include "lcd.h"
-#include "lowpower.h"
-#include "pdma.h"
-#include "pinint.h"
-#include "power.h"
-#include "pwm0.h"
-#include "pwm123.h"
-#include "rtc.h"
-#include "spi.h"
-#include "sys.h"
-#include "TrimLIRC.h"
-#include "uart.h"
-#include "uart2.h"
-#include "uart3.h"
-#include "vref.h"
-#include "wdt.h"
-#include "wkt.h"
 
 /*--------------------------------------------------------------------------
 ML51 Function_define.h
