@@ -13,3 +13,6 @@
 2. ML51.h                     Updated for chm release
 3. Document                   Added NuMicro ML51 Series Driver Reference Guide.chm
 4. LX51                       All project use LX51 instead of BL51.
+
+2021/2
+1. WDT                        added WDT divider 512/1024/2048 item.

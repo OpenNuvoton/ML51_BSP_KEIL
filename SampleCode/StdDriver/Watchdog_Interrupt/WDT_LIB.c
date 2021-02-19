@@ -41,7 +41,7 @@ void main (void)
 //only when WDT reset disable, WDT use as pure timer
 //--------------------------------------------------------
     ENABLE_P17_PULLDOWN;
-    WDT_Open(256);
+    WDT_Open(512);
     WDT_Interrupt(Enable);
     ENABLE_GLOBAL_INTERRUPT;
     while (P17)

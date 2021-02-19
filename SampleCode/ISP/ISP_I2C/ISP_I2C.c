@@ -16,7 +16,7 @@ bit BIT_TMP;
   data volatile uint16_t flash_address; 
   data volatile uint16_t AP_size;
   data volatile uint8_t g_timer1Counter;
-  data volatile uint8_t count; 
+  data volatile uint16_t count; 
   data volatile uint16_t g_timer0Counter;
   data volatile uint32_t g_checksum;
   data volatile uint32_t g_totalchecksum;
@@ -71,9 +71,10 @@ void READ_CONFIG(void)
 
 void TM0_ini(void)
 {    
-  TH0=TL0=0;    //interrupt timer 140us
+  TH0=TL0=0;         //interrupt timer 140us
   set_TCON_TR0;      //Start timer0
-  set_IPH_PSH;       // Serial port 0 interrupt level2
+//  set_IPH_PSH;       // Serial port 0 interrupt level2
+	IPH|=0x10;         // Serial port 0 interrupt level2
   set_IE_ET0;
 }
 
@@ -118,14 +119,11 @@ if(g_timer0Counter)
 
 void Init_I2C(void)
 {
-    MFP_P25_I2C0_SCL;
-    MFP_P24_I2C0_SDA;
-    P25_OPENDRAIN_MODE;                         //set SCL (P13) is Quasi mode
-    P24_OPENDRAIN_MODE;                         //set SDA (P24) is Quasi mode
-    
-    SDA = 1;                                    //set SDA and SCL pins high
-    SCL = 1;
-    set_EIE0_EI2C0;                               //enable I2C interrupt by setting EIE bit 0
+    SFRS=2;P2MF54&=0;P2MF54|=0x66;              //set SCL (P13) MFP //set SDA (P24) MFP
+	  SFRS=1;P2M1|=0x30;P2M2|=0x30;               //set SCL (P13) is Quasi mode//set SDA (P24) is Quasi mode
+//    SDA = 1;                                  //set SDA and SCL pins high default high remove to reduce Code Size
+//    SCL = 1;
+    set_EIE0_EI2C0;                               //enable I2C Interrupt by setting EIE bit 0
     set_I2C0CON_I2CEN;                            //enable I2C circuit 
     I2C0ADDR0 = ADDR_SLA;                          //define own slave address    
     clr_I2C0CON_SI;

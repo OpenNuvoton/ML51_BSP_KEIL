@@ -28,41 +28,41 @@ void main (void)
 /****************************************************************************/
 /* Need re- power on to confirm enable modify HIRC.
 /****************************************************************************/
-Init_I2C(); 
+    Init_I2C(); 
 
     TM0_ini();  
     g_timer0Over=0;
     g_timer0Counter=5000;
-
-  
+ 
     g_progarmflag=0;
 
 while(1)
 {
-        //if(bUartDataReady == TRUE)
+
         if(bI2CDataReady == TRUE)
         {
-          EA=0; //DISABLE ALL INTERRUPT
+          EA=0;                                 /*Disable all Interrupt */
           if(g_progarmflag==1)
           {
             for(count=8;count<64;count++)
             {
-              IAPCN = BYTE_PROGRAM_AP;          //program byte
+              IAPCN = BYTE_PROGRAM_AP;          /* program byte */
               IAPAL = flash_address&0xff;
               IAPAH = (flash_address>>8)&0xff;
-              IAPFD=rx_buf[count];
+              IAPFD = rx_buf[count];
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+//              set_IAPTRG_IAPGO;            
+							TA=0xAA;TA=0x55;IAPTRG|=0x01;     /* Since EA disabled and page 0 for Code Size limitation */
 #endif
           
-              IAPCN = BYTE_READ_AP;              //program byte verify
-              set_IAPTRG_IAPGO;
+              IAPCN = BYTE_READ_AP;             /* program byte verify */
+              TA=0xAA;TA=0x55;IAPTRG|=0x01;     /* Since EA disabled and page 0 */
               if(IAPFD!=rx_buf[count])
               while(1);                          
-              if (CHPCON==0x43)              //if error flag set, program error stop ISP
-              while(1);
+//              if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
+//              while(1);                       /* Disable to reduce Code Size */
               
               g_totalchecksum=g_totalchecksum+rx_buf[count];
               flash_address++;
@@ -87,9 +87,8 @@ END_2:
             case CMD_SYNC_PACKNO:
             {
               Package_checksum();
-
               bISPDataReady = 1;              
-              g_timer0Counter=0; //clear timer 0 for no reset
+              g_timer0Counter=0;                  /* clear timer 0 for no reset */
               g_timer0Over=0;
             break;
             }
@@ -98,7 +97,6 @@ END_2:
             {
               Package_checksum();
               tx_buf[8]=FW_VERSION;  
-
               bISPDataReady = 1;
             break;
             }
@@ -109,7 +107,7 @@ END_2:
             break;
             }
     
-            //please for ISP programmer GUI, ID always use following rule to transmit.
+            /* Base on ISP programmer GUI, ID always use following rule to transmit. */
             case CMD_GET_DEVICEID:            
             {
               READ_ID();
@@ -126,7 +124,7 @@ END_2:
             {
 //              set_CHPCON_IAPEN;
               set_IAPUEN_APUEN;
-              IAPFD = 0xFF;          //Erase must set IAPFD = 0xFF
+              IAPFD = 0xFF;            /* Erase must set IAPFD = 0xFF */
               IAPCN = PAGE_ERASE_AP;
               
               for(flash_address=0x0000;flash_address<APROM_SIZE/PAGE_SIZE;flash_address++)
@@ -167,7 +165,7 @@ END_2:
               recv_CONF2 = rx_buf[10];
               recv_CONF4 = rx_buf[12];
 /*Erase CONFIG */              
-//              set_CHPCON_IAPEN;
+//              set_CHPCON_IAPEN;                   /* Disable to reduce Code Size */
               set_IAPUEN_CFUEN;
               IAPCN = PAGE_ERASE_CONFIG;
               IAPAL = 0x00;
@@ -223,9 +221,9 @@ END_2:
             
             case CMD_UPDATE_APROM:
             {
-//              set_CHPCON_IAPEN;
+//              set_CHPCON_IAPEN;           /* Disable to reduce Code Size */
               set_IAPUEN_APUEN;
-              IAPFD = 0xFF;          //Erase must set IAPFD = 0xFF
+              IAPFD = 0xFF;                 /* Erase must set IAPFD = 0xFF */
               IAPCN = PAGE_ERASE_AP;
 
               g_totalchecksum=0;
@@ -234,28 +232,42 @@ END_2:
               AP_size=rx_buf[12];
               AP_size|=(rx_buf[13]<<8);  
               g_progarmflag=1;
-
-              for(count=16;count<64;count++)
+					
+/* Erase APROM Size */
+              for(count=0;count<AP_size/PAGE_SIZE;count++)
               {
-                IAPCN = BYTE_PROGRAM_AP;
-                IAPAL = flash_address&0xff;
-                IAPAH = (flash_address>>8)&0xff;
-                IAPFD=rx_buf[count];
-                clr_CHPCON_IAPFF;
+                IAPAL = LOBYTE(count*PAGE_SIZE);
+                IAPAH = HIBYTE(count*PAGE_SIZE);
+//                clr_CHPCON_IAPFF;               /* Disable to reduce Code Size */
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
               set_IAPTRG_IAPGO;
 #endif
-      
-                IAPCN = BYTE_READ_AP;                //program byte verify
+							}
+/* Program APROM Size */				
+              for(count=16;count<64;count++)
+              {
+                IAPCN = BYTE_PROGRAM_AP;								
+                IAPAL = flash_address&0xff;
+                IAPAH = (flash_address>>8)&0xff;
+								IAPFD = 0xFF;
+                IAPFD = rx_buf[count];
+//                clr_CHPCON_IAPFF;
+#ifdef isp_with_wdt
+              set_IAPTRG_IAPGO_WDCLR;
+#else
+              set_IAPTRG_IAPGO;
+#endif
+								
+/* Read verify APROM Size */      
+                IAPCN = BYTE_READ_AP;
                 set_IAPTRG_IAPGO;                          
                 if(IAPFD!=rx_buf[count])
                 while(1);
-                if (CHPCON==0x43)                //if error flag set, program error stop ISP
-                while(1);
-                
-                g_totalchecksum=g_totalchecksum+rx_buf[count];
+//              if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
+//              while(1);                       /* Disable to reduce Code Size */
+                g_totalchecksum = g_totalchecksum+rx_buf[count];
                 flash_address++;
                 
                 if(flash_address==AP_size)
@@ -276,13 +288,12 @@ END_1:
           bI2CDataReady = FALSE;
           EA=1;
       }
-      //For connect timer out  
+      /*For connect timer out  */
       if(g_timer0Over==1)
       {       
        goto _APROM;
       }
 }   
-
 
 _APROM:
     EA = 0;
