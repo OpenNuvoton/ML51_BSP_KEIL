@@ -16,7 +16,7 @@
 #include "ML51.h"
 
 /* IMPORTANT !! This define for printf code only. Disable this define to reduce code size. */
-#define print_function
+//#define print_function
 
 unsigned char adc_flag;
 unsigned int temp;
@@ -48,7 +48,8 @@ void main (void)
   printf("\n ADC trig by GPIO intial...");
   printf("\n P5.5 pull low to start ADC");
 #endif
-/*---------------------------------------------------------------
+
+/*---------------------------------------------------------------
   ADC port trig initial setting toggle P5.5 to start ADC 
 ----------------------------------------------------------------*/
     ENABLE_ADC_CH0;                              // Enable AIN0 P1.7 as ADC pin
@@ -59,7 +60,7 @@ void main (void)
 /* Enable ADC interrupt */
     ENABLE_ADC_INTERRUPT;                                  // Enable ADC interrupt (if use interrupt)
     ENABLE_GLOBAL_INTERRUPT;
-/* Trig P04 falling edge to start adc, no need set ADCS bit*/
+/* Trig P04 falling edge to start adc, no need set ADCS sfrs */
     while (!adc_flag);
     temp = (ADCRH<<4)|ADCRL;
     DISABLE_ADC;

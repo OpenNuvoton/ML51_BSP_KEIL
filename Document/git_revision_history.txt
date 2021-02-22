@@ -16,3 +16,4 @@
 
 2021/2
 1. WDT                        added WDT divider 512/1024/2048 item.
+2. hex2bin                    Modified hextobin linking from startup/exe to keil/C51/NUlink and remove startup/exe folder
