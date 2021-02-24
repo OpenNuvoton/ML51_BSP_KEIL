@@ -37,7 +37,7 @@
 #define print_function 
 
 
-#define I2C_CLOCK               2
+#define I2C_CLOCK               15           /* I2C clock = 24MHz /4*(14+1) = 400k */
 #define EEPROM_SLA              0xA0
 #define EEPROM_WR               0
 #define EEPROM_RD               1
@@ -208,7 +208,7 @@ void One_Page_Read(unsigned char u8PageNumber,unsigned char u8DAT)
   /* Step9 */    
     clr_I2C0CON_SI;
     set_I2C0CON_STO;
-    while (I2C0CON|CLR_BIT4)                  /* Check STOP signal */
+    while (I2C0CON&SET_BIT4)                  /* Check STOP signal */
     {
       I2C_SI_Check();
       if (I2C_Reset_Flag)
@@ -311,7 +311,7 @@ void One_Page_Write(unsigned char u8PageNumber,unsigned char u8DAT)
     {
         set_I2C0CON_STO;                    /* Set I2C STOP Control Bit */
         clr_I2C0CON_SI;
-        while (I2C0CON|CLR_BIT4)            /* Check STOP signal */
+        while (I2C0CON&SET_BIT4)            /* Check STOP signal */
         {
           I2C_SI_Check();
           if (I2C_Reset_Flag)
@@ -339,7 +339,7 @@ void One_Page_Write(unsigned char u8PageNumber,unsigned char u8DAT)
     /* Step7 */
     set_I2C0CON_STO;                          /* Set STOP Bit to I2C EEPROM */
     clr_I2C0CON_SI;
-    while (I2C0CON|CLR_BIT4)                  /* Check STOP signal */
+    while (I2C0CON&SET_BIT4)                  /* Check STOP signal */
     {
       I2C_SI_Check();
       if (I2C_Reset_Flag)

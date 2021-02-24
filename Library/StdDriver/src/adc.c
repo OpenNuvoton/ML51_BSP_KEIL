@@ -225,15 +225,3 @@ unsigned int READ_BANDGAP()
     clr_CHPCON_IAPEN;
     return (u16bgvalue);
 }
-
-//void ADC_Calibration(void)
-//{
-//  unsigned char calibration;
-//  SFRS=2;
-//  calibration =ADCCALI&0x8F;
-//  TA=0XAA;
-//  TA=0X55;
-//  ADCCALI=calibration;
-//  SFRS =0;
-//  ADCCON1|=SET_BIT7;
-//}
