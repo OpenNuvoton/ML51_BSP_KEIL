@@ -14,8 +14,18 @@
 //  File Function: ML51 GPIO toggle demo code
 //***********************************************************************************************************
 #include "ML51.H"
-#include "LCDSubCommon.h"
-#include "NKML56.H"
+
+unsigned char WKTCT;
+
+
+void WakeUp_Timer_ISR (void)   interrupt 17     //ISR for self wake-up timer
+{
+
+    _push_(SFRS); 
+      WKTCT++;
+      clr_WKCON_WKTF;                                   //clear interrupt flag
+    _pop_(SFRS);
+}
 
 void LCD_IO_Init(void)
 {
@@ -61,74 +71,55 @@ void LCD_IO_Init(void)
 
     MFP_P11_LCD_DH1;
     MFP_P12_LCD_DH2;
-
 }
 
+
 //----------------------------------------------------------------------------------------------//
-void LCD_Init_Setting (void)
+void main (void)
 {
+
+  WKT_Open(LIRC, 512, 500);
+  WKT_Interrupt(Enable);             // enable WKT interrupt
 
 /* As defaut all multi function define as GPIO */ 
   LCD_IO_Init();
 
-  LCD_Open(TYPE_B, Internal_VCP, LCD_CPVOL_4_6V, BIAS_1_4, LCD_8COM );
   LCD_Clock_Setting(LIRC, LCD_FREQ_DIV2);
-  LCD_Current_Mode(Buffer_Mode,TurnOn_All);
-  LCD_Blink(Disable,4);
+  LCD_Open(TYPE_B, Internal_VCP, LCD_CPVOL_4_6V, BIAS_1_4, LCD_8COM);
+  LCD_Current_Mode(Buffer_PowerSave_Mode, TurnOn_1_4);
   LCD_PowerDown_Display(LCD_ON);
   LCD_Enable();
 
-}
+  LCD_SetAllPixels(Enable);
+  DISABLE_BOD;
+  Timer0_Delay(24000000,2000,1000);
+  ENABLE_GLOBAL_INTERRUPT;
+
+/*Disable BOD for the power down current test */
+  DISABLE_BOD;
 	
-void LCD_frame1 (void)
-{
-	unsigned long temp;
-	LCD_SetOnePixel(0,27,0);
-/* Show logo and battery level */
-    LCDLIB_SetSymbol(3, 20, 1);
-    LCDLIB_SetSymbol(3, 23, 1);
-    LCDLIB_SetSymbol(3, 24, 1);
-    LCDLIB_SetSymbol(3, 26, 1);
-    
-/*Show Zone0 */
-  LCDLIB_PrintCharacter(0, "*ML56*");
-   
-/* Show temperature */  
-  temp = internal_Temperature(); 
-  LCDLIB_PrintNumber(1,temp,1);
-  LCDLIB_SetSymbol(3, 15, 1);
-
-/* Show bsp version */
-  LCDLIB_PrintNumber(2,200001,1);
-  LCDLIB_SetSymbol(3, 17, 1);
-  LCDLIB_SetSymbol(3, 18, 1);
-  LCDLIB_SetSymbol(3, 19, 1);
+  while(1)
+  {
+/* LCD ON when Powen down. Power consumption under 20uA without LCD panel */
+    if (WKTCT&SET_BIT0)
+    {
+      LCD_PowerDown_Display(LCD_ON);
+      set_PCON_PD;
+      Timer0_Delay(24000000,1000,1000);
+    }
+    else if (!(WKTCT&SET_BIT0))
+    {
+/* LCD OFF Powen down mode with the minimum power consumption. Under 3uA with WKT */
+      LCD_VSource_Control(LCD_VSource_Disable);
+      LCD_PowerDown_Display(LCD_OFF);
+      set_PCON_PD;
+      LCD_VSource_Control(Internal_VCP);
+      Timer0_Delay(24000000,1000,1000);
+    }
+  }
+while(1);
 
 }
 
-void LCD_frame2 (void)
-{
 
-//  LCD_SetAllPixels(Enable);
-/* Show logo and battery level */
-    LCDLIB_SetSymbol(3, 20, 1);
-    LCDLIB_SetSymbol(3, 23, 1);
-    LCDLIB_SetSymbol(3, 24, 1);
-    LCDLIB_SetSymbol(3, 26, 1);
-    
-/*Show Zone0 */
-  LCDLIB_PrintCharacter(0, "TOUCH");
 
-/* Show counter */
-  LCDLIB_PrintNumber(1,(tkct<<12),0);
-  LCDLIB_SetSymbol(3, 15, 0);
-/* Show bsp version */
-  LCDLIB_PrintNumber(2,200001,1);
-  LCDLIB_SetSymbol(3, 17, 1);
-  LCDLIB_SetSymbol(3, 18, 1);
-  LCDLIB_SetSymbol(3, 19, 1);
-}
-
-void LCD_RTC_Display (void)
-{
-}

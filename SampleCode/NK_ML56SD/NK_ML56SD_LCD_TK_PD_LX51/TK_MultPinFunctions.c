@@ -70,10 +70,10 @@ void SetTkMultiFun(uint32_t u32TkMsk)
                 P0MF32 = (P0MF32 & 0x0F) | (10<<4);
                 if(u32Shielding == 0x10)
                 {
-					//DBG_PRINTF("Shielding TK4 CKO\n");
-                    MFP_P03_CLKO;
-                    P03_QUASI_MODE;
-                    TKCON1 |= 0x8;
+					//DBG_PRINTF("Shielding TK4 CKO\n");    /* Disable for AVerMedia 5 key board */
+//                    MFP_P03_CLKO;
+//                    P03_QUASI_MODE;
+//                    TKCON1 |= 0x8;
                 }
                 break;
             case 5:/* P0.4 */

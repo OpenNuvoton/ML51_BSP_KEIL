@@ -19,8 +19,7 @@
 #define   TMPCAL        0x2A3000       /*    675*4096     */
 #define   VTEMPCOMDIV   7694           /*    4096*1.83    */
 
-
-unsigned long internal_Temperature () 
+unsigned long  internal_Temperature () 
 {
 /* GPIO initial setting 
   * include gpio.c in Library for GPIO mode setting 
@@ -62,6 +61,8 @@ unsigned long internal_Temperature ()
 
     RealTemperature = 25 + ((TMPCAL - (u16bgvalue * VREF_Voltage))/VTEMPCOMDIV);
     RealTemperature = abs(RealTemperature);
+    ADC_Close();
+    VREF_Disable();
 
     return (RealTemperature);
     while(1);

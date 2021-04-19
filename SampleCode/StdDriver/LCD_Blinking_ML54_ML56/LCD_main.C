@@ -75,11 +75,12 @@ void main (void)
   LCD_Clock_Setting(LIRC, LCD_FREQ_DIV2);
   LCD_Open(TYPE_B, Internal_VCP, LCD_CPVOL_4_6V, BIAS_1_4, LCD_8COM);
   LCD_Current_Mode(Buffer_PowerSave_Mode, TurnOn_1_4);
-  LCD_Blink(Enable,3);
+  LCD_Blink(Enable,5);
   LCD_PowerDown_Display(LCD_ON);
   LCD_Enable();
 
-  LCD_SetAllPixels(Enable);
+  LCD_SetAllPixels(Disable);
+	LCD_SetOnePixel(6,6,Enable);
   Timer0_Delay(24000000,4000,1000);
 
   set_PCON_PD;

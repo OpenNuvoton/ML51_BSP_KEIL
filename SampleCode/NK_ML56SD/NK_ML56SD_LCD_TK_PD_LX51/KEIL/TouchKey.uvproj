@@ -149,7 +149,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>9</TargetSelection>
+          <TargetSelection>11</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -173,7 +173,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4101</DriverSelection>
+            <DriverSelection>4103</DriverSelection>
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2>BIN\Nuvoton_8051_Keil_uVision_Driver.dll</Flash2>
@@ -382,11 +382,6 @@
               <FilePath>..\..\..\..\Library\StdDriver\src\common.c</FilePath>
             </File>
             <File>
-              <FileName>TK_DebugUART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\TK_DebugUART.c</FilePath>
-            </File>
-            <File>
               <FileName>TK_MultPinFunctions.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\TK_MultPinFunctions.c</FilePath>
@@ -407,9 +402,55 @@
               <FilePath>..\TK_Main.c</FilePath>
             </File>
             <File>
-              <FileName>TK_UartCmd.c</FileName>
+              <FileName>TK_Data.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\TK_UartCmd.c</FilePath>
+              <FilePath>..\TK_Data.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                  <BankNo>65535</BankNo>
+                </CommonProperty>
+                <File51>
+                  <C51>
+                    <RegisterColoring>2</RegisterColoring>
+                    <VariablesInOrder>2</VariablesInOrder>
+                    <IntegerPromotion>2</IntegerPromotion>
+                    <uAregs>2</uAregs>
+                    <UseInterruptVector>2</UseInterruptVector>
+                    <Fuzzy>8</Fuzzy>
+                    <Optimize>10</Optimize>
+                    <WarningLevel>3</WarningLevel>
+                    <SizeSpeed>2</SizeSpeed>
+                    <ObjectExtend>2</ObjectExtend>
+                    <ACallAJmp>2</ACallAJmp>
+                    <InterruptVectorAddress>0</InterruptVectorAddress>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </C51>
+                </File51>
+              </FileOption>
+            </File>
+            <File>
+              <FileName>TK_DebugUART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\TK_DebugUART.c</FilePath>
             </File>
             <File>
               <FileName>TK_MassProduction.c</FileName>
@@ -417,9 +458,9 @@
               <FilePath>..\TK_MassProduction.c</FilePath>
             </File>
             <File>
-              <FileName>TK_Data.c</FileName>
+              <FileName>TK_UartCmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\TK_Data.c</FilePath>
+              <FilePath>..\TK_UartCmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -427,19 +468,59 @@
           <GroupName>Library</GroupName>
           <Files>
             <File>
-              <FileName>TKLib_MassProduction.LIB</FileName>
+              <FileName>TKLib_Calibration_LX51.LIB</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_MassProduction.LIB</FilePath>
+              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_Calibration_LX51.LIB</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                  <BankNo>65535</BankNo>
+                </CommonProperty>
+                <File51/>
+              </FileOption>
             </File>
             <File>
-              <FileName>TKLib_Calibration.LIB</FileName>
+              <FileName>TKLib_FreeRun_LX51.LIB</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_Calibration.LIB</FilePath>
+              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_FreeRun_LX51.LIB</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                  <BankNo>65535</BankNo>
+                </CommonProperty>
+                <File51/>
+              </FileOption>
             </File>
             <File>
-              <FileName>TKLib_FreeRun.LIB</FileName>
+              <FileName>TKLib_MassProduction_LX51.LIB</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_FreeRun.LIB</FilePath>
+              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_MassProduction_LX51.LIB</FilePath>
             </File>
           </Files>
         </Group>
@@ -495,6 +576,16 @@
               <FileName>lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Library\StdDriver\src\lcd.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>RTC</GroupName>
+          <Files>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\Library\StdDriver\src\rtc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -667,7 +758,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4102</DriverSelection>
+            <DriverSelection>4103</DriverSelection>
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2>BIN\Nuvoton_8051_Keil_uVision_Driver.dll</Flash2>
@@ -836,7 +927,7 @@
           <Lx51>
             <useFile>0</useFile>
             <linkonly>0</linkonly>
-            <UseMemoryFromTarget>1</UseMemoryFromTarget>
+            <UseMemoryFromTarget>0</UseMemoryFromTarget>
             <CaseSensitiveSymbols>0</CaseSensitiveSymbols>
             <WarningLevel>2</WarningLevel>
             <DataOverlaying>1</DataOverlaying>
@@ -849,7 +940,7 @@
             <CClasses></CClasses>
             <UserClasses></UserClasses>
             <CSection></CSection>
-            <UserSection></UserSection>
+            <UserSection>?CO?TK_DATA(C:0xEE80)</UserSection>
             <CodeBaseAddress></CodeBaseAddress>
             <XDataBaseAddress>0X0000-0X3FFF</XDataBaseAddress>
             <PDataBaseAddress></PDataBaseAddress>
@@ -876,11 +967,6 @@
               <FilePath>..\..\..\..\Library\StdDriver\src\common.c</FilePath>
             </File>
             <File>
-              <FileName>TK_DebugUART.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\TK_DebugUART.c</FilePath>
-            </File>
-            <File>
               <FileName>TK_MultPinFunctions.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\TK_MultPinFunctions.c</FilePath>
@@ -901,9 +987,14 @@
               <FilePath>..\TK_Main.c</FilePath>
             </File>
             <File>
-              <FileName>TK_UartCmd.c</FileName>
+              <FileName>TK_Data.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\TK_UartCmd.c</FilePath>
+              <FilePath>..\TK_Data.c</FilePath>
+            </File>
+            <File>
+              <FileName>TK_DebugUART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\TK_DebugUART.c</FilePath>
             </File>
             <File>
               <FileName>TK_MassProduction.c</FileName>
@@ -911,9 +1002,9 @@
               <FilePath>..\TK_MassProduction.c</FilePath>
             </File>
             <File>
-              <FileName>TK_Data.c</FileName>
+              <FileName>TK_UartCmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\TK_Data.c</FilePath>
+              <FilePath>..\TK_UartCmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -921,19 +1012,59 @@
           <GroupName>Library</GroupName>
           <Files>
             <File>
-              <FileName>TKLib_MassProduction.LIB</FileName>
+              <FileName>TKLib_Calibration_LX51.LIB</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_MassProduction.LIB</FilePath>
+              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_Calibration_LX51.LIB</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                  <BankNo>65535</BankNo>
+                </CommonProperty>
+                <File51/>
+              </FileOption>
             </File>
             <File>
-              <FileName>TKLib_Calibration.LIB</FileName>
+              <FileName>TKLib_FreeRun_LX51.LIB</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_Calibration.LIB</FilePath>
+              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_FreeRun_LX51.LIB</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                  <BankNo>65535</BankNo>
+                </CommonProperty>
+                <File51/>
+              </FileOption>
             </File>
             <File>
-              <FileName>TKLib_FreeRun.LIB</FileName>
+              <FileName>TKLib_MassProduction_LX51.LIB</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_FreeRun.LIB</FilePath>
+              <FilePath>..\..\..\..\Library\StdDriver\lib\TKLib_MassProduction_LX51.LIB</FilePath>
             </File>
           </Files>
         </Group>
@@ -989,6 +1120,16 @@
               <FileName>lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Library\StdDriver\src\lcd.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>RTC</GroupName>
+          <Files>
+            <File>
+              <FileName>rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\Library\StdDriver\src\rtc.c</FilePath>
             </File>
           </Files>
         </Group>

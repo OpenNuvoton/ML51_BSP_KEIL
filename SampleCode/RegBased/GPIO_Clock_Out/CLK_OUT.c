@@ -29,8 +29,8 @@ void main(void)
     P56_PUSHPULL_MODE;
 
     set_CKCON_CLOEN;                                  //System Clock Output Enable
-    CKDIV = 0x78;                                      //System clock divider 240 for scope check
-
+    SFRS=1;CKDIV = 0x78;                              //System clock divider 240 for scope check
+	
     while(1);
 	/* =================== */
 }

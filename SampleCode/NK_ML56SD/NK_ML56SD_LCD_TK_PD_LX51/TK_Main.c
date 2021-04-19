@@ -143,13 +143,16 @@ void main(void)
 {
     uint32_t u32ChanelMsk;
     int8_t i8Ret = -1;
-
+    
     int8_t i8TKChan = -1;
-    int8_t i8TKChanTemp = -1;
+    int8_t i8TKChanTemp;
     bit lcdct=0;
 
 #ifdef  DEMO_CALIBRATION
     UART0_Init();
+#else
+    i8TKChanTemp = TK_Data[0];
+    i8TKChanTemp = -1;
 #endif
 
 #ifdef UART1_DBG
@@ -256,7 +259,7 @@ void main(void)
       {
         u8EventKeyScan = 0;
         if(g_u8IsPress == 0) i8LedChan = -1;
-TKRECHECK:        
+TKRECHECK:
         i8Ret = TK_ScanKey(&ai8Signal[0]);
         if (i8Ret != -1)                    /* TK0 was pressed  */
         {

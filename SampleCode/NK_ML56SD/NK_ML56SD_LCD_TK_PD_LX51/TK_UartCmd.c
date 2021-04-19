@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     TK_UartCmd.c
  * @version  V1.00
- * $Revision: 6 $
- * $Date: 9/15/20 10:28a $
+ * $Revision: 7 $
+ * $Date: 11/25/20 4:02p $
  * @brief     UART command to communicate with PC tool that for evaluate the Touch Key.
  * @note
  * Copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
@@ -66,7 +66,7 @@ extern void TickCallback_KeyScan(void);
 #define E_CMD_TYPE2_GET_IIR_PARAMETER       ('i')
 #define E_CMD_TYPE2_GET_DEBOUNCE_PARAMETER  ('j')
 #define E_CMD_TYPE2_SET_SCAN_KEY            ('k')
-
+#define E_CMD_TYPE2_EXPORT_CALIBRATION      ('n')
 #ifdef MASS_FINETUNE
 #define E_CMD_TYPE2_GET_UID                 ('l')
 void TK_MP_Open(void);                              /* Used for internal mass production */
@@ -232,6 +232,7 @@ int8_t TK_CmdType1(uint8_t *pu8RXBuf)
         psTkInfo->u8ShieldChan = pu8RXBuf[2];
         psTkInfo->u8SliderRes = pu8RXBuf[3];
         psTkInfo->u8WheelRes = pu8RXBuf[4];
+		    //printf("Shield Chn 0x%x\n", (uint16_t) psTkInfo->u8ShieldChan);
         break;
 
     case E_CMD_TYPE1_SPECIFY_FEATURE:
@@ -470,6 +471,7 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
     case E_CMD_TYPE2_READ_REF_SHIELD_NO:
         gu8TXBuf[0] = psTkInfo->u8RefChan;
         gu8TXBuf[1] = psTkInfo->u8ShieldChan;
+		    //printf("Shield Chn 0x%x\n", (uint16_t) psTkInfo->u8ShieldChan);
         if(pu8RXBuf[1] == 0)
         {
             gu8TXBuf[2] = psTkInfo->u8SliderRes;
@@ -578,7 +580,13 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
 					  i8KeyScanId = TickSetTickEvent(1, TickCallback_KeyScan);
         }
         break;
-
+		case E_CMD_TYPE2_EXPORT_CALIBRATION:
+				u32KeyStoreAddr = psTkInfo->u32StoreAddr + pu8RXBuf[1]*4;	
+				gu8TXBuf[0] = inp8(u32KeyStoreAddr);   //*((uint8_t *)&u32KeyStoreAddr+0);
+        gu8TXBuf[1] = inp8(u32KeyStoreAddr+1); //*((uint8_t *)&u32KeyStoreAddr+1);
+        gu8TXBuf[2] = inp8(u32KeyStoreAddr+2); //*((uint8_t *)&u32KeyStoreAddr+2);
+        gu8TXBuf[3] = inp8(u32KeyStoreAddr+3); //*((uint8_t *)&u32KeyStoreAddr+3);
+				break;
 #if defined(MASS_FINETUNE)
     case E_CMD_TYPE2_GET_UID:
         gu8TXBuf[0] = (USER_ID&&0xFF000000)>>24;
@@ -594,12 +602,34 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
             gu8TXBuf[0] = FIRMWARE_MAJOR_VERSION;
             gu8TXBuf[1] = FIRMWARE_MINOR_VERSION;
         }
-        else
+        if(pu8RXBuf[1] == 1)
         {
             gu8TXBuf[0] = TKLIB_MAJOR_VERSION;
             gu8TXBuf[1] = TKLIB_MINOR_VERSION;
         }
         gu8TXBuf[2] = TOUCHKEY_VERSION;
+				if(pu8RXBuf[1] == 2)
+        {//PID
+					IAPCN = READ_DID;
+					IAPAH = 0x00;
+					IAPAL = 0x03;
+					set_IAPTRG_IAPGO;
+					gu8TXBuf[2] = IAPFD;
+					IAPAL = 0x02;
+					set_IAPTRG_IAPGO;
+					gu8TXBuf[3] = IAPFD;
+				}
+				if(pu8RXBuf[1] == 3)
+        {//DID
+					IAPCN = READ_DID;
+					IAPAH = 0x00;
+					IAPAL = 0x01;
+					set_IAPTRG_IAPGO;
+					gu8TXBuf[2] = IAPFD;
+					IAPAL = 0x00;
+					set_IAPTRG_IAPGO;
+					gu8TXBuf[3] = IAPFD;
+				}
         break;
     default:
         gu8TXBuf[4] = 'N';

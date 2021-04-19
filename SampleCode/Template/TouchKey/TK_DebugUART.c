@@ -49,6 +49,10 @@ void UART0_Init(void)
     MFP_P53_UART0_TXD;
     P52_QUASI_MODE;
     P53_QUASI_MODE;
+	  MFP_P64_UART0_RXD;      /* set P6.4 and P6.5 as Quasi mode for UART0 trasnfer */
+    MFP_P65_UART0_TXD;
+    P64_QUASI_MODE;
+    P65_QUASI_MODE;
 #else
     /* PY */
     MFP_P64_UART0_RXD;      /* set P6.4 and P6.5 as Quasi mode for UART0 trasnfer */

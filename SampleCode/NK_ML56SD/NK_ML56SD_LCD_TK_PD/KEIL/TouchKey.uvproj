@@ -949,7 +949,7 @@
             <IDataBaseAddress></IDataBaseAddress>
             <Precede></Precede>
             <Stack></Stack>
-            <CodeSegmentName>?CO?TK_DATA(0XEE80)</CodeSegmentName>
+            <CodeSegmentName>?CO?TK_DATA(0xEE80)</CodeSegmentName>
             <XDataSegmentName></XDataSegmentName>
             <BitSegmentName></BitSegmentName>
             <DataSegmentName></DataSegmentName>

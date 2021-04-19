@@ -45,6 +45,10 @@ void UART0_Init(void)
     MFP_P31_UART0_TXD;
     P30_INPUT_MODE;
     P31_QUASI_MODE;
+//    MFP_P52_UART0_RXD;      /* set P3.0 and P3.1 as Quasi mode for UART0 trasnfer */
+//    MFP_P53_UART0_TXD;
+//    P52_INPUT_MODE;
+//    P53_QUASI_MODE;
 #endif
     SFRS = 0x00;
     InitialUART0_Timer1(24000000, 115200);

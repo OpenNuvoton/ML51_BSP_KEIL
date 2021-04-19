@@ -4,6 +4,7 @@
 #define  VLCD_PIN               0
 #define  AVDD_PIN               1
 #define  Internal_VCP           2
+#define  LCD_VSource_Disable    3
 
 #define  Resistor_Mode            0x80
 #define  Buffer_Mode              0x40
@@ -54,6 +55,7 @@
 
 void LCD_Open(unsigned char u8LCDPowerType, unsigned char u8LCDVSource, unsigned char u8DrivingVol, unsigned char u8BiasLevel, unsigned char u8ComNum );
 void LCD_Current_Mode(unsigned char u8LCDCurrentSel, unsigned char u8LCDPSSel);
+void LCD_VSource_Control(unsigned char u8LCDVSource);
 void LCD_Clock_Setting(unsigned char u8LCDCLKSource, unsigned char u8LCDCLKDiv);
 void LCD_Blink(unsigned char u8LCDBKStatus, unsigned char u8LCDBKFEQ);
 void LCD_PowerSaving(unsigned char u8LCDPowerStatus);

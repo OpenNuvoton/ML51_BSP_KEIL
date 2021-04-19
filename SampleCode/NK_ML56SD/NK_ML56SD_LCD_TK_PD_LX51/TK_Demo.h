@@ -12,7 +12,7 @@
 #define FIRMWARE_MINOR_VERSION      (0x10)            /* Add Wheel example code and CKO shielding */
 
 #define USER_ID                     (('N'<<24) | ('U'<<16) | ('V'<<8) | 'O')
-
+extern code unsigned char TK_Data[384];
 //TK_Param.c
 int8_t TK_LoadPara(uint32_t* pu32ChanelMsk);
 int8_t TK_SavePara(void);

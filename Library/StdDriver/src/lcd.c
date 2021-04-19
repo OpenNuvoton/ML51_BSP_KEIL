@@ -14,7 +14,7 @@
 /**
  *  @brief LCD Initialization routine.
  *  @param[in]  u8LCDPowerType  LCD Power type: \ref TYPE_A (Standard) / \ref TYPE_B (LowPower)
- *  @param[in]  u8LCDVSource    LCD VLCD source: \ref AVDD_PIN / \ref VLCD_PIN / \ref Internal_VCP
+ *  @param[in]  u8LCDVSource    LCD VLCD source: \ref AVDD_PIN / \ref VLCD_PIN / \ref Internal_VCP  \ref LCD_VSource_Disable
  *  @param[in]  u8DrivingVol    LCD driving voltage: \ref LCD_CPVOL_5_4V / \ref LCD_CPVOL_5_2V / \ref LCD_CPVOL_5_0V / 
  *                                                   \ref LCD_CPVOL_4_8V / \ref LCD_CPVOL_4_6V / \ref LCD_CPVOL_4_4V / 
  *                                                   \ref LCD_CPVOL_4_2V / \ref LCD_CPVOL_4_0V / \ref LCD_CPVOL_3_8V /
@@ -72,6 +72,19 @@ void LCD_Current_Mode(unsigned char u8LCDCurrentSel, unsigned char u8LCDPSSel)
       case Resistor_Mode: 
         LCDPWR=0; break;
     }
+}
+
+/**
+ *  @brief VLCD source control subrution for Power Down power consumption contorl 
+ *  @param[in]  u8LCDVSource    LCD VLCD source: \ref AVDD_PIN / \ref VLCD_PIN / \ref Internal_VCP  \ref LCD_VSource_Disable
+ *  @return None.
+ *  @return LCD_VSource_Control(LCD_VSource_Disable);
+ */
+void LCD_VSource_Control(unsigned char u8LCDVSource)
+{       
+    SFRS = 3;    //switch sfrs to page3
+    LCDMODE &= 0xFC;
+    LCDMODE |= u8LCDVSource;                 // VLCD source select
 }
 
 /**
@@ -189,6 +202,8 @@ void LCD_SetOnePixel(unsigned char u8LCDCOM, unsigned char u8LCDSEG, unsigned ch
     else
        LCDDAT &= ~(1 << u8LCDCOM); 
 }
+
+
 
 
 void LCD_Enable(void)
