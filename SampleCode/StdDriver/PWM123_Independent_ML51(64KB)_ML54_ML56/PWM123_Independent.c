@@ -58,9 +58,8 @@ void main(void)
     P40_PUSHPULL_MODE;
     PWM123_ConfigOutputChannel(PWM3,1,0x6FF,60);    // setting PWM channel 5 as 60% duty high of 0x6FF PWM period = 0x0432
     
-    set_PWM1CON0_LOAD;
-    set_PWM2CON0_LOAD;
-    set_PWM3CON0_LOAD;
+    PWM123_RUN(PWM1+PWM2+PWM3);
+
     
     while(1);
 }

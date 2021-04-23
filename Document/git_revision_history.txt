@@ -6,13 +6,13 @@
 1.TK library                  Update TK lib with Power down Scan function.
 2.RTC                         Update rtc.lib with tick select.
 3.TK_Utility                  Update NuSendj.exe to support Power down function.
-4.NK_ML56SD                   Added power down process for NuMaker. Display status same.
+4.NK_ML56SD             Added power down process for NuMaker. Display status same.
 
 2021/1
 1. TK library                 Updated TK lib with scan resolution.
 2. ML51.h                     Updated for chm release
-3. Document                   Added NuMicro ML51 Series Driver Reference Guide.chm
-4. LX51                       All project use LX51 instead of BL51.
+3. Document                  Added NuMicro ML51 Series Driver Reference Guide.chm
+4. LX51                         All project use LX51 instead of BL51.
 
 2021/2
 1. WDT                        added WDT divider 512/1024/2048 item.
@@ -20,4 +20,5 @@
 3. LCD Power down             Added LCD power down for ML54 ML56 series.
 
 2021/4
-1. lib folder                          lib for touch key updated
+1. lib folder                     lib for touch key updated
+2. pwm123                    update pwm123.c library file 

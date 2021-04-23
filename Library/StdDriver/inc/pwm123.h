@@ -7,3 +7,4 @@ void PWM123_ConfigOutputChannel(unsigned char u8PWMNum,
                                 unsigned char u8PWMChannelNum,
                                 unsigned int u16PWMFrequency,
                                 unsigned int u16PWMDutyCycle);
+void PWM123_RUN(unsigned char u8PWM123Sel);

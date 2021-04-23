@@ -120,4 +120,25 @@ _push_(SFRS);
 _pop_(SFRS);
 }
 
+/**
+* @brief This function action all PWM1 run
+* @param[in] none
+* @return none
+* @note        
+* @example PWM1_RUN();
+*/
+void PWM123_RUN(unsigned char u8PWM123Sel)
+{
+  switch (u8PWM123Sel)
+  {
+    case PWM1: set_PWM1CON0_LOAD;set_PWM1CON0_PWMRUN; break;
+    case PWM2: set_PWM2CON0_LOAD;set_PWM2CON0_PWMRUN; break;
+    case PWM3: set_PWM3CON0_LOAD;set_PWM3CON0_PWMRUN; break;
+    case PWM1+PWM2+PWM3:
+               set_PWM1CON0_LOAD;set_PWM1CON0_PWMRUN;
+               set_PWM2CON0_LOAD;set_PWM2CON0_PWMRUN;
+               set_PWM3CON0_LOAD;set_PWM3CON0_PWMRUN; break;
+  }
+}
+
 
