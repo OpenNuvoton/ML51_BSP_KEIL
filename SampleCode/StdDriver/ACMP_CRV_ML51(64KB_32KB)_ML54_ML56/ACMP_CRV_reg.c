@@ -15,7 +15,6 @@
 
 #include "ML51.h"
 
-
 /**
  * @brief       ACMP interrupt subroutine
  * @param       None

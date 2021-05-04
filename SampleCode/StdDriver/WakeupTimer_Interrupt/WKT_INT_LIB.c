@@ -17,16 +17,6 @@
 #include "ML51.h"
 
 
-void WakeUp_Timer_ISR (void)   interrupt 17     //ISR for self wake-up timer
-{
-
-    _push_(SFRS);
-      P32 = ~P32;
-      clr_WKCON_WKTF;                                   //clear interrupt flag
-    _pop_(SFRS);
-}
-
-
 /************************************************************************************************************
 *    Main function 
 ************************************************************************************************************/
@@ -35,11 +25,12 @@ void main (void)
    
     P32_PUSHPULL_MODE;
 
-//-----------------------------------------------------
-//  WKT initial   
-//-----------------------------------------------------  
-    WKT_Open (LIRC,4,96);            // 96*4/38400 = 10ms
-    WKT_Interrupt(Enable);             // enable WKT interrupt
+/*
+/*  WKT initial  check wkt interrupt vector in wkt.c  
+*/
+
+//    WKT_AutoReload_Interrupt_Initial_MS(LIRC,200);   /* WKT delay 200 ms */
+    WKT_AutoReload_Interrupt_Initial_S(LIRC,2);      /* WKT delay 2s */
     ENABLE_GLOBAL_INTERRUPT;
 
     while(1);
