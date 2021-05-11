@@ -21,6 +21,7 @@
 #include "adc.h"
 #include "bod.h"
 #include "capture.h"
+#include "common.h"
 #include "delay.h"
 #include "eeprom.h"
 #include "eeprom_sprom.h"

@@ -36,10 +36,14 @@ void main (void)
     P33_INPUT_MODE;                          //Define P33 as IC0 input pin.
     ENABLE_P33_PULLUP;                       //Since check falling edge enalbe internal pull high function.
     TIMER2_Capture(IC0,CaptureRising,2);
-    MFP_P31_IC2;
+
+    MFP_P31_IC2;
     P31_INPUT_MODE;                          //Define P33 as IC0 input pin.
     ENABLE_P31_PULLUP;                       //Since check falling edge enalbe internal pull high function.
     TIMER2_Capture(IC2,CaptureEither,7);;
+
+    TIMER2_Capture_Interrupt(Enable);
+    Global_Interrupt(Enable);
 
     while(1);
 }

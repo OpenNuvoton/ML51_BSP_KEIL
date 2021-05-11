@@ -7,20 +7,20 @@
 
   <Targets>
     <Target>
-      <TargetName>RegBased</TargetName>
+      <TargetName>I2C_EEPROM</TargetName>
       <ToolsetNumber>0x0</ToolsetNumber>
       <ToolsetName>MCS-51</ToolsetName>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>ML56SD1AE</Device>
+          <Device>ML51PC0AE</Device>
           <Vendor>Nuvoton</Vendor>
-          <Cpu>IRAM(0 - 0xFF) IROM(0 - 0xFFFF)  XRAM(0 - 0xFFF) CLOCK(24000000)</Cpu>
+          <Cpu>IRAM(0 - 0xFF) IROM(0 - 0x7FFF)  XRAM(0 - 0x7FF) CLOCK(24000000)</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"LIB\STARTUP.A51" ("Standard 8051 Startup Code")</StartupFile>
           <FlashDriverDll></FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>ML56.H</RegisterFile>
+          <RegisterFile>ML51.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -46,7 +46,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Output\</OutputDirectory>
-          <OutputName>ISP_UART0</OutputName>
+          <OutputName>I2C_EEPROM</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -206,7 +206,7 @@
             <Mode2>0</Mode2>
             <useCB>0</useCB>
             <useXB>0</useXB>
-            <useL251>1</useL251>
+            <useL251>0</useL251>
             <useA251>0</useA251>
             <Mx51>0</Mx51>
             <ModC812>0</ModC812>
@@ -273,7 +273,7 @@
               <IRO>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x10000</Size>
+                <Size>0x8000</Size>
               </IRO>
               <IRA>
                 <Type>0</Type>
@@ -283,7 +283,7 @@
               <XRA>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x1000</Size>
+                <Size>0x800</Size>
               </XRA>
               <XRA512>
                 <Type>0</Type>
@@ -314,7 +314,7 @@
             <uAregs>0</uAregs>
             <UseInterruptVector>1</UseInterruptVector>
             <Fuzzy>3</Fuzzy>
-            <Optimize>7</Optimize>
+            <Optimize>4</Optimize>
             <WarningLevel>2</WarningLevel>
             <SizeSpeed>1</SizeSpeed>
             <ObjectExtend>1</ObjectExtend>
@@ -347,7 +347,7 @@
             <WarningLevel>2</WarningLevel>
             <DataOverlaying>1</DataOverlaying>
             <OverlayString></OverlayString>
-            <MiscControls>REMOVEUNUSED</MiscControls>
+            <MiscControls></MiscControls>
             <DisableWarningNumbers>16</DisableWarningNumbers>
             <LinkerCmdFile></LinkerCmdFile>
             <Assign></Assign>
@@ -377,19 +377,26 @@
           <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>ISP_UART0_main_autosize.c</FileName>
+              <FileName>I2C_Device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\ISP_UART0_main_autosize.c</FilePath>
-            </File>
-            <File>
-              <FileName>isp_uart0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\isp_uart0.c</FilePath>
+              <FilePath>..\I2C_Device.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Common</GroupName>
+          <GroupName>Library</GroupName>
+          <Files>
+            <File>
+              <FileName>common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\Library\StdDriver\src\common.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\Library\StdDriver\src\i2c.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Startup</GroupName>
@@ -397,7 +404,7 @@
             <File>
               <FileName>STARTUP.A51</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Library\Startup\KEIL\STARTUP.A51</FilePath>
+              <FilePath>..\..\..\..\Library\Startup\Keil\STARTUP.A51</FilePath>
             </File>
           </Files>
         </Group>

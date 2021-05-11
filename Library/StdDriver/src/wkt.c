@@ -33,7 +33,7 @@ void WKT_AutoReload_Interrupt_Initial_MS(unsigned char u8WKTCLKSouce, unsigned i
     {
       case LIRC:
         WKCON &= 0xDF;
-        WKTCT = 65535-(u8WKTRLData*6/10);
+        WKTCT = 65535ul-(u8WKTRLData*6ul/10ul);
         SFRS=2; RWKH = HIBYTE (WKTCT);
         SFRS=0; RWKL = LOBYTE (WKTCT);
       break;
@@ -43,7 +43,7 @@ void WKT_AutoReload_Interrupt_Initial_MS(unsigned char u8WKTCLKSouce, unsigned i
         set_CKEN_ELXTEN;                        //step3: Enable LXT.
         while(!(CKSWT&SET_BIT6));      //step4: check clock source status and wait for ready
         WKCON |= 0x20;
-        WKTCT = 65535-(u8WKTRLData*512/1000);
+        WKTCT = 65535ul-(u8WKTRLData*512ul/1000ul);
         SFRS=2; RWKH = HIBYTE (WKTCT);
         SFRS=0; RWKL = LOBYTE (WKTCT);
       break;
@@ -71,7 +71,7 @@ void WKT_AutoReload_Interrupt_Initial_S(unsigned char u8WKTCLKSouce, unsigned in
     {
       case LIRC:
         WKCON &= 0xDF;
-        WKTCT = 65535-(u8WKTRLData*75);
+        WKTCT = 65535ul-(u8WKTRLData*75ul);
         SFRS=2; RWKH = HIBYTE (WKTCT);
         SFRS=0; RWKL = LOBYTE (WKTCT);
       break;
@@ -81,7 +81,7 @@ void WKT_AutoReload_Interrupt_Initial_S(unsigned char u8WKTCLKSouce, unsigned in
         set_CKEN_ELXTEN;                        //step3: Enable LXT.
         while(!(CKSWT&SET_BIT6));      //step4: check clock source status and wait for ready
         WKCON |= 0x20;
-        WKTCT = 65535-(u8WKTRLData*64);
+        WKTCT = 65535ul-(u8WKTRLData*64ul);
         SFRS=2; RWKH = HIBYTE (WKTCT);
         SFRS=0; RWKL = LOBYTE (WKTCT);
       break;
