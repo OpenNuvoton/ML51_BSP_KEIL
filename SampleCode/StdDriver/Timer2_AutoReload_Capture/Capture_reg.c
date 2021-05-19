@@ -48,7 +48,7 @@ void main (void)
 {
 
     Enable_UART0_VCOM_printf();
-	  SFRS=0; printf ("\n ML51 series capture demo." );
+    SFRS=0; printf ("\n ML51 series capture demo." );
 
 /* Setting Multi function pin setting for GPIO toggle */ 
     MFP_P33_IC0;
@@ -57,7 +57,7 @@ void main (void)
     TIMER2_Capture(IC0,CaptureRising,2);
 
     MFP_P11_IC2;
-    P11_INPUT_MODE;                          //Define P33 as IC0 input pin.
+    P11_INPUT_MODE;                          //Define P11 as IC2 input pin.
     ENABLE_P11_PULLUP;                       //Since check falling edge enalbe internal pull high function.
     TIMER2_Capture(IC2,CaptureEither,7);;
 

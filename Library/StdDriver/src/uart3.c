@@ -16,7 +16,7 @@
 unsigned char uart3rvbuffer=0;
 bit uart3rvflag;
 
-void SMC1_ISR(void) interrupt 22          // Vector @  0x9B
+void SMC1_ISR(void) interrupt 27          // Vector @  0xDB
 {
     _push_(SFRS);
         SFRS = 2;
