@@ -32,6 +32,9 @@ typedef signed long           int32_t;
 #define Disable  0
 #define Enable   1
 
+#define DISABLE  0
+#define ENABLE   1
+
 #define FAIL            1
 #define PASS            0
 
