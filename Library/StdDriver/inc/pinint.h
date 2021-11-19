@@ -8,13 +8,6 @@
 #define PIT6  6
 #define PIT7  7
 
-#define Port0  0
-#define Port1  1
-#define Port2  2
-#define Port3  3
-#define Port4  4
-#define Port5  5
-
 #define LOW     0
 #define HIGH    1
 #define FALLING 0

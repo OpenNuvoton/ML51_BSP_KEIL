@@ -9,6 +9,15 @@
 #define  PORT3     3
 #define  PORT4     4
 #define  PORT5     5
+#define  PORT6     6
+
+#define  Port0  0
+#define  Port1  1
+#define  Port2  2
+#define  Port3  3
+#define  Port4  4
+#define  Port5  5
+#define  Port6  6
 
 #define  BIT0    0x01
 #define  BIT1    0x02

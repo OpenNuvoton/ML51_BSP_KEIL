@@ -7,20 +7,20 @@
 
   <Targets>
     <Target>
-      <TargetName>Regbased</TargetName>
+      <TargetName>RegBased</TargetName>
       <ToolsetNumber>0x0</ToolsetNumber>
       <ToolsetName>MCS-51</ToolsetName>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>MS51FB9AE</Device>
+          <Device>ML56SD1AE</Device>
           <Vendor>Nuvoton</Vendor>
-          <Cpu>IRAM(0 - 0xFF) IROM(0 - 0x3FFF)  XRAM(0 - 0x3FF) CLOCK(24000000)</Cpu>
+          <Cpu>IRAM(0 - 0xFF) IROM(0 - 0xFFFF)  XRAM(0 - 0xFFF) CLOCK(24000000)</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"LIB\STARTUP.A51" ("Standard 8051 Startup Code")</StartupFile>
           <FlashDriverDll></FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>MS51.H</RegisterFile>
+          <RegisterFile>ML56.H</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -46,7 +46,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Output\</OutputDirectory>
-          <OutputName>IAP_APproLD</OutputName>
+          <OutputName>ISP_UART0</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -86,7 +86,7 @@
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
-          <SelectedForBatchBuild>0</SelectedForBatchBuild>
+          <SelectedForBatchBuild>1</SelectedForBatchBuild>
           <SVCSIdString></SVCSIdString>
         </TargetCommonOption>
         <CommonProperty>
@@ -133,7 +133,7 @@
             <RestoreMemoryDisplay>1</RestoreMemoryDisplay>
             <RestoreFunctions>1</RestoreFunctions>
             <RestoreToolbox>1</RestoreToolbox>
-            <LimitSpeedToRealTime>1</LimitSpeedToRealTime>
+            <LimitSpeedToRealTime>0</LimitSpeedToRealTime>
             <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
@@ -273,7 +273,7 @@
               <IRO>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x4000</Size>
+                <Size>0x10000</Size>
               </IRO>
               <IRA>
                 <Type>0</Type>
@@ -283,7 +283,7 @@
               <XRA>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x400</Size>
+                <Size>0x1000</Size>
               </XRA>
               <XRA512>
                 <Type>0</Type>
@@ -374,29 +374,22 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Source Group 1</GroupName>
+          <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>IAP_program_CONFIG.c</FileName>
+              <FileName>ISP_UART0_main_autosize.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\IAP_program_CONFIG.c</FilePath>
+              <FilePath>..\ISP_UART0_main_autosize.c</FilePath>
+            </File>
+            <File>
+              <FileName>isp_uart0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\isp_uart0.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Common</GroupName>
-          <Files>
-            <File>
-              <FileName>IAP.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\src\IAP.c</FilePath>
-            </File>
-            <File>
-              <FileName>common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\src\common.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Startup</GroupName>
@@ -404,7 +397,7 @@
             <File>
               <FileName>STARTUP.A51</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\Library\Startup\Keil\STARTUP.A51</FilePath>
+              <FilePath>..\..\..\..\Library\Startup\KEIL\STARTUP.A51</FilePath>
             </File>
           </Files>
         </Group>

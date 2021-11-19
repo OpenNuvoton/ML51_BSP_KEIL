@@ -21,6 +21,7 @@
   *                  - \ref Port 3
   *                  - \ref Port 4
   *                  - \ref Port 5
+  *                  - \ref Port 6
   * @param[in] u8PinMask Decides  bit of the port (SET_BIT0~SET_BIT7 use "|" to define multi bit).
   *                  - \ref SET_BIT0
   *                  - \ref SET_BIT1
@@ -53,7 +54,7 @@ void GPIO_SetMode(unsigned char u8Port, unsigned char u8PinMask, unsigned char u
         case Port3:  u8PnM1 = P3M1;  u8PnM2 = P3M2;  break;
         case Port4:  u8PnM1 = P4M1;  u8PnM2 = P4M2;  break;
         case Port5:  u8PnM1 = P5M1;  u8PnM2 = P5M2;  break;
-//        case Port6:  u8PnM1 = P6M1;  u8PnM2 = P6M2;  break;
+        case Port6:  SFRS=2; u8PnM1 = P6M1;  u8PnM2 = P6M2;  break;
     }
     switch(u8Mode)
     {
@@ -82,6 +83,7 @@ void GPIO_SetMode(unsigned char u8Port, unsigned char u8PinMask, unsigned char u
         case Port3:  P3M1 = u8PnM1;  P3M2 = u8PnM2;  break;
         case Port4:  P4M1 = u8PnM1;  P4M2 = u8PnM2;  break;
         case Port5:  P5M1 = u8PnM1;  P5M2 = u8PnM2;  break;
+        case Port6:  SFRS=2;P6M1 = u8PnM1;  P6M2 = u8PnM2;  break;
     }
 }
 
@@ -94,6 +96,7 @@ void GPIO_SetMode(unsigned char u8Port, unsigned char u8PinMask, unsigned char u
   *                  - \ref Port 3
   *                  - \ref Port 4
   *                  - \ref Port 5
+  *                  - \ref Port 6
   * @param[in] u8PinMask Decides  bit of the port (SET_BIT0~SET_BIT7 use "|" to define multi bit).
   *                  - \ref SET_BIT0
   *                  - \ref SET_BIT1
@@ -125,6 +128,7 @@ void GPIO_Pull_Enable(unsigned char u8Port, unsigned char u8PinMask, unsigned ch
           case Port3:  P3UP |= u8PinMask;  break;
           case Port4:  P4UP |= u8PinMask;  break;
           case Port5:  P5UP |= u8PinMask;  break;
+          case Port6:  SFRS=2;P6UP |= u8PinMask;  break;
         }
     break;
     case PULLDOWN:
@@ -136,6 +140,7 @@ void GPIO_Pull_Enable(unsigned char u8Port, unsigned char u8PinMask, unsigned ch
           case Port3:  P3DW |= u8PinMask;  break;
           case Port4:  P4DW |= u8PinMask;  break;
           case Port5:  P5DW |= u8PinMask;  break;
+          case Port6:  SFRS=2;P5DW |= u8PinMask;  break;
         }
     break;
     }
@@ -151,6 +156,7 @@ void GPIO_Pull_Enable(unsigned char u8Port, unsigned char u8PinMask, unsigned ch
   *                  - \ref Port 3
   *                  - \ref Port 4
   *                  - \ref Port 5
+  *                  - \ref Port 6
   * @param[in] u8PinMask Decides  bit of the port (SET_BIT0~SET_BIT7 use "|" to define multi bit).
   *                  - \ref SET_BIT0
   *                  - \ref SET_BIT1
@@ -182,6 +188,7 @@ void GPIO_Pull_Disable(unsigned char u8Port, unsigned char u8PinMask, unsigned c
           case Port3:  P3UP &= ~u8PinMask;  break;
           case Port4:  P4UP &= ~u8PinMask;  break;
           case Port5:  P5UP &= ~u8PinMask;  break;
+          case Port6:  SFRS=2;P6UP &= ~u8PinMask;  break;
         }
     break;
     case PULLDOWN:
@@ -193,6 +200,7 @@ void GPIO_Pull_Disable(unsigned char u8Port, unsigned char u8PinMask, unsigned c
           case Port3:  P3DW &= ~u8PinMask;  break;
           case Port4:  P4DW &= ~u8PinMask;  break;
           case Port5:  P5DW &= ~u8PinMask;  break;
+          case Port6:  SFRS=2;P6DW &= ~u8PinMask;  break;
         }
     break;
     }
@@ -207,6 +215,7 @@ void GPIO_Pull_Disable(unsigned char u8Port, unsigned char u8PinMask, unsigned c
   *                  - \ref Port 3
   *                  - \ref Port 4
   *                  - \ref Port 5
+  *                  - \ref Port 6
   * @param[in] u8PinMask Decides  bit of the port (SET_BIT0~SET_BIT7 use "|" to define multi bit).
   *                  - \ref SET_BIT0
   *                  - \ref SET_BIT1
@@ -239,6 +248,7 @@ _push_(SFRS);
           case Port3:  P3S |= u8PinMask;  break;
           case Port4:  P4S |= u8PinMask;  break;
           case Port5:  P5S |= u8PinMask;  break;
+          case Port6:  SFRS=2; P5S |= u8PinMask;  break;
         }
     break;
     case Disable:
@@ -250,6 +260,7 @@ _push_(SFRS);
           case Port3:  P3S &= ~u8PinMask;  break;
           case Port4:  P4S &= ~u8PinMask;  break;
           case Port5:  P5S &= ~u8PinMask;  break;
+          case Port6:  SFRS=2; P6S &= ~u8PinMask;  break;
         }
     break;
     }
