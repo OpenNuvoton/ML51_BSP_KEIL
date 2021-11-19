@@ -49,16 +49,11 @@ void main (void)
   Enable_UART0_VCOM_printf();
 #endif
 
-//----------------------------------------------------
-//  P1.3 set as highlevel trig pin interrupt function
-//  otherwise, MCU into idle mode.
-//----------------------------------------------------
-
     MFP_P17_GPIO;
     MFP_P65_GPIO;
 
     GPIO_SetMode(Port1,BIT7,GPIO_MODE_INPUT);
-    GPIO_SetMode(Port2,BIT5,GPIO_MODE_INPUT);
+    GPIO_SetMode(Port6,BIT5,GPIO_MODE_INPUT);
     GPIO_Pull_Enable(Port1,BIT7,PULLUP);
     GPIO_Pull_Enable(Port6,BIT5,PULLDOWN);
     GPIO_EnableInt(PIT0,BOTH,EDGE,Port1,7);
