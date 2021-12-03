@@ -74,7 +74,7 @@ void PWM0_ConfigOutputChannel(unsigned char u8PWM0ChannelNum,
   }
   switch (u8PWM0ChannelNum)
   {
-      case 0:  PWM0C1H=(u32PWM0Frequency*u16PWM0DutyCycle/100)>>8;PWM0C0L=(u32PWM0Frequency*u16PWM0DutyCycle/100);break;
+      case 0:  PWM0C0H=(u32PWM0Frequency*u16PWM0DutyCycle/100)>>8;PWM0C0L=(u32PWM0Frequency*u16PWM0DutyCycle/100);break;
       case 1:  PWM0C1H=(u32PWM0Frequency*u16PWM0DutyCycle/100)>>8;PWM0C1L=(u32PWM0Frequency*u16PWM0DutyCycle/100);break;
       case 2:  PWM0C2H=(u32PWM0Frequency*u16PWM0DutyCycle/100)>>8;PWM0C2L=(u32PWM0Frequency*u16PWM0DutyCycle/100);break;
       case 3:  PWM0C3H=(u32PWM0Frequency*u16PWM0DutyCycle/100)>>8;PWM0C3L=(u32PWM0Frequency*u16PWM0DutyCycle/100);break;

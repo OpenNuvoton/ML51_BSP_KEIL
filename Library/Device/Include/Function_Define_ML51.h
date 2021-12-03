@@ -143,84 +143,83 @@ typedef signed long           int32_t;
 /*****************************************************************************************
 *interrupt function process 
 *****************************************************************************************/
-#define    ENABLE_GLOBAL_INTERRUPT     EA=1
-#define    DISABLE_GLOBAL_INTERRUPT    EA=0
+#define    ENABLE_GLOBAL_INTERRUPT                          EA=1
+#define    DISABLE_GLOBAL_INTERRUPT                         EA=0
+                                                           
+#define    ENABLE_ADC_INTERRUPT                             set_IE_EADC
+#define    ENABLE_BOD_INTERRUPT                             set_IE_EBOD
+#define    ENABLE_UART0_INTERRUPT                           set_IE_ES
+#define    ENABLE_TIMER1_INTERRUPT                          set_IE_ET1
+#define    ENABLE_INT1_INTERRUPT                            set_IE_EX1
+#define    ENABLE_TIMER0_INTERRUPT                          set_IE_ET0
+#define    ENABLE_INT0_INTERRUPT                            set_IE_EX0
+                                                           
+#define    ENABLE_TIMER2_INTERRUPT                          set_EIE0_ET2
+#define    ENABLE_SPI0_INTERRUPT                            set_EIE0_ESPI0
+#define    ENABLE_PWM0_FB_INTERRUPT                         set_EIE0_EFB0  
+#define    ENABLE_WDT_INTERRUPT                             set_EIE0_EWDT  
+#define    ENABLE_PWMM0_INTERRUPT                           set_EIE0_EPWM0  
+#define    ENABLE_CAPTURE_INTERRUPT                         set_EIE0_ECAP  
+#define    ENABLE_PIN_INTERRUPT                             set_EIE0_EPI  
+#define    ENABLE_I2C_INTERRUPT                             set_EIE0_EI2C0
+                                                           
+#define    ENABLE_PWM1_INTERRUPT                            set_EIE1_EPWM123
+#define    ENABLE_I2C1_INTERRUPT                            set_EIE1_EI2C1
+#define    ENABLE_ESPI1_INTERRUPT                           set_EIE1_ESPI1
+#define    ENABLE_HARDFAULT_INTERRUPT                       set_EIE1_EHFI
+#define    ENABLE_WKT_INTERRUPT                             set_EIE1_EWKT
+#define    ENABLE_TIMER3_INTERRUPT                          set_EIE1_ET3
+#define    ENABLE_UART1_INTERRUPT                           set_EIE1_ES1
 
-#define    ENABLE_ADC_INTERRUPT         set_IE_EADC
-#define    ENABLE_BOD_INTERRUPT         set_IE_EBOD
-#define    ENABLE_UART0_INTERRUPT       set_IE_ES
-#define    ENABLE_TIMER1_INTERRUPT      set_IE_ET1
-#define    ENABLE_INT1_INTERRUPT        set_IE_EX1
-#define    ENABLE_TIMER0_INTERRUPT      set_IE_ET0
-#define    ENABLE_INT0_INTERRUPT        set_IE_EX0
+#define    ENABLE_SC0_AUTO_CONVENTION_ERROR_INTERRUPT       set_SC0IE_ACERRIEN
+#define    ENABLE_SC0_BLOCK_GUARD_TIMER_INTERRUPT           set_SC0IE_BGTIEN
+#define    ENABLE_SC0_TRANSFER_ERROR_INTERRUPT              set_SC0IE_TERRIEN
+#define    ENABLE_SC0_TRASMIT_BUFFER_EMPTY_INTERRUPT        set_SC0IE_TBEIEN
+#define    ENABLE_SC0_RECEIVE_DATA_REACH_INTERRUPT          set_SC0IE_RDAIEN
 
-#define    ENABLE_TIMER2_INTERRUPT      set_EIE0_ET2
-#define    ENABLE_SPI0_INTERRUPT        set_EIE0_ESPI0
-#define    ENABLE_PWM0_FB_INTERRUPT     set_EIE0_EFB0  
-#define    ENABLE_WDT_INTERRUPT         set_EIE0_EWDT  
-#define    ENABLE_PWMM0_INTERRUPT       set_EIE0_EPWM0  
-#define    ENABLE_CAPTURE_INTERRUPT     set_EIE0_ECAP  
-#define    ENABLE_PIN_INTERRUPT         set_EIE0_EPI  
-#define    ENABLE_I2C_INTERRUPT         set_EIE0_EI2C0
+#define    ENABLE_SC1_AUTO_CONVENTION_ERROR_INTERRUPT       SFRS=2;SC1IE|=0x10
+#define    ENABLE_SC1_BLOCK_GUARD_TIMER_INTERRUPT           SFRS=2;SC1IE|=0x08
+#define    ENABLE_SC1_TRANSFER_ERROR_INTERRUPT              SFRS=2;SC1IE|=0x04
+#define    ENABLE_SC1_TRASMIT_BUFFER_EMPTY_INTERRUPT        SFRS=2;SC1IE|=0x02
+#define    ENABLE_SC1_RECEIVE_DATA_REACH_INTERRUPT          SFRS=2;SC1IE|=0x01
 
-//#define    ENABLE_PWM1_FB_INTERRUPT     set_EIE1_EBF1//Delete
-#define    ENABLE_PWM1_INTERRUPT        set_EIE1_EPWM123
-#define    ENABLE_I2C1_INTERRUPT        set_EIE1_EI2C1
-#define    ENABLE_ESPI1_INTERRUPT       set_EIE1_ESPI1
-#define    ENABLE_HARDFAULT_INTERRUPT   set_EIE1_EHFI
-#define    ENABLE_WKT_INTERRUPT         set_EIE1_EWKT
-#define    ENABLE_TIMER3_INTERRUPT      set_EIE1_ET3
-#define    ENABLE_UART1_INTERRUPT       set_EIE1_ES1
+#define    ENABLE_PDMA0_HALFDONE_INT                        SFRS=0;DMA0CR|=0x08
+#define    ENABLE_PDMA0_FULLDONE_INT                        SFRS=0;DMA0CR|=0x04
+#define    ENABLE_PDMA1_HALFDONE_INT                        SFRS=0;DMA1CR|=0x08
+#define    ENABLE_PDMA1_FULLDONE_INT                        SFRS=0;DMA1CR|=0x04
+#define    ENABLE_PDMA2_HALFDONE_INT                        SFRS=2;DMA2CR|=0x08
+#define    ENABLE_PDMA2_FULLDONE_INT                        SFRS=2;DMA2CR|=0x04
+#define    ENABLE_PDMA3_HALFDONE_INT                        SFRS=2;DMA3CR|=0x08
+#define    ENABLE_PDMA3_FULLDONE_INT                        SFRS=2;DMA3CR|=0x04 
 
-#define    ENABLE_SC0_AUTO_CONVENTION_ERROR_INTERRUPT    set_SC0IE_ACERRIEN
-#define    ENABLE_SC0_BLOCK_GUARD_TIMER_INTERRUPT        set_SC0IE_BGTIEN
-#define    ENABLE_SC0_TRANSFER_ERROR_INTERRUPT           set_SC0IE_TERRIEN
-#define    ENABLE_SC0_TRASMIT_BUFFER_EMPTY_INTERRUPT     set_SC0IE_TBEIEN
-#define    ENABLE_SC0_RECEIVE_DATA_REACH_INTERRUPT       set_SC0IE_RDAIEN
-
-#define    ENABLE_SC1_AUTO_CONVENTION_ERROR_INTERRUPT    SFRS=2;SC1IE|=0x10
-#define    ENABLE_SC1_BLOCK_GUARD_TIMER_INTERRUPT        SFRS=2;SC1IE|=0x08
-#define    ENABLE_SC1_TRANSFER_ERROR_INTERRUPT           SFRS=2;SC1IE|=0x04
-#define    ENABLE_SC1_TRASMIT_BUFFER_EMPTY_INTERRUPT     SFRS=2;SC1IE|=0x02
-#define    ENABLE_SC1_RECEIVE_DATA_REACH_INTERRUPT       SFRS=2;SC1IE|=0x01
-
-#define    ENABLE_PDMA0_HALFDONE_INT          SFRS=0;DMA0CR|=0x08
-#define    ENABLE_PDMA0_FULLDONE_INT          SFRS=0;DMA0CR|=0x04
-#define    ENABLE_PDMA1_HALFDONE_INT          SFRS=0;DMA1CR|=0x08
-#define    ENABLE_PDMA1_FULLDONE_INT          SFRS=0;DMA1CR|=0x04
-#define    ENABLE_PDMA2_HALFDONE_INT          SFRS=2;DMA2CR|=0x08
-#define    ENABLE_PDMA2_FULLDONE_INT          SFRS=2;DMA2CR|=0x04
-#define    ENABLE_PDMA3_HALFDONE_INT          SFRS=2;DMA3CR|=0x08
-#define    ENABLE_PDMA3_FULLDONE_INT          SFRS=2;DMA3CR|=0x04 
-
-#define    ENABLE_ACMP0_INTERRUPT             set_ACMPCR0_ACMPIE
-#define    ENABLE_ACMP1_INTERRUPT             set_ACMPCR1_ACMPIE
+#define    ENABLE_ACMP0_INTERRUPT                           set_ACMPCR0_ACMPIE
+#define    ENABLE_ACMP1_INTERRUPT                           set_ACMPCR1_ACMPIE
 
 /*DISABLE INTERRUPT*/ 
-#define    DISABLE_ADC_INTERRUPT         clr_IE_EADC
-#define    DISABLE_BOD_INTERRUPT         clr_IE_EBOD
-#define    DISABLE_UART0_INTERRUPT       clr_IE_ES
-#define    DISABLE_TIMER1_INTERRUPT      clr_IE_ET1
-#define    DISABLE_INT1_INTERRUPT        clr_IE_EX1
-#define    DISABLE_TIMER0_INTERRUPT      clr_IE_ET0
-#define    DISABLE_INT0_INTERRUPT        clr_IE_EX0
-
-#define    DISABLE_TIMER2_INTERRUPT      clr_EIE0_ET2
-#define    DISABLE_SPI0_INTERRUPT        clr_EIE0_ESPI0 
-#define    DISABLE_PWM0_FB_INTERRUPT     clr_EIE0_EFB0  
-#define    DISABLE_WDT_INTERRUPT         clr_EIE0_EWDT  
-#define    DISABLE_PWMM0_INTERRUPT       clr_EIE0_EPWM0  
-#define    DISABLE_CAPTURE_INTERRUPT     clr_EIE0_ECAP  
-#define    DISABLE_PIN_INTERRUPT         clr_EIE0_EPI  
-#define    DISABLE_I2C_INTERRUPT         clr_EIE0_EI2C0
-
-#define    DISABLE_PWM1_INTERRUPT        clr_EIE1_EPWM123
-#define    DISABLE_I2C1_INTERRUPT        clr_EIE1_EI2C1
-#define    DISABLE_ESPI1_INTERRUPT       clr_EIE1_ESPI1
-#define    DISABLE_HARDFAULT_INTERRUPT   clr_EIE1_EHFI
-#define    DISABLE_WKT_INTERRUPT         clr_EIE1_EWKT
-#define    DISABLE_TIMER3_INTERRUPT      clr_EIE1_ET3
-#define    DISABLE_UART1_INTERRUPT       clr_EIE1_ES1
+#define    DISABLE_ADC_INTERRUPT                            clr_IE_EADC
+#define    DISABLE_BOD_INTERRUPT                            clr_IE_EBOD
+#define    DISABLE_UART0_INTERRUPT                          clr_IE_ES
+#define    DISABLE_TIMER1_INTERRUPT                         clr_IE_ET1
+#define    DISABLE_INT1_INTERRUPT                           clr_IE_EX1
+#define    DISABLE_TIMER0_INTERRUPT                         clr_IE_ET0
+#define    DISABLE_INT0_INTERRUPT                           clr_IE_EX0
+                                                           
+#define    DISABLE_TIMER2_INTERRUPT                         clr_EIE0_ET2
+#define    DISABLE_SPI0_INTERRUPT                           clr_EIE0_ESPI0 
+#define    DISABLE_PWM0_FB_INTERRUPT                        clr_EIE0_EFB0  
+#define    DISABLE_WDT_INTERRUPT                            clr_EIE0_EWDT  
+#define    DISABLE_PWMM0_INTERRUPT                          clr_EIE0_EPWM0  
+#define    DISABLE_CAPTURE_INTERRUPT                        clr_EIE0_ECAP  
+#define    DISABLE_PIN_INTERRUPT                            clr_EIE0_EPI  
+#define    DISABLE_I2C_INTERRUPT                            clr_EIE0_EI2C0
+                                                           
+#define    DISABLE_PWM1_INTERRUPT                           clr_EIE1_EPWM123
+#define    DISABLE_I2C1_INTERRUPT                           clr_EIE1_EI2C1
+#define    DISABLE_ESPI1_INTERRUPT                          clr_EIE1_ESPI1
+#define    DISABLE_HARDFAULT_INTERRUPT                      clr_EIE1_EHFI
+#define    DISABLE_WKT_INTERRUPT                            clr_EIE1_EWKT
+#define    DISABLE_TIMER3_INTERRUPT                         clr_EIE1_ET3
+#define    DISABLE_UART1_INTERRUPT                          clr_EIE1_ES1
 
 #define    DISABLE_SC0_AUTO_CONVENTION_ERROR_INTERRUPT    SFRS=0;SC0IE&=0xEF
 #define    DISABLE_SC0_BLOCK_GUARD_TIMER_INTERRUPT        SFRS=0;SC0IE&=0xF7
@@ -515,14 +514,14 @@ typedef signed long           int32_t;
 #define    PWM0_CHANNEL2_OUTPUT_INVERSE     SFRS=1;PWM0NP|=0x04
 #define    PWM0_CHANNEL1_OUTPUT_INVERSE     SFRS=1;PWM0NP|=0x02
 #define    PWM0_CHANNEL0_OUTPUT_INVERSE     SFRS=1;PWM0NP|=0x01
-#define    PWM0_ALL_OUTPUT_INVERSE          SFRS=1;PWM0NP=0xFF
+#define    PWM0_ALL_OUTPUT_INVERSE          SFRS=1;PWM0NP|=0xFF
 #define    PWM0_CHANNEL5_OUTPUT_NORMAL      SFRS=1;PWM0NP|=0xDF
 #define    PWM0_CHANNEL4_OUTPUT_NORMAL      SFRS=1;PWM0NP|=0xEF
 #define    PWM0_CHANNEL3_OUTPUT_NORMAL      SFRS=1;PWM0NP|=0xF7
 #define    PWM0_CHANNEL2_OUTPUT_NORMAL      SFRS=1;PWM0NP|=0xFB
 #define    PWM0_CHANNEL1_OUTPUT_NORMAL      SFRS=1;PWM0NP|=0xFD
 #define    PWM0_CHANNEL0_OUTPUT_NORMAL      SFRS=1;PWM0NP|=0xFE
-#define    PWM0_ALL_OUTPUT_NORMAL           SFRS=1;PWM0NP=0x00
+#define    PWM0_ALL_OUTPUT_NORMAL           SFRS=1;PWM0NP&=0x00
 
 
 /*--------- PMW1 Setting ---------NEED CHECK FOR ML56 register------------*/ 
@@ -847,7 +846,7 @@ typedef signed long           int32_t;
 #define    SPI1_SLAVE_MODE                    SFRS=0;SPI1CR0&=0xEF;SPI1CR0|=0x40
 #define    SPI1_LSB_FIRST                     SFRS=0;SPI1CR0|=0x20;SPI1CR0|=0x40
 #define    SPI1_MSB_FIRST                     SFRS=0;SPI1CR0&=0xDF;SPI1CR0|=0x40
-#define    SPI1_MODE0                         SFRS=0;SPI1CR0&=0xF3//Modify
+#define    SPI1_MODE0                         SFRS=0;SPI1CR0&=0xF3
 #define    SPI1_MODE1                         SFRS=0;SPI1CR0&=0xF3;SPI1CR0|=0x04
 #define    SPI1_MODE2                         SFRS=0;SPI1CR0&=0xF3;SPI1CR0|=0x08
 #define    SPI1_MODE3                         SFRS=0;SPI1CR0|=0x0C
