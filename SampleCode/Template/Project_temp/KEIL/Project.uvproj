@@ -507,11 +507,6 @@
               <FilePath>..\..\..\..\Library\StdDriver\src\rtc.c</FilePath>
             </File>
             <File>
-              <FileName>TrimLIRC.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\Library\StdDriver\src\TrimLIRC.c</FilePath>
-            </File>
-            <File>
               <FileName>uart2.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Library\StdDriver\src\uart2.c</FilePath>

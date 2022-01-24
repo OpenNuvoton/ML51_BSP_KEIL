@@ -7,9 +7,14 @@ All function define inital setting file for Nuvoton ML51 series
 --------------------------------------------------------------------------*/
 
 typedef bit                   BIT;
+
 typedef unsigned char         UINT8;
 typedef unsigned int          UINT16;
 typedef unsigned long         UINT32;
+
+typedef signed char           INT8;
+typedef signed int            INT16;
+typedef signed long           INT32;
 
 typedef unsigned char         uint8_t;
 typedef unsigned int          uint16_t;

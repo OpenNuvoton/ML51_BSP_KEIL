@@ -23,7 +23,7 @@
 #define set_T1M     CKCON   |= SET_BIT4
 #define clr_BRCK    T3CON   &= ~SET_BIT5
 #define set_TR1     TR1     = 1
-void InitialUART0_Timer1(unsigned long Fsys, UINT32 u32Baudrate)
+void TK_InitialUART0_Timer1(void)
 {
     SCON = 0x52;     //UART0 Mode1,REN=1,TI=1
     TMOD |= 0x20;    //Timer1 Mode1
@@ -51,7 +51,7 @@ void UART0_Init(void)
 //    P53_QUASI_MODE;
 #endif
     SFRS = 0x00;
-    InitialUART0_Timer1(24000000, 115200);
+    TK_InitialUART0_Timer1();
     set_SCON_TI;
     IP = IP | BIT4;
     ES=1;

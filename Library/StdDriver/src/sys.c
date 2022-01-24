@@ -60,27 +60,27 @@ void FsysSelect(unsigned char u8FsysMode)
 //        clr_CKEN_EHXTEN;                      //step4: disable HXT if needed
 //        clr_CKEN_HIRCEN;                      //step5: disable HIRC if needed 
     break;  
-        
+
         //***** HIRC enable part *****  
     case FSYS_HIRC:
         ClockEnable(FSYS_HIRC);                 //step1: switching system clock HIRC
         ClockSwitch(FSYS_HIRC);
         clr_CKEN_EHXTEN;                        //step2: disable HXT if needed 
     break;
-    
+
     //***** LIRC enable part*****
     case FSYS_LIRC:
-//        ClockEnable(FSYS_HIRC);                 //step1: switching system clock to HIRC
+//        ClockEnable(FSYS_HIRC);               //step1: switching system clock to HIRC
 //        ClockSwitch(FSYS_HIRC);
         ClockEnable(FSYS_LIRC);                 //step2: switching system clock LIRC
         ClockSwitch(FSYS_LIRC);
-        if((CKEN&SET_BIT0)==SET_BIT0)            //step3: check clock switching flag to confirm switch OK. 
+        if((CKEN&SET_BIT0)==SET_BIT0)           //step3: check clock switching flag to confirm switch OK. 
           FsysSwitchError();
         clr_CKEN_HIRCEN;                        //step4: disable HIRC if needed 
 //        if((CKSWT&SET_BIT5)==SET_BIT5)        /* check clock disable status*/
 //          ClockDisableError();
         clr_CKEN_EHXTEN;                        //step5: disable HXT if needed 
-//        if((CKSWT&SET_BIT7)==SET_BIT7)         /*step6: check clock disable status*/
+//        if((CKSWT&SET_BIT7)==SET_BIT7)        /*step6: check clock disable status*/
 //          ClockDisableError();
     break;
         
