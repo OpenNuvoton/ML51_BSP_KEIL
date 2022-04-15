@@ -95,7 +95,7 @@ typedef signed long           int32_t;
           _nop_();                     \
        }                               \
     }                                  \
-}                                  
+}
 /*******************************************************************************
 *   POR/LVR/BOD Define
 ********************************************************************************/
@@ -994,7 +994,7 @@ typedef signed long           int32_t;
 /*----- ------ ------ P1 MFP ------ ------ ------*/
 /* P1.0 */ /* Mapping == PA8 */
 #define    MFP_P10_GPIO                    SFRS=2;P1MF10&=0xF0         /*!<  P1.0 MFP setting for GPIO       */ 
-#define    MFP_P10_UART1_RXD               SFRS=2;P1MF10&=0xF0;P1MF10|=0x05
+#define    MFP_P10_UART1_RXD               SFRS=2;P1MF10&=0xF0;P1MF10|=0x07
 #define    MFP_P10_IC0                     SFRS=2;P1MF10&=0xF0;P1MF10|=0x0D  
 /* P1.1 */  /* Mapping == PA9 */
 #define    MFP_P11_GPIO                    SFRS=2;P1MF10&=0x0F         /*!<  P1.1 MFP setting for GPIO       */ 

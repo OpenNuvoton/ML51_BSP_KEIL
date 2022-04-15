@@ -29,3 +29,6 @@
 3. DID                           lib read DID -> read DID/PID
 4. GPIO                        P6 sfrs page. Added PIT disable control in functiom_define.h
 5. PWM                        lib / pwm.c  PWM0C0H
+
+2022/4
+1.P1.0                         MFP_P10_UART1_RXD define to 7
