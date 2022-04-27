@@ -47,5 +47,6 @@
 
 
 void ACMP_Open(unsigned char u8ACMPNum, unsigned char u8PosSrc, unsigned char u8NegSrc, unsigned char u8CVRSource, unsigned char u8ACMPOut, unsigned char u8HysteresisEn);
+void ACMP_Disable(unsigned char u8ACMPNum, unsigned char u8ACMPOut);
 void ACMP_INTEnable(unsigned char u8ACMPNum, unsigned char u8ACMPWakeEn,unsigned char u8ACMPINTEn);
 void ACMP_CRVValue(unsigned char u8ACMPNum, unsigned char u8ACMPValue);
