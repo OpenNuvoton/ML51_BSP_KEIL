@@ -357,7 +357,7 @@ void PID_Read(void)
 /**
  * @brief       Calculate APROM Checksum
  * @param       u8IAPStartAddressHiByte: start address high byte
-   @param       u8ChecksumSize. 0 means full Flash area. size = u8ChecksumSize*256 bytes  
+   @param       u8ChecksumSize. 0 means full Flash area. size = u8ChecksumSize*256 bytes
  * @return      none
  * @details     Calculate APROM Checksum for 256 bytes based on start address. 
  * @example     APROM_Checksum_Run(0x3800,1) when start address is 0x3800.

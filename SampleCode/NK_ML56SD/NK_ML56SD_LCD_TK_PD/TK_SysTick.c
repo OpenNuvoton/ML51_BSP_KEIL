@@ -15,8 +15,8 @@ typedef struct timeEvent_t
     sys_pvTimeFunPtr    funPtr;
 } TimeEvent_T;
 
-#define TRUE                    1
-#define FALSE                   0
+//#define TRUE                    1
+//#define FALSE                   0
 #define TICKEVENTCOUNT         (3)                      /* 1 ~ 3 */
 volatile  TimeEvent_T tTime0Event[TICKEVENTCOUNT];
 volatile uint8_t xdata _sys_uTime0EventCount = 0;             /* Speed up interrupt reponse time if no callback function */

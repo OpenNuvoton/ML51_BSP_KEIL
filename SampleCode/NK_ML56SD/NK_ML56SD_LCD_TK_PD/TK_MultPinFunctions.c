@@ -1,8 +1,8 @@
 /**************************************************************************//**
  * @file     TK_Utility.c
  * @version  V1.00
- * $Revision: 4 $
- * $Date: 9/15/20 10:28a $
+ * $Revision: 5 $
+ * $Date: 12/18/20 4:12p $
  * @brief    Some Utility Funcion for Calibration Using.
  * @note
  * Copyright (C) 2019 Nuvoton Technology Corp. All rights reserved.
@@ -36,10 +36,10 @@ void SetTkMultiFun(uint32_t u32TkMsk)
 {
     /* Avoid using the pointer to set multiple pin function registers */
     uint32_t i;
-	uint32_t u32Shielding;
-	
-	u32Shielding = TK_GetEnabledChannelMask(TK_SHIELDING);
-	
+    uint32_t u32Shielding;
+
+    u32Shielding = TK_GetEnabledChannelMask(TK_SHIELDING);
+    EA  = 0;
     SFRS=0x02;
     for (i = 0; i < (TKLIB_TOL_NUM_KEY + 3); i++)
     {
@@ -51,10 +51,11 @@ void SetTkMultiFun(uint32_t u32TkMsk)
                 P5MF76 = (P5MF76 & 0xF0) | 10;
                 if(u32Shielding == 0x1)
                 {
-					//DBG_PRINTF("Shielding TK0 CKO\n");
+                    //DBG_PRINTF("Shielding TK0 CKO\n");
                     MFP_P56_CLKO;
                     P56_QUASI_MODE;
                     TKCON1 |= 0x8;
+                    SFRS=0x02;
                 }
                 break;
             case 1:/* P0.0 */
@@ -70,10 +71,11 @@ void SetTkMultiFun(uint32_t u32TkMsk)
                 P0MF32 = (P0MF32 & 0x0F) | (10<<4);
                 if(u32Shielding == 0x10)
                 {
-					//DBG_PRINTF("Shielding TK4 CKO\n");    /* Disable for AVerMedia 5 key board */
-//                    MFP_P03_CLKO;
-//                    P03_QUASI_MODE;
-//                    TKCON1 |= 0x8;
+                    //DBG_PRINTF("Shielding TK4 CKO\n");
+                    MFP_P03_CLKO;
+                    P03_QUASI_MODE;
+                    TKCON1 |= 0x8;
+                    SFRS=0x02;
                 }
                 break;
             case 5:/* P0.4 */
@@ -108,25 +110,29 @@ void SetTkMultiFun(uint32_t u32TkMsk)
                 P4MF32 = (P4MF32 & 0xF0) | 10;
                 break;
             case 15:/* P3.2 CKO shielding only*/
-				//DBG_PRINTF("Shielding 32 CKO\n");
+                //DBG_PRINTF("Shielding 32 CKO\n");
                 MFP_P32_CLKO;
                 P32_QUASI_MODE;
                 TKCON1 |= 0x8;
+                SFRS=0x02;
                 break;
             case 16:/* P4.6 CKO shielding only */
-				//DBG_PRINTF("Shielding P46 CKO\n");
+                //DBG_PRINTF("Shielding P46 CKO\n");
                 MFP_P46_CLKO;
                 P46_QUASI_MODE;
                 TKCON1 |= 0x8;
+                SFRS=0x02;
                 break;
             case 17:/* P5.7 CKO shielding only*/
-				//DBG_PRINTF("Shielding 57 CKO\n");
+                //DBG_PRINTF("Shielding 57 CKO\n");
                 MFP_P57_CLKO;
                 P57_QUASI_MODE;
                 TKCON1 |= 0x8;
+                SFRS=0x02;
                 break;
             }
         }
     }
     SFRS=0x00;
+    EA  = 1;
 }

@@ -23,7 +23,7 @@
 #define set_T1M     CKCON   |= SET_BIT4
 #define clr_BRCK    T3CON   &= ~SET_BIT5
 #define set_TR1     TR1     = 1
-void TK_InitialUART0_Timer1(void)
+void InitialUART0_Timer1(unsigned long Fsys, UINT32 u32Baudrate)
 {
     SCON = 0x52;     //UART0 Mode1,REN=1,TI=1
     TMOD |= 0x20;    //Timer1 Mode1
@@ -39,19 +39,25 @@ void TK_InitialUART0_Timer1(void)
 
 void UART0_Init(void)
 {
-#ifdef BOARD_NUMAKER
+#ifdef DEMO_CALIBRATION
     /* Tim */
     MFP_P30_UART0_RXD;      /* set P3.0 and P3.1 as Quasi mode for UART0 trasnfer */
     MFP_P31_UART0_TXD;
-    P30_INPUT_MODE;
+    P30_QUASI_MODE;
     P31_QUASI_MODE;
-//    MFP_P52_UART0_RXD;      /* set P3.0 and P3.1 as Quasi mode for UART0 trasnfer */
-//    MFP_P53_UART0_TXD;
-//    P52_INPUT_MODE;
-//    P53_QUASI_MODE;
+    //MFP_P52_UART0_RXD;      /* set P5.2 and P5.3 as Quasi mode for UART0 trasnfer */
+    //MFP_P53_UART0_TXD;
+    //P52_QUASI_MODE;
+    //P53_QUASI_MODE;
+#else
+    /* PY */
+    MFP_P64_UART0_RXD;      /* set P6.4 and P6.5 as Quasi mode for UART0 trasnfer */
+    MFP_P65_UART0_TXD;
+    P64_QUASI_MODE;
+    P65_QUASI_MODE;
 #endif
     SFRS = 0x00;
-    TK_InitialUART0_Timer1();
+    InitialUART0_Timer1(24000000, 115200);
     set_SCON_TI;
     IP = IP | BIT4;
     ES=1;
@@ -80,7 +86,7 @@ void InitialUART1_Timer3(unsigned long Fsys, UINT32 u32Baudrate) //use timer3 as
 
 void UART1_Init(void)
 {
-#ifdef BOARD_NUMAKER  /* For NuMaker UART1 debug */
+#ifdef BOARD_TIM  /* HCKuo */
     MFP_P10_UART1_RXD;      /* set P1.0 and P2.7 as Quasi mode for UART0 trasnfer */
     MFP_P27_UART1_TXD;
     P10_QUASI_MODE;

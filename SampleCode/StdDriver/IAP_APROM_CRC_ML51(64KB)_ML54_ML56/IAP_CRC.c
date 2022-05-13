@@ -56,9 +56,10 @@ void main (void)
     UART_Open(24000000,UART0_Timer1,115200);
     ENABLE_UART0_PRINTF;
 #endif
-
-    ENABLE_P32_PULLUP;
-    while(P32);
+
+
+//    ENABLE_P32_PULLUP;
+//    while(P32);
 
   for (i=0;i<128;i++)
   {
