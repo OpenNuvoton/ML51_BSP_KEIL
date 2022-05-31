@@ -11,6 +11,7 @@
 #include "ML51.h"
 #include "isp_uart3.h"
 
+
 //#define  isp_with_wdt
 unsigned int xdata start_address, u16_addr;
 bit BIT_TMP;
@@ -39,6 +40,7 @@ void main(void)
             {
                 for (count = 8; count < 64; count++)
                 {
+                    SFRS = 0;
                     IAPCN = BYTE_PROGRAM_AP;          //program byte
                     IAPAL = flash_address & 0xff;
                     IAPAH = (flash_address >> 8) & 0xff;
@@ -54,6 +56,7 @@ void main(void)
 
                     if (IAPFD != uart_rcvbuf[count])
                         while (1);
+
                     if (CHPCON == 0x43)            //if error flag set, program error stop ISP
                         while (1);
 
@@ -101,7 +104,7 @@ END_2:
                     break;
                 }
 
-                /*please for ISP programmer GUI, ID always use following rule to transmit. */
+                //please for ISP programmer GUI, ID always use following rule to transmit.
                 case CMD_GET_DEVICEID:
                 {
                     READ_ID();
@@ -269,8 +272,10 @@ END_2:
 
                         if (IAPFD != uart_rcvbuf[count])
                             while (1);
+
                         if (CHPCON == 0x43)              //if error flag set, program error stop ISP
                             while (1);
+
                         g_totalchecksum = g_totalchecksum + uart_rcvbuf[count];
                         flash_address++;
 

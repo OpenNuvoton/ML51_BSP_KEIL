@@ -33,6 +33,7 @@ unsigned char recv_CONF0, recv_CONF1, recv_CONF2, recv_CONF4;
 void READ_ID(void)
 {
     //    set_CHPCON_IAPEN;
+    SFRS = 0;
     IAPCN = READ_DID;
     IAPAH = 0x00;
     IAPAL = 0x00;
@@ -50,6 +51,7 @@ void READ_ID(void)
 }
 void READ_CONFIG(void)
 {
+    SFRS = 0;
     IAPCN = BYTE_READ_CONFIG;
     IAPAH = 0x00;
     IAPAL = 0x00;
@@ -69,7 +71,7 @@ void READ_CONFIG(void)
 
 void TM0_ini(void)
 {
-    TH0 = TL0 = 0;     //interrupt timer 140us
+    TH0 = TL0 = 0; //interrupt timer 140us
     set_TCON_TR0;      //Start timer0
     //set_IPH_PSH;       // Serial port 0 interrupt level2
     set_IE_ET0;
@@ -94,6 +96,7 @@ void UART3_ini_115200(void)
     set_SC1CR1_PBOFF;     //parity bit disable
     SC1CR1 &= 0xCF;      //datalegth 8bit
     set_SC1CR0_NSB;      //stop bit = 1bit
+
     ENABLE_SC1_RECEIVE_DATA_REACH_INTERRUPT;
     ENABLE_GLOBAL_INTERRUPT;
 }
@@ -107,6 +110,7 @@ void Package_checksum(void)
     {
         g_checksum = g_checksum + uart_rcvbuf[count];
     }
+
     uart_txbuf[0] = g_checksum & 0xff;
     uart_txbuf[1] = (g_checksum >> 8) & 0xff;
     uart_txbuf[4] = uart_rcvbuf[4] + 1;
@@ -154,15 +158,18 @@ void SMC1_ISR(void) interrupt 27          // Vector @  0xDB
         g_timer1Over = 0;
         bufhead = 0;
     }
+
     _pop_(SFRS);
 }
 
 void Timer0_ISR(void) interrupt 1
 {
-        _push_(SFRS);
+    _push_(SFRS);
+
     if (g_timer0Counter)
     {
         g_timer0Counter--;
+
         if (!g_timer0Counter)
         {
             g_timer0Over = 1;
@@ -172,10 +179,12 @@ void Timer0_ISR(void) interrupt 1
     if (g_timer1Counter)
     {
         g_timer1Counter--;
+
         if (!g_timer1Counter)
         {
             g_timer1Over = 1;
         }
     }
-        _pop_(SFRS);
+
+    _pop_(SFRS);
 }
