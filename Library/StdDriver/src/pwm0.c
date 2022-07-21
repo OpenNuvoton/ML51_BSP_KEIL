@@ -1,5 +1,6 @@
 /*---------------------------------------------------------------------------------------------------------*/
 /*                                                                                                         */
+/* SPDX-License-Identifier: Apache-2.0                                                                     */
 /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                         */
 /*                                                                                                         */
 /*---------------------------------------------------------------------------------------------------------*/
@@ -151,7 +152,17 @@ void PWM0_STOP(void)
   clr_PWM0CON0_PWMRUN;
 }
 
-
+/**
+* @brief This function action all PWM reload data
+* @param[in] none
+* @return none
+* @note        
+* @example PWM0_Reload();
+*/
+void PWM0_Reload(void)
+{
+    set_PWM0CON0_LOAD;
+}
 /************* PWM123 SETTING **************/
  /**
  * @brief This function config PWM1 clock base

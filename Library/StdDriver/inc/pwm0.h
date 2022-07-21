@@ -23,3 +23,4 @@ void PWM0_DeadZoneEnable(unsigned char u8PWM0Pair, unsigned int u16PWM0DZValue);
 void PWM0_DeadZone_ALL_Disable(void);
 void PWM0_RUN(void);
 void PWM0_STOP(void);
+void PWM0_Reload(void);

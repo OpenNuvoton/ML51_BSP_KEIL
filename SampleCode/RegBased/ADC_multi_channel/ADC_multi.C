@@ -1,14 +1,9 @@
 /*---------------------------------------------------------------------------------------------------------*/
 /*                                                                                                         */
+/* SPDX-License-Identifier: Apache-2.0                                                                     */
 /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                         */
 /*                                                                                                         */
 /*---------------------------------------------------------------------------------------------------------*/
-
-//***********************************************************************************************************
-//  Website: http://www.nuvoton.com
-//  E-Mail : MicroC-8bit@nuvoton.com
-//  Date   : Apr/29/2020
-//***********************************************************************************************************
 
 //***********************************************************************************************************
 //  File Function: ML51 ADC multi channel input demo code
@@ -43,7 +38,6 @@ void main (void)
       ENABLE_ADC_CH5;
       ADCCON1|=0X30;            /* clock divider */
       ADCCON2|=0X0E;            /* AQT time */
-      AUXR1|=SET_BIT4;          /* ADC clock low speed */
       clr_ADCCON0_ADCF;
       set_ADCCON0_ADCS;
       while(!(ADCCON0&SET_BIT7)); 
@@ -64,7 +58,6 @@ void main (void)
       _delay_();
       ADCCON1|=0X30;            /* clock divider */
       ADCCON2|=0X0E;            /* AQT time */
-      AUXR1&=CLR_BIT4;          /* ADC clock high speed */
       clr_ADCCON0_ADCF;
       set_ADCCON0_ADCS;
       while(!(ADCCON0&SET_BIT7)); 

@@ -1,15 +1,10 @@
 /*---------------------------------------------------------------------------------------------------------*/
 /*                                                                                                         */
+/* SPDX-License-Identifier: Apache-2.0                                                                     */
 /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                         */
 /*                                                                                                         */
 /*---------------------------------------------------------------------------------------------------------*/
 
-//***********************************************************************************************************
-//  Nuvoton Technoledge Corp. 
-//  Website: http://www.nuvoton.com
-//  E-Mail : MicroC-8bit@nuvoton.com
-//  Date   : Apr/29/2020
-//***********************************************************************************************************
 
 #include "ML51.h"
 
@@ -79,20 +74,14 @@ void ADC_Close(void)
   * @return  None
   * @note ML56 series MCU ADC can only convert 1 channel at a time. If more than 1 channels are enabled, only channel
   *       with smallest number will be convert.
-  * @example ADC_InitialContinous(0x0300,128,ADCSlowSpeed);
+  * @example ADC_InitialContinous(0x0300,128);
   */
-void ADC_InitialContinous(unsigned int u16ADCRBase, unsigned char u8ADCRLength, unsigned char u8ADCSpeed)
+void ADC_InitialContinous(unsigned int u16ADCRBase, unsigned char u8ADCRLength)
 {
   SFRS=0;
   ADCBAL = LOBYTE(u16ADCRBase);
   ADCBAH = HIBYTE(u16ADCRBase);
   ADCSN  = u8ADCRLength - 1;   //Offset value, since the actually sampling number= ADCSN[7:0] + 1
-  switch (u8ADCSpeed)
-  {
-    case ADCSlowSpeed: set_ADCSR_SLOW; break;
-    case ADCHighSpeed: clr_ADCSR_SLOW; break;
-    default: break;
-  }
 }
 
 
