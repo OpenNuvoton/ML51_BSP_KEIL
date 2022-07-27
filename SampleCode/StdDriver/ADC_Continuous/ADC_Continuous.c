@@ -56,7 +56,7 @@ void main (void)
    *include adc.c for ADC initial setting
 */
     ADC_Open(ADC_CONTINUOUS,0);                        // Opend ADC as continous mode, and input from AIN0 P2.5
-    ADC_InitialContinous(0x300,128,ADCHighSpeed);      // Define data restore in RAM start address and ADC total sample number 
+    ADC_InitialContinous(0x300,128);      // Define data restore in RAM start address and ADC total sample number 
     ADC_SamplingTime(2,7);                             // ADC clock = Fsys/4, sampling timer select longest value is 7
     ADC_Interrupt(Enable,ADC_INT_CONTDONE);            // Enable ADC interrupt when sampling total byte is done.
     ENABLE_GLOBAL_INTERRUPT;

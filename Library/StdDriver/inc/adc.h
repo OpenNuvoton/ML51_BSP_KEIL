@@ -42,7 +42,7 @@
          
 void ADC_Open(unsigned int u8ADCOpMode, unsigned char u8ADCChMask);
 void ADC_Close(void);
-void ADC_InitialContinous(unsigned int u16ADCRBase, unsigned char u8ADCRLength, unsigned char u8ADCSpeed);
+void ADC_InitialContinous(unsigned int u16ADCRBase, unsigned char u8ADCRLength);
 void ADC_SamplingTime(unsigned char u8ADCDIV, unsigned char u8ADCAQT);
 void ADC_EnableHWTrigger(unsigned char u8ADCSHWTource, unsigned char u8ADCHWTParam, unsigned char u8ADCHWTDelay);
 void ADC_DisableHWTrigger(void);
