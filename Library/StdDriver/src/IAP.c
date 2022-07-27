@@ -8,7 +8,7 @@
 #include "ML51.h"
 unsigned char xdata DIDBuffer[2];
 unsigned char xdata PIDBuffer[2];
-unsigned char xdata UIDBuffer[9];
+unsigned char xdata UIDBuffer[12];
 unsigned char xdata UCIDBuffer[12];
 unsigned char xdata IAPDataBuf[128];
 unsigned char xdata IAPCFBuf[5];
