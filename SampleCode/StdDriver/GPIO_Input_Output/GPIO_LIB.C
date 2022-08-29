@@ -22,9 +22,11 @@ void main (void)
   {
     P1 = ~P1;
     P4 = ~P4;
-    SFRS=2; P6 |= SET_BIT0;
+    SFRS=0; set_P5_3;
+    SFRS=2; P6 |= SET_BIT0;    /* or set_P6_0; */
     Timer2_Delay(24000000,4,2,1000);
-    SFRS=2; P6 &= ~SET_BIT0;
+    SFRS=0; clr_P5_3;
+    SFRS=2; P6 &= ~SET_BIT0;   /* or clr_P6_0; */
     Timer2_Delay(24000000,4,2,1000);
   }
 }

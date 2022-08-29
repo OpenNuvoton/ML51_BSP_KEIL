@@ -1,8 +1,15 @@
+/*---------------------------------------------------------------------------------------------------------*/
+/*                                                                                                         */
+/* SPDX-License-Identifier: Apache-2.0                                                                     */
+/* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                         */
+/*                                                                                                         */
+/*---------------------------------------------------------------------------------------------------------*/
+
 
 #include "ML51.h"
 #include "TKLib.h"
 #include "TK_Demo.h"
-#include "LCDSubCommon.h"
+#include "LCDView.h"
 #include "NKML56.H"
 
 #define TK0 0
@@ -312,6 +319,7 @@ TKCHECKEND:
                      else
                      {
                       LCD_frame1();
+                      tkct++;
                      }
                     lcdct ^=1;
                 break;

@@ -37,3 +37,5 @@
 1.All                         Added Apache License in all lib .c file
 2.PWM                         Added SampleCode\StdDriver\PWM0_Independent_Reload project. Added PWM_Reload() API.
 3.ADC                         Remove all ADC slow speed define.
+
+2022/8                        LCD update API for LCD view

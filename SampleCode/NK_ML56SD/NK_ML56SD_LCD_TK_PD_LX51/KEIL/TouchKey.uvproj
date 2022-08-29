@@ -563,19 +563,14 @@
               <FilePath>..\LCDmain_NK.c</FilePath>
             </File>
             <File>
-              <FileName>LCDSub_Panel.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\LCDSub_Panel.c</FilePath>
-            </File>
-            <File>
-              <FileName>LCDSubCommon.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\LCDSubCommon.c</FilePath>
-            </File>
-            <File>
               <FileName>lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Library\StdDriver\src\lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCDView.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LCDView.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1107,19 +1102,14 @@
               <FilePath>..\LCDmain_NK.c</FilePath>
             </File>
             <File>
-              <FileName>LCDSub_Panel.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\LCDSub_Panel.c</FilePath>
-            </File>
-            <File>
-              <FileName>LCDSubCommon.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\LCDSubCommon.c</FilePath>
-            </File>
-            <File>
               <FileName>lcd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\Library\StdDriver\src\lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCDView.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\LCDView.c</FilePath>
             </File>
           </Files>
         </Group>

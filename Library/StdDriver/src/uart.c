@@ -75,7 +75,7 @@ void UART1_ISR(void) interrupt 15
  * @param       UART0~3, baudrate value
  * @return      none
  * @details     none
- * @note        max baud rate = 1.5MHz when Fsys = 24MHz
+ * @note        max baud rate = 750khz when Fsys = 24MHz
  */
 //****************************************************************************************************************  
 //**** UART Enable Setting  
@@ -172,7 +172,7 @@ void UART_Send_Data(unsigned char UARTPort, unsigned char c)
  * @param       u8UARTINTStatus: Disable/Enable
  * @return      none
  * @details     none
- * @note        max baud rate = 1.5MHz when Fsys = 24MHz
+ * @note        max baud rate = 750khz when Fsys = 24MHz
  */
 void UART_Interrupt_Enable(unsigned char u8UARTPort, unsigned char u8UARTINTStatus)
 {

@@ -6,15 +6,15 @@
 /*---------------------------------------------------------------------------------------------------------*/
 
 //***********************************************************************************************************
-//  File Function: ML51 NuMaker LCD driver main 
+//  File Function: ML51 NuMaker board LCD initial and Dispaly setting
 //***********************************************************************************************************
-#include "ML51.H"
+#include "ML51.h"
 #include "LCDView.h"
-#include "NKML56.H"
+#include "LCD_NK.h"
+
 
 void LCD_IO_Init(void)
 {
-
 /* Enable COM pin MFP */
     MFP_P25_LCD_COM0;
     MFP_P24_LCD_COM1;
@@ -74,7 +74,7 @@ void LCD_Init_Setting (void)
   LCD_Enable();
 
 }
-
+	
 void LCD_frame1 (void)
 {
 	unsigned long temp;
@@ -84,36 +84,38 @@ void LCD_frame1 (void)
     LCDLIB_SetSymbol(SYMBOL_BAT_FRAME_18, 1);
     LCDLIB_SetSymbol(SYMBOL_BAT_1_18, 1);
     LCDLIB_SetSymbol(SYMBOL_BAT_2_18, 1);
+    
 /*Show Main Zone */
   LCDLIB_Printf(ZONE_MAIN_DIGIT, "*ML56*");
-/* Show counter */
-  LCDLIB_PrintNumber(ZONE_PPM_DIGIT, (tkct));
+/* Show PPM */
+  LCDLIB_PrintNumber(ZONE_PPM_DIGIT, 888);
 /* Show temperature */ 
   temp = internal_Temperature();
   LCDLIB_PrintNumber(ZONE_TEMP_DIGIT, temp);
-  LCDLIB_SetSymbol(SYMBOL_TEMP_C_35, 1);
+//  LCDLIB_SetSymbol(3, 15, 1);
+	LCDLIB_SetSymbol(SYMBOL_TEMP_C_35, 1);
 /* Show bsp version */
-/* 200002 means support LCD View*/
   LCDLIB_PrintNumber(ZONE_VER_DIGIT, 200002);
 
 }
 
 void LCD_frame2 (void)
 {
-
-//  LCD_SetAllPixels(Enable);
+	unsigned long temp;
 /* Show logo and battery level */
     LCDLIB_SetSymbol(SYMBOL_NVT_14, 1);
     LCDLIB_SetSymbol(SYMBOL_BAT_FRAME_18, 1);
     LCDLIB_SetSymbol(SYMBOL_BAT_1_18, 1);
     LCDLIB_SetSymbol(SYMBOL_BAT_2_18, 1);
 /*Show Main Zone */
-    LCDLIB_Printf(ZONE_MAIN_DIGIT, "TOUCH");
-/* Show counter */
-    LCDLIB_PrintNumber(ZONE_PPM_DIGIT, (tkct));
+  LCDLIB_Printf(ZONE_MAIN_DIGIT, "*ML54*");
+/* Show temperature */ 
+  temp = internal_Temperature();
+  LCDLIB_PrintNumber(ZONE_TEMP_DIGIT, temp);
 /* Show bsp version */
-/* 200002 means support LCD View*/
-    LCDLIB_PrintNumber(ZONE_VER_DIGIT, 200002);
+  LCDLIB_PrintNumber(ZONE_VER_DIGIT, 200002);
 }
 
-
+void LCD_RTC_Display (void)
+{
+}

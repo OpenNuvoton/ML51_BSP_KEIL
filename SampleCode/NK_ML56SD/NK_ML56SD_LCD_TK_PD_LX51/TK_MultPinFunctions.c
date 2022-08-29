@@ -1,3 +1,10 @@
+/*---------------------------------------------------------------------------------------------------------*/
+/*                                                                                                         */
+/* SPDX-License-Identifier: Apache-2.0                                                                     */
+/* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                         */
+/*                                                                                                         */
+/*---------------------------------------------------------------------------------------------------------*/
+
 /**************************************************************************//**
  * @file     TK_Utility.c
  * @version  V1.00
@@ -5,7 +12,7 @@
  * $Date: 9/15/20 10:28a $
  * @brief    Some Utility Funcion for Calibration Using.
  * @note
- * Copyright (C) 2019 Nuvoton Technology Corp. All rights reserved.
+ * Copyright (C) 2020 Nuvoton Technology Corp. All rights reserved.
  *
  ******************************************************************************/
 #include "ML51.h"

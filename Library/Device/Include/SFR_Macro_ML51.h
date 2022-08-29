@@ -30,6 +30,7 @@
 #include "i2c.h"
 #include "IAP.h"
 #include "IAP_sprom.h"
+#include "isr.h"
 #include "lcd.h"
 #include "lowpower.h"
 #include "pdma.h"
@@ -47,6 +48,9 @@
 #include "vref.h"
 #include "wdt.h"
 #include "wkt.h"
+#include "tk.h"
+
+
 
 /********SFR ALL PAGES*************/
 /**** PCON  87H  PAGE A ****/
@@ -591,39 +595,39 @@
 #define clr_BODCON1_BODFLT               SFRS=0;BIT_TMP=EA;EA=0;TA=0xAA;TA=0x55;BODCON1&=0xFE;EA=BIT_TMP
 
 /**** EIP2  ACH  PAGE 0 ****/
-#define set_EIP2_RTC                     SFRS=0;EIP2|=0x80
-#define set_EIP2_PDMA3                   SFRS=0;EIP2|=0x40
-#define set_EIP2_PDMA2                   SFRS=0;EIP2|=0x20
-#define set_EIP2_SMC1                    SFRS=0;EIP2|=0x10
-#define set_EIP2_TK                      SFRS=0;EIP2|=0x08
+#define set_EIP2_PRTC                    SFRS=0;EIP2|=0x80
+#define set_EIP2_PPDMA3                  SFRS=0;EIP2|=0x40
+#define set_EIP2_PPDMA2                  SFRS=0;EIP2|=0x20
+#define set_EIP2_PSMC1                   SFRS=0;EIP2|=0x10
+#define set_EIP2_PTK                     SFRS=0;EIP2|=0x08
 #define set_EIP2_PPWM1                   SFRS=0;EIP2|=0x04
 #define set_EIP2_PI2C1                   SFRS=0;EIP2|=0x02
 #define set_EIP2_PACMP                   SFRS=0;EIP2|=0x01
 
-#define clr_EIP2_RTC                     SFRS=0;EIP2&=0x7F
-#define clr_EIP2_PDMA3                   SFRS=0;EIP2&=0xBF
-#define clr_EIP2_PDMA2                   SFRS=0;EIP2&=0xDF
-#define clr_EIP2_SMC1                    SFRS=0;EIP2&=0xEF
-#define clr_EIP2_TK                      SFRS=0;EIP2&=0xF7
+#define clr_EIP2_PRTC                    SFRS=0;EIP2&=0x7F
+#define clr_EIP2_PPDMA3                  SFRS=0;EIP2&=0xBF
+#define clr_EIP2_PPDMA2                  SFRS=0;EIP2&=0xDF
+#define clr_EIP2_PSMC1                   SFRS=0;EIP2&=0xEF
+#define clr_EIP2_PTK                     SFRS=0;EIP2&=0xF7
 #define clr_EIP2_PPWM1                   SFRS=0;EIP2&=0xFB
 #define clr_EIP2_PI2C1                   SFRS=0;EIP2&=0xFD
 #define clr_EIP2_PACMP                   SFRS=0;EIP2&=0xFE
 
 /**** EIPH2  ADH  PAGE 0 ****/
-#define set_EIPH2_RTCH                   SFRS=0;EIPH2|=0x80
-#define set_EIPH2_PDMA3H                 SFRS=0;EIPH2|=0x40
-#define set_EIPH2_PDMA2H                 SFRS=0;EIPH2|=0x20
-#define set_EIPH2_SMC1H                  SFRS=0;EIPH2|=0x10
-#define set_EIPH2_TKH                    SFRS=0;EIPH2|=0x08
+#define set_EIPH2_PRTCH                   SFRS=0;EIPH2|=0x80
+#define set_EIPH2_PPDMA3H                 SFRS=0;EIPH2|=0x40
+#define set_EIPH2_PPDMA2H                 SFRS=0;EIPH2|=0x20
+#define set_EIPH2_PSMC1H                 SFRS=0;EIPH2|=0x10
+#define set_EIPH2_PTKH                   SFRS=0;EIPH2|=0x08
 #define set_EIPH2_PPWM1H                 SFRS=0;EIPH2|=0x04
 #define set_EIPH2_PI2C1H                 SFRS=0;EIPH2|=0x02
 #define set_EIPH2_PACMPH                 SFRS=0;EIPH2|=0x01
 
-#define clr_EIPH2_RTCH                   SFRS=0;EIPH2&=0x7F
-#define clr_EIPH2_PDMA3H                 SFRS=0;EIPH2&=0xBF
-#define clr_EIPH2_PDMA2H                 SFRS=0;EIPH2&=0xDF
-#define clr_EIPH2_SMC1H                  SFRS=0;EIPH2&=0xEF
-#define clr_EIPH2_TKH                    SFRS=0;EIPH2&=0xF7
+#define clr_EIPH2_PRTCH                   SFRS=0;EIPH2&=0x7F
+#define clr_EIPH2_PPDMA3H                 SFRS=0;EIPH2&=0xBF
+#define clr_EIPH2_PPDMA2H                 SFRS=0;EIPH2&=0xDF
+#define clr_EIPH2_PSMC1H                  SFRS=0;EIPH2&=0xEF
+#define clr_EIPH2_PTKH                   SFRS=0;EIPH2&=0xF7
 #define clr_EIPH2_PPWM1H                 SFRS=0;EIPH2&=0xFB
 #define clr_EIPH2_PI2C1H                 SFRS=0;EIPH2&=0xFD
 #define clr_EIPH2_PACMPH                 SFRS=0;EIPH2&=0xFE
@@ -1040,19 +1044,19 @@
 #define set_EIP0_PSPI                    SFRS=0;EIP0|=0x40
 #define set_EIP0_PFB                     SFRS=0;EIP0|=0x20
 #define set_EIP0_PWDT                    SFRS=0;EIP0|=0x10
-#define set_EIP0_PPWM                    SFRS=0;EIP0|=0x08
+#define set_EIP0_PPWM0                   SFRS=0;EIP0|=0x08
 #define set_EIP0_PCAP                    SFRS=0;EIP0|=0x04
 #define set_EIP0_PPI                     SFRS=0;EIP0|=0x02
-#define set_EIP0_PI2C                    SFRS=0;EIP0|=0x01
+#define set_EIP0_PI2C0                   SFRS=0;EIP0|=0x01
 
 #define clr_EIP0_PT2                     SFRS=0;EIP0&=0x7F
 #define clr_EIP0_PSPI                    SFRS=0;EIP0&=0xBF
 #define clr_EIP0_PFB                     SFRS=0;EIP0&=0xDF
 #define clr_EIP0_PWDT                    SFRS=0;EIP0&=0xEF
-#define clr_EIP0_PPWM                    SFRS=0;EIP0&=0xF7
+#define clr_EIP0_PPWM0                   SFRS=0;EIP0&=0xF7
 #define clr_EIP0_PCAP                    SFRS=0;EIP0&=0xFB
 #define clr_EIP0_PPI                     SFRS=0;EIP0&=0xFD
-#define clr_EIP0_PI2C                    SFRS=0;EIP0&=0xFE
+#define clr_EIP0_PI2C0                   SFRS=0;EIP0&=0xFE
 
 /**** DMA1TSR  F1H  PAGE 0 ****/
 #define set_DMA1TSR_ACT                  SFRS=0;DMA1TSR|=0x04
@@ -1111,19 +1115,19 @@
 #define set_EIPH0_PSPIH                  SFRS=0;EIPH0|=0x40
 #define set_EIPH0_PFBH                   SFRS=0;EIPH0|=0x20
 #define set_EIPH0_PWDTH                  SFRS=0;EIPH0|=0x10
-#define set_EIPH0_PPWMH                  SFRS=0;EIPH0|=0x08
+#define set_EIPH0_PPWM0H                 SFRS=0;EIPH0|=0x08
 #define set_EIPH0_PCAPH                  SFRS=0;EIPH0|=0x04
 #define set_EIPH0_PPIH                   SFRS=0;EIPH0|=0x02
-#define set_EIPH0_PI2CH                  SFRS=0;EIPH0|=0x01
+#define set_EIPH0_PI2C0H                 SFRS=0;EIPH0|=0x01
 
 #define clr_EIPH0_PT2H                   SFRS=0;EIPH0&=0x7F
 #define clr_EIPH0_PSPIH                  SFRS=0;EIPH0&=0xBF
 #define clr_EIPH0_PFBH                   SFRS=0;EIPH0&=0xDF
 #define clr_EIPH0_PWDTH                  SFRS=0;EIPH0&=0xEF
-#define clr_EIPH0_PPWMH                  SFRS=0;EIPH0&=0xF7
+#define clr_EIPH0_PPWM0H                 SFRS=0;EIPH0&=0xF7
 #define clr_EIPH0_PCAPH                  SFRS=0;EIPH0&=0xFB
 #define clr_EIPH0_PPIH                   SFRS=0;EIPH0&=0xFD
-#define clr_EIPH0_PI2CH                  SFRS=0;EIPH0&=0xFE
+#define clr_EIPH0_PI2C0H                 SFRS=0;EIPH0&=0xFE
 
 /**** SPI1CR0  F9H  PAGE 0 ****/
 #define set_SPI1CR0_SSOE                 SFRS=0;SPI1CR0|=0x80
@@ -1181,39 +1185,39 @@
 #define set_EIP1_PSPI1                   SFRS=0;EIP1|=0x80
 #define set_EIP1_PDMA1                   SFRS=0;EIP1|=0x40
 #define set_EIP1_PDMA0                   SFRS=0;EIP1|=0x20
-#define set_EIP1_PSMC                    SFRS=0;EIP1|=0x10
+#define set_EIP1_PSMC0                   SFRS=0;EIP1|=0x10
 #define set_EIP1_PHF                     SFRS=0;EIP1|=0x08
 #define set_EIP1_PWKT                    SFRS=0;EIP1|=0x04
 #define set_EIP1_PT3                     SFRS=0;EIP1|=0x02
-#define set_EIP1_PS_1                    SFRS=0;EIP1|=0x01
+#define set_EIP1_PS1                     SFRS=0;EIP1|=0x01
 
 #define clr_EIP1_PSPI1                   SFRS=0;EIP1&=0x7F
 #define clr_EIP1_PDMA1                   SFRS=0;EIP1&=0xBF
 #define clr_EIP1_PDMA0                   SFRS=0;EIP1&=0xDF
-#define clr_EIP1_PSMC                    SFRS=0;EIP1&=0xEF
+#define clr_EIP1_PSMC0                   SFRS=0;EIP1&=0xEF
 #define clr_EIP1_PHF                     SFRS=0;EIP1&=0xF7
 #define clr_EIP1_PWKT                    SFRS=0;EIP1&=0xFB
 #define clr_EIP1_PT3                     SFRS=0;EIP1&=0xFD
-#define clr_EIP1_PS_1                    SFRS=0;EIP1&=0xFE
+#define clr_EIP1_PS1                     SFRS=0;EIP1&=0xFE
 
 /**** EIPH1  FFH  PAGE 0 ****/
 #define set_EIPH1_PSPI1H                 SFRS=0;EIPH1|=0x80
 #define set_EIPH1_PDMA1H                 SFRS=0;EIPH1|=0x40
 #define set_EIPH1_PDMA0H                 SFRS=0;EIPH1|=0x20
-#define set_EIPH1_PSMCH                  SFRS=0;EIPH1|=0x10
+#define set_EIPH1_PSMC0H                 SFRS=0;EIPH1|=0x10
 #define set_EIPH1_PHFH                   SFRS=0;EIPH1|=0x08
 #define set_EIPH1_PWKTH                  SFRS=0;EIPH1|=0x04
 #define set_EIPH1_PT3H                   SFRS=0;EIPH1|=0x02
-#define set_EIPH1_PSH_1                  SFRS=0;EIPH1|=0x01
+#define set_EIPH1_PS1H                   SFRS=0;EIPH1|=0x01
 
 #define clr_EIPH1_PSPI1H                 SFRS=0;EIPH1&=0x7F
 #define clr_EIPH1_PDMA1H                 SFRS=0;EIPH1&=0xBF
 #define clr_EIPH1_PDMA0H                 SFRS=0;EIPH1&=0xDF
-#define clr_EIPH1_PSMCH                  SFRS=0;EIPH1&=0xEF
+#define clr_EIPH1_PSMC0H                 SFRS=0;EIPH1&=0xEF
 #define clr_EIPH1_PHFH                   SFRS=0;EIPH1&=0xF7
 #define clr_EIPH1_PWKTH                  SFRS=0;EIPH1&=0xFB
 #define clr_EIPH1_PT3H                   SFRS=0;EIPH1&=0xFD
-#define clr_EIPH1_PSH_1                  SFRS=0;EIPH1&=0xFE
+#define clr_EIPH1_PS1H                   SFRS=0;EIPH1&=0xFE
 
 /**** EIPH1  FFH  PAGE 0 ****/
 #define set_EIPH1_7                      SFRS=0;EIPH1|=0x80
@@ -2509,7 +2513,7 @@
 #define clr_P6UP_0                       SFRS=2;P6UP&=0xFE
 
 /**** PWM1CON0  9CH  PAGE 2 ****/
-#define set_PWM1CON0_PWMRUN             SFRS=2;PWM1CON0|=0x80
+#define set_PWM1CON0_PWMRUN              SFRS=2;PWM1CON0|=0x80
 #define set_PWM1CON0_LOAD                SFRS=2;PWM1CON0|=0x40
 #define set_PWM1CON0_PWMF                SFRS=2;PWM1CON0|=0x20
 #define set_PWM1CON0_CLRPWM              SFRS=2;PWM1CON0|=0x10

@@ -1,9 +1,13 @@
 /*---------------------------------------------------------------------------------------------------------*/
 /*                                                                                                         */
-/* SPDX-License-Identifier: Apache-2.0                                                                     */
 /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                         */
 /*                                                                                                         */
 /*---------------------------------------------------------------------------------------------------------*/
+
+//***********************************************************************************************************
+//  Website: http://www.nuvoton.com
+//  E-Mail : MicroC-8bit@nuvoton.com
+//***********************************************************************************************************
 
 //***********************************************************************************************************
 //  File Function: ML51 Interrupt demo code
@@ -342,3 +346,243 @@ void RTC_ISR (void) interrupt 30          // Vector @  0xF3
     _pop_(SFRS);
 }
 
+void Set_Interrupt_Priority_Level( unsigned char u8InterruptSource, unsigned char u8u8InterruptPriorityLevel)
+{
+   switch (u8InterruptSource)
+   {
+        case INT_INT0        :
+          switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_IP_PX0; clr_IPH_PX0H; break;
+            case 1:  clr_IP_PX0; set_IPH_PX0H; break;
+            case 2:  set_IP_PX0; clr_IPH_PX0H; break;
+            case 3:  set_IP_PX0; set_IPH_PX0H; break;
+          }
+        case INT_BOD          :
+                switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_IP_PBOD; clr_IPH_PBODH; break;
+            case 1:  clr_IP_PBOD; set_IPH_PBODH; break;
+            case 2:  set_IP_PBOD; clr_IPH_PBODH; break;
+            case 3:  set_IP_PBOD; set_IPH_PBODH; break;
+          }
+        case INT_WDT           :
+               switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_EIP0_PWDT; clr_EIPH0_PWDTH; break;
+            case 1:  clr_EIP0_PWDT; set_EIPH0_PWDTH; break;
+            case 2:  set_EIP0_PWDT; clr_EIPH0_PWDTH; break;
+            case 3:  set_EIP0_PWDT; set_EIPH0_PWDTH; break;
+          }        
+        case INT_Timer0        :
+                switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_IP_PT0; clr_IPH_PT0H; break;
+            case 1:  clr_IP_PT0; set_IPH_PT0H; break;
+            case 2:  set_IP_PT0; clr_IPH_PT0H; break;
+            case 3:  set_IP_PT0; set_IPH_PT0H; break;
+          }
+        case INT_I2C0          :
+                switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_EIP0_PI2C0; clr_EIPH0_PI2C0H; break;
+            case 1:  clr_EIP0_PI2C0; set_EIPH0_PI2C0H; break;
+            case 2:  set_EIP0_PI2C0; clr_EIPH0_PI2C0H; break;
+            case 3:  set_EIP0_PI2C0; set_EIPH0_PI2C0H; break;
+          }
+        case INT_ADC           :
+                switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_IP_PADC; clr_IPH_PADCH; break;
+            case 1:  clr_IP_PADC; set_IPH_PADCH; break;
+            case 2:  set_IP_PADC; clr_IPH_PADCH; break;
+            case 3:  set_IP_PADC; set_IPH_PADCH; break;
+          }        
+        case INT_INT1        :
+          switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_IP_PX1; clr_IPH_PX1H; break;
+            case 1:  clr_IP_PX1; set_IPH_PX1H; break;
+            case 2:  set_IP_PX1; clr_IPH_PX1H; break;
+            case 3:  set_IP_PX1; set_IPH_PX1H; break;
+          }
+        case INT_PIT           :
+                switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_EIP0_PPI; clr_EIPH0_PPIH; break;
+            case 1:  clr_EIP0_PPI; set_EIPH0_PPIH; break;
+            case 2:  set_EIP0_PPI; clr_EIPH0_PPIH; break;
+            case 3:  set_EIP0_PPI; set_EIPH0_PPIH; break;
+          }        
+        case INT_Timer1        :
+                switch (u8u8InterruptPriorityLevel)
+          {
+            case 0:  clr_IP_PT1; clr_IPH_PT1H; break;
+            case 1:  clr_IP_PT1; set_IPH_PT1H; break;
+            case 2:  set_IP_PT1; clr_IPH_PT1H; break;
+            case 3:  set_IP_PT1; set_IPH_PT1H; break;
+          }
+        case INT_UART0         :
+              switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_IP_PS; clr_IPH_PSH; break;
+            case 1:  clr_IP_PS; set_IPH_PSH; break;
+            case 2:  set_IP_PS; clr_IPH_PSH; break;
+            case 3:  set_IP_PS; set_IPH_PSH; break;
+          }        
+        case INT_PWM0_Brake :
+              switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP0_PFB; clr_EIPH0_PFBH; break;
+            case 1:  clr_EIP0_PFB; set_EIPH0_PFBH; break;
+            case 2:  set_EIP0_PFB; clr_EIPH0_PFBH; break;
+            case 3:  set_EIP0_PFB; set_EIPH0_PFBH; break;
+          }
+        case INT_SPI0          :
+              switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP0_PSPI; clr_EIPH0_PSPIH; break;
+            case 1:  clr_EIP0_PSPI; set_EIPH0_PSPIH; break;
+            case 2:  set_EIP0_PSPI; clr_EIPH0_PSPIH; break;
+            case 3:  set_EIP0_PSPI; set_EIPH0_PSPIH; break;
+          }        
+        case INT_Timer2        :
+              switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP0_PT2; clr_EIPH0_PT2H; break;
+            case 1:  clr_EIP0_PT2; set_EIPH0_PT2H; break;
+            case 2:  set_EIP0_PT2; clr_EIPH0_PT2H; break;
+            case 3:  set_EIP0_PT2; set_EIPH0_PT2H; break;
+          }         
+        case INT_Capture       :
+              switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP0_PCAP; clr_EIPH0_PCAPH; break;
+            case 1:  clr_EIP0_PCAP; set_EIPH0_PCAPH; break;
+            case 2:  set_EIP0_PCAP; clr_EIPH0_PCAPH; break;
+            case 3:  set_EIP0_PCAP; set_EIPH0_PCAPH; break;
+          }
+        case INT_PWM0          :
+              switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP0_PPWM0; clr_EIPH0_PPWM0H; break;
+            case 1:  clr_EIP0_PPWM0; set_EIPH0_PPWM0H; break;
+            case 2:  set_EIP0_PPWM0; clr_EIPH0_PPWM0H; break;
+            case 3:  set_EIP0_PPWM0; set_EIPH0_PPWM0H; break;
+          }
+        case INT_UART1         :
+             switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP1_PS1; clr_EIPH1_PS1H; break;
+            case 1:  clr_EIP1_PS1; set_EIPH1_PS1H; break;
+            case 2:  set_EIP1_PS1; clr_EIPH1_PS1H; break;
+            case 3:  set_EIP1_PS1; set_EIPH1_PS1H; break;
+          }        
+        case INT_Timer3        :        
+            switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP1_PT3; clr_EIPH1_PT3H; break;
+            case 1:  clr_EIP1_PT3; set_EIPH1_PT3H; break;
+            case 2:  set_EIP1_PT3; clr_EIPH1_PT3H; break;
+            case 3:  set_EIP1_PT3; set_EIPH1_PT3H; break;
+          } 
+        case INT_WKT           :
+            switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP1_PWKT; clr_EIPH1_PWKTH; break;
+            case 1:  clr_EIP1_PWKT; set_EIPH1_PWKTH; break;
+            case 2:  set_EIP1_PWKT; clr_EIPH1_PWKTH; break;
+            case 3:  set_EIP1_PWKT; set_EIPH1_PWKTH; break;
+          }           
+        case INT_SMC0          :                  
+            switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP1_PSMC0; clr_EIPH1_PSMC0H; break;
+            case 1:  clr_EIP1_PSMC0; set_EIPH1_PSMC0H; break;
+            case 2:  set_EIP1_PSMC0; clr_EIPH1_PSMC0H; break;
+            case 3:  set_EIP1_PSMC0; set_EIPH1_PSMC0H; break;
+          }
+        case INT_PDMA0         :
+            switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP1_PDMA0; clr_EIPH1_PDMA0H; break;
+            case 1:  clr_EIP1_PDMA0; set_EIPH1_PDMA0H; break;
+            case 2:  set_EIP1_PDMA0; clr_EIPH1_PDMA0H; break;
+            case 3:  set_EIP1_PDMA0; set_EIPH1_PDMA0H; break;
+          }
+        case INT_PDMA1         :
+            switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP1_PDMA1; clr_EIPH1_PDMA1H; break;
+            case 1:  clr_EIP1_PDMA1; set_EIPH1_PDMA1H; break;
+            case 2:  set_EIP1_PDMA1; clr_EIPH1_PDMA1H; break;
+            case 3:  set_EIP1_PDMA1; set_EIPH1_PDMA1H; break;
+          }    
+        case INT_SPI1          :
+            switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP1_PSPI1; clr_EIPH1_PSPI1H; break;
+            case 1:  clr_EIP1_PSPI1; set_EIPH1_PSPI1H; break;
+            case 2:  set_EIP1_PSPI1; clr_EIPH1_PSPI1H; break;
+            case 3:  set_EIP1_PSPI1; set_EIPH1_PSPI1H; break;
+          }
+        case INT_ACMP          :
+            switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP2_PACMP; clr_EIPH2_PACMPH; break;
+            case 1:  clr_EIP2_PACMP; set_EIPH2_PACMPH; break;
+            case 2:  set_EIP2_PACMP; clr_EIPH2_PACMPH; break;
+            case 3:  set_EIP2_PACMP; set_EIPH2_PACMPH; break;
+          }        
+        case INT_I2C1          :
+            switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP2_PI2C1; clr_EIPH2_PI2C1H; break;
+            case 1:  clr_EIP2_PI2C1; set_EIPH2_PI2C1H; break;
+            case 2:  set_EIP2_PI2C1; clr_EIPH2_PI2C1H; break;
+            case 3:  set_EIP2_PI2C1; set_EIPH2_PI2C1H; break;
+          } 
+        case INT_PWM123        :
+           switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP2_PPWM1; clr_EIPH2_PPWM1H; break;
+            case 1:  clr_EIP2_PPWM1; set_EIPH2_PPWM1H; break;
+            case 2:  set_EIP2_PPWM1; clr_EIPH2_PPWM1H; break;
+            case 3:  set_EIP2_PPWM1; set_EIPH2_PPWM1H; break;
+          }
+        case INT_SMC1          :
+           switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP2_PSMC1; clr_EIPH2_PSMC1H; break;
+            case 1:  clr_EIP2_PSMC1; set_EIPH2_PSMC1H; break;
+            case 2:  set_EIP2_PSMC1; clr_EIPH2_PSMC1H; break;
+            case 3:  set_EIP2_PSMC1; set_EIPH2_PSMC1H; break;
+          }
+        case INT_PDMA2         :
+           switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP2_PPDMA2; clr_EIPH2_PPDMA2H; break;
+            case 1:  clr_EIP2_PPDMA2; set_EIPH2_PPDMA2H; break;
+            case 2:  set_EIP2_PPDMA2; clr_EIPH2_PPDMA2H; break;
+            case 3:  set_EIP2_PPDMA2; set_EIPH2_PPDMA2H; break;
+          }
+        case INT_PDMA3         :
+           switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP2_PPDMA3; clr_EIPH2_PPDMA3H; break;
+            case 1:  clr_EIP2_PPDMA3; set_EIPH2_PPDMA3H; break;
+            case 2:  set_EIP2_PPDMA3; clr_EIPH2_PPDMA3H; break;
+            case 3:  set_EIP2_PPDMA3; set_EIPH2_PPDMA3H; break;
+          }
+        case INT_RTC         :
+           switch (u8u8InterruptPriorityLevel)
+          {          
+            case 0:  clr_EIP2_PRTC; clr_EIPH2_PRTCH; break;
+            case 1:  clr_EIP2_PRTC; set_EIPH2_PRTCH; break;
+            case 2:  set_EIP2_PRTC; clr_EIPH2_PRTCH; break;
+            case 3:  set_EIP2_PRTC; set_EIPH2_PRTCH; break;
+          }
+        
+          break;
+   }
+ }
