@@ -19,7 +19,7 @@
 #define set_T1M     CKCON   |= SET_BIT4
 #define clr_BRCK    T3CON   &= ~SET_BIT5
 #define set_TR1     TR1     = 1
-void InitialUART0_Timer1(unsigned long Fsys, UINT32 u32Baudrate)
+void InitialUART0_Timer1(void)
 {
     SCON = 0x52;     //UART0 Mode1,REN=1,TI=1
     TMOD |= 0x20;    //Timer1 Mode1
@@ -32,25 +32,46 @@ void InitialUART0_Timer1(unsigned long Fsys, UINT32 u32Baudrate)
     TH1 = 0xF3;
     set_TR1;
 }
+#ifdef CAL_UART1
+void InitialUART1_Timer3(unsigned long u32SysClock, UINT32 u32Baudrate)
+{
+          SFRS = 0x00;
+          S1CON = 0x50;           /*UART1 Mode1,REN_1=1 */
+          T3CON = 0x88;           /*T3PS2=0,T3PS1=0,T3PS0=0(Prescale=1), UART1 in MODE 1*/
+          RH3    = HIBYTE(65536 - (u32SysClock/16/u32Baudrate));
+          RL3    = LOBYTE(65536 - (u32SysClock/16/u32Baudrate));
+          set_T3CON_TR3;          /* Trigger Timer3 */
+}
+#endif
 
 void UART0_Init(void)
 {
 #ifdef BOARD_NUMAKER
-    /* Tim */
     MFP_P30_UART0_RXD;      /* set P3.0 and P3.1 as Quasi mode for UART0 trasnfer */
     MFP_P31_UART0_TXD;
     P30_INPUT_MODE;
     P31_QUASI_MODE;
-//    MFP_P52_UART0_RXD;      /* set P3.0 and P3.1 as Quasi mode for UART0 trasnfer */
-//    MFP_P53_UART0_TXD;
-//    P52_INPUT_MODE;
-//    P53_QUASI_MODE;
 #endif
     SFRS = 0x00;
-    InitialUART0_Timer1(24000000, 115200);
+    InitialUART0_Timer1();
     set_SCON_TI;
     IP = IP | BIT4;
     ES=1;
+}
+#endif
+
+#ifdef CAL_UART1
+void UART1_Init(void)
+{
+    MFP_P26_UART1_RXD;
+    MFP_P03_UART1_TXD;
+    P26_INPUT_MODE;
+    P03_QUASI_MODE;
+
+    InitialUART1_Timer3(24000000, 115200);
+    SFRS=0; set_EIP1_PS1;                   // Set UART INT priority first.
+    TI_1=1;
+    ENABLE_UART1_INTERRUPT;                 //For interrupt enable , interrupt subroutine is in uart.c file
 }
 #endif
 
@@ -60,7 +81,6 @@ void UART0_Init(void)
 //  Using UART1 for debug purpose.
 //
 //***********************************************************************************************************
-
 #define set_TR3     T3CON   |= SET_BIT3
 void InitialUART1_Timer3(unsigned long Fsys, UINT32 u32Baudrate) //use timer3 as Baudrate generator
 {

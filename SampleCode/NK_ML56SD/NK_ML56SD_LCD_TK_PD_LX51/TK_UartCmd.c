@@ -102,7 +102,12 @@ void TK_SendChars(uint8_t *pu8buf, uint32_t u32len)
 #if 1
         while (td_flag!=1);    /* wait until transmitter complete */
         td_flag = 0;
+#ifdef CAL_UART0
         SBUF = pu8buf[i];      /* output character */
+#endif
+#ifdef CAL_UART1
+        SBUF1 = pu8buf[i];
+#endif
 #else
         while (UART0->FIFOSTS & UART_FIFOSTS_TXFULL_Msk);
         UART0->DAT = pu8buf[i];
@@ -239,7 +244,7 @@ int8_t TK_CmdType1(uint8_t *pu8RXBuf)
         psTkInfo->u8ShieldChan = pu8RXBuf[2];
         psTkInfo->u8SliderRes = pu8RXBuf[3];
         psTkInfo->u8WheelRes = pu8RXBuf[4];
-		    //printf("Shield Chn 0x%x\n", (uint16_t) psTkInfo->u8ShieldChan);
+        //printf("Shield Chn 0x%x\n", (uint16_t) psTkInfo->u8ShieldChan);
         break;
 
     case E_CMD_TYPE1_SPECIFY_FEATURE:
@@ -258,10 +263,10 @@ int8_t TK_CmdType1(uint8_t *pu8RXBuf)
         psTkFeat->u16ResetTime = pu8RXBuf[1] | ((uint16_t)(pu8RXBuf[2]) << 8);
         psTkInfo->u8AvcchLevel = 7; //(20200807 removed) //pu8RXBuf[3];
         break;
-		
-		case E_CMD_TYPE1_SPECIFY_STORE_ADDR:
+    
+    case E_CMD_TYPE1_SPECIFY_STORE_ADDR:
         psTkInfo->u32StoreAddr = u32Data;
-				break;
+        break;
 
     case E_CMD_TYPE1_SPECIFY_NEIGHBORING:
 #ifdef OPT_NEIGHBOR
@@ -339,7 +344,7 @@ int8_t TK_CmdType1(uint8_t *pu8RXBuf)
         {
             uint8_t chan; 
             for(chan = 0; chan < TKLIB_TOL_NUM_KEY; chan = chan+1)
-            {	
+            {  
                 (psKeyInfo+chan)->level = 0;
             }
         }
@@ -398,7 +403,7 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
     S_TKINFO* psTkInfo;
     S_TKFEAT* psTkFeat;
     S_KEYINFO* psKeyInfo;
-	
+  
 #ifdef OPT_NEIGHBOR
     S_NEIGHBOR* psKeyNeighbor;
     psKeyNeighbor = TK_GetNeighborInfoPtr();
@@ -406,9 +411,9 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
     psTkFeat = TK_GetFeaturePtr();
     psKeyInfo = TK_GetKeyInfoPtr();
     psTkInfo = TK_GetTKInfoPtr();
-	
+  
     u32KeyStoreAddr = psTkInfo->u32StoreAddr + PAGE_SIZE; 
-	
+  
 #if 0
     memset(&gu8TXBuf, 0x0, 5);
 #else
@@ -478,7 +483,7 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
     case E_CMD_TYPE2_READ_REF_SHIELD_NO:
         gu8TXBuf[0] = psTkInfo->u8RefChan;
         gu8TXBuf[1] = psTkInfo->u8ShieldChan;
-		    //printf("Shield Chn 0x%x\n", (uint16_t) psTkInfo->u8ShieldChan);
+        //printf("Shield Chn 0x%x\n", (uint16_t) psTkInfo->u8ShieldChan);
         if(pu8RXBuf[1] == 0)
         {
             gu8TXBuf[2] = psTkInfo->u8SliderRes;
@@ -511,7 +516,7 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
         gu8TXBuf[2] = psTkInfo->u8AvcchLevel;
         //gu8TXBuf[3] = 0x0;
         break;
-		case E_CMD_TYPE2_READ_STORE_ADDR:
+    case E_CMD_TYPE2_READ_STORE_ADDR:
         gu8TXBuf[0] = *((uint8_t *)&psTkInfo->u32StoreAddr+3);
         gu8TXBuf[1] = *((uint8_t *)&psTkInfo->u32StoreAddr+2);
         gu8TXBuf[2] = *((uint8_t *)&psTkInfo->u32StoreAddr+1);
@@ -579,21 +584,21 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
         if(pu8RXBuf[1] == 0)
         {
             gu8Calibration = E_CALIBRATION_DONE;
-					  TickClearTickEvent(i8KeyScanId);
+            TickClearTickEvent(i8KeyScanId);
         }
         else
         {
             gu8Calibration = E_CALIBRATION_DONE_FREERUN;
-					  i8KeyScanId = TickSetTickEvent(1, TickCallback_KeyScan);
+            i8KeyScanId = TickSetTickEvent(1, TickCallback_KeyScan);
         }
         break;
-		case E_CMD_TYPE2_EXPORT_CALIBRATION:
-				u32KeyStoreAddr = psTkInfo->u32StoreAddr + pu8RXBuf[1]*4;	
-				gu8TXBuf[0] = inp8(u32KeyStoreAddr);   //*((uint8_t *)&u32KeyStoreAddr+0);
+    case E_CMD_TYPE2_EXPORT_CALIBRATION:
+        u32KeyStoreAddr = psTkInfo->u32StoreAddr + pu8RXBuf[1]*4;  
+        gu8TXBuf[0] = inp8(u32KeyStoreAddr);   //*((uint8_t *)&u32KeyStoreAddr+0);
         gu8TXBuf[1] = inp8(u32KeyStoreAddr+1); //*((uint8_t *)&u32KeyStoreAddr+1);
         gu8TXBuf[2] = inp8(u32KeyStoreAddr+2); //*((uint8_t *)&u32KeyStoreAddr+2);
         gu8TXBuf[3] = inp8(u32KeyStoreAddr+3); //*((uint8_t *)&u32KeyStoreAddr+3);
-				break;
+        break;
 #if defined(MASS_FINETUNE)
     case E_CMD_TYPE2_GET_UID:
         gu8TXBuf[0] = (USER_ID&&0xFF000000)>>24;
@@ -615,28 +620,28 @@ int8_t TK_CmdType2(uint8_t *pu8RXBuf)
             gu8TXBuf[1] = TKLIB_MINOR_VERSION;
         }
         gu8TXBuf[2] = TOUCHKEY_VERSION;
-				if(pu8RXBuf[1] == 2)
+        if(pu8RXBuf[1] == 2)
         {//PID
-					IAPCN = READ_DID;
-					IAPAH = 0x00;
-					IAPAL = 0x03;
-					set_IAPTRG_IAPGO;
-					gu8TXBuf[2] = IAPFD;
-					IAPAL = 0x02;
-					set_IAPTRG_IAPGO;
-					gu8TXBuf[3] = IAPFD;
-				}
-				if(pu8RXBuf[1] == 3)
+          IAPCN = READ_DID;
+          IAPAH = 0x00;
+          IAPAL = 0x03;
+          set_IAPTRG_IAPGO;
+          gu8TXBuf[2] = IAPFD;
+          IAPAL = 0x02;
+          set_IAPTRG_IAPGO;
+          gu8TXBuf[3] = IAPFD;
+        }
+        if(pu8RXBuf[1] == 3)
         {//DID
-					IAPCN = READ_DID;
-					IAPAH = 0x00;
-					IAPAL = 0x01;
-					set_IAPTRG_IAPGO;
-					gu8TXBuf[2] = IAPFD;
-					IAPAL = 0x00;
-					set_IAPTRG_IAPGO;
-					gu8TXBuf[3] = IAPFD;
-				}
+          IAPCN = READ_DID;
+          IAPAH = 0x00;
+          IAPAL = 0x01;
+          set_IAPTRG_IAPGO;
+          gu8TXBuf[2] = IAPFD;
+          IAPAL = 0x00;
+          set_IAPTRG_IAPGO;
+          gu8TXBuf[3] = IAPFD;
+        }
         break;
     default:
         gu8TXBuf[4] = 'N';
@@ -857,17 +862,17 @@ void Serial_ISR (void) interrupt 4 //using 1
         uint8_t i;
         uint8_t u8Arry[5] = {0};
         uint8_t ch = gu8RXBuf[1];
-	#if 1			
+  #if 1      
         u8Arry[0] = (psKeyInfo+ch)->ccb;
         u8Arry[1] = (psKeyInfo+ch)->refcb;
         u8Arry[2] = (psKeyInfo+ch)->level;
         u8Arry[3] = (psKeyInfo+ch)->threshold;
-	#else /* Save 11 bytes ROM space. inc 6 bytes RAM space. But not verify yet */
+  #else /* Save 11 bytes ROM space. inc 6 bytes RAM space. But not verify yet */
         uint32_t *pu32Src, *pu32Dst;
         pu32Src = (psKeyInfo+ch);
         pu32Dst = (uint32_t*)u8Arry;
-				*pu32Dst = *pu32Src;
-  #endif				
+        *pu32Dst = *pu32Src;
+  #endif        
 
         u8Arry[4] = 'A';
         for (i = 0; i < 5; i = i + 1)
@@ -879,6 +884,166 @@ void Serial_ISR (void) interrupt 4 //using 1
         UART_StateInit();
     }
 }
+
+#ifdef CAL_UART1
+void UART1_ISR(void) interrupt 15 //using 1
+{
+    uint8_t u8CmdType;
+    S_KEYINFO* psKeyInfo;
+    S_TKFEAT* psTkFeat;
+
+    psKeyInfo = TK_GetKeyInfoPtr();
+    psTkFeat = TK_GetFeaturePtr();
+    if (TI_1)
+    {
+        td_flag = 1;
+        TI_1 =0;                                       /* Clear TI (Transmit Interrupt) */
+        return;
+    }
+    if (RI_1)
+    {
+        gu8RXBuf[gu8comRtail] = SBUF1;
+        RI_1=0;                                       /* Clear RI (Receive Interrupt) */
+        gu8ChkSum += gu8RXBuf[gu8comRtail];
+        gu8comRtail = gu8comRtail + 1;
+    }
+    if ((gu8RXBuf[0] >= 0x0) && (gu8RXBuf[0] <= E_CMD_TYPE1_NUM_LAST_COMMAND))
+    {
+        u8CmdType = 1;
+    }
+    else if ((gu8RXBuf[0] >= 'A') && (gu8RXBuf[0] <= E_CMD_TYPE1_LAST_COMMAND))
+    {
+        u8CmdType = 1;
+    }
+    else
+    {
+        u8CmdType = 2;    /* Cmd = 0x10 ~ 0x16, 'a' ~ 'd' */
+    }
+
+    if (u8CmdType == 1)
+    {
+        do
+        {
+            if (RI_1)
+            {
+                gu8RXBuf[gu8comRtail] = SBUF1;
+                RI_1=0;                                         /* Clear RI (Receive Interrupt) */
+                if(gu8comRtail < 5)
+                    gu8ChkSum += gu8RXBuf[gu8comRtail];
+                gu8comRtail++;
+            }
+        }
+        while(gu8comRtail<6);
+
+        if (gu8RXBuf[5] == gu8ChkSum)
+        {
+            gu8CmdSts = E_CMD_TYPE1_READY;
+        }
+        else
+        {
+            gu8CmdSts = E_CMD_TYPE1_WRONG;
+        }
+    }
+
+    if (u8CmdType == 2)
+    {
+        /* E_RX_CMD_TYPE2_SIZE (3) */
+        do
+        {
+            if (RI_1)
+            {
+                gu8RXBuf[gu8comRtail] = SBUF1;
+                RI_1=0;                                         /* Clear RI (Receive Interrupt) */
+                if(gu8comRtail < 2)
+                    gu8ChkSum += gu8RXBuf[gu8comRtail];
+                gu8comRtail++;
+            }
+        }
+        while(gu8comRtail<3);
+
+        if (gu8RXBuf[2] == gu8ChkSum)
+            gu8CmdSts = E_CMD_TYPE2_READY;
+        else
+            gu8CmdSts = E_CMD_TYPE2_WRONG;
+    }
+
+    /* Process the run-time event - E_CMD_TYPE2_CHECK_CALIBRATION_DONE */
+    if ((gu8RXBuf[0] == E_CMD_TYPE2_CHECK_CALIBRATION_DONE) &&
+            (gu8CmdSts == E_CMD_TYPE2_READY))
+    {
+        /* Run time get calibration status */
+        uint8_t i;
+        uint8_t u8Arry[5] = {0};
+        if(psTkFeat->u8BaseLineRound != 1)
+        {
+            /* Polling Calibration done */
+            if(gu8Calibration == E_UNDER_CALIBRATION)
+                u8Arry[0] = 0;      /* return 0 means under calibration (untouch calibration) */
+            else if(gu8Calibration == E_CALIBRATION_DONE)
+                u8Arry[0] = 1;      /* return 1 means calibration done */
+        }
+        else
+        {
+#if defined(MASS_FINETUNE)
+            /* Polling Mass-Productio done */
+            if(gbIsFineTuneDone == 1)
+            {
+                u8Arry[0]  = 1;                      /* done    */
+                if(gFineTuneDoneTimeOut == 1)
+                    u8Arry[1] = 0;                   /* result: 1:pass, 0:fail  */
+                else
+                    u8Arry[1] = 1;
+                psTkFeat->u8BaseLineRound = TRACK_BASELINE_RELOAD_TIME;
+            }
+            else
+            {
+                u8Arry[0]  = 0;   /* not done */
+                u8Arry[1] = 0;    /* result   */
+            }
+#endif
+        }
+        u8Arry[4] = 'A';
+
+        UART_StateInit();
+        for (i = 0; i < 5; i = i + 1)
+        {
+            SBUF1 = u8Arry[i];      /* output character */
+            while (!TI_1);           /* wait until transmitter complete */
+            TI_1=0;
+        }
+    }
+
+    /* Process the run-time event - E_CMD_TYPE2_RUNTIME_KEY_INFO */
+    if ((gu8RXBuf[0] == E_CMD_TYPE2_RUNTIME_KEY_INFO) &&
+            (gu8CmdSts == E_CMD_TYPE2_READY))  /* Run time get Touch data */
+    {
+
+        uint8_t i;
+        uint8_t u8Arry[5] = {0};
+        uint8_t ch = gu8RXBuf[1];
+  #if 1
+        u8Arry[0] = (psKeyInfo+ch)->ccb;
+        u8Arry[1] = (psKeyInfo+ch)->refcb;
+        u8Arry[2] = (psKeyInfo+ch)->level;
+        u8Arry[3] = (psKeyInfo+ch)->threshold;
+  #else /* Save 11 bytes ROM space. inc 6 bytes RAM space. But not verify yet */
+        uint32_t *pu32Src, *pu32Dst;
+        pu32Src = (psKeyInfo+ch);
+        pu32Dst = (uint32_t*)u8Arry;
+        *pu32Dst = *pu32Src;
+  #endif        
+
+        u8Arry[4] = 'A';
+        for (i = 0; i < 5; i = i + 1)
+        {
+            SBUF1 = u8Arry[i];      /* output character */
+            while (!TI_1);           /* wait until transmitter complete */
+            TI_1=0;
+        }
+        UART_StateInit();
+    }
+}
+#endif
 
 void UART_SetCalibrationDone(void)
 {

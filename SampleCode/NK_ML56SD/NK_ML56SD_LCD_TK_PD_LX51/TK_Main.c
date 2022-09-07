@@ -156,7 +156,12 @@ void main(void)
     bit lcdct=0;
 
 #ifdef  DEMO_CALIBRATION
+#ifdef  CAL_UART0
     UART0_Init();
+#endif
+#ifdef  CAL_UART1
+		 UART1_Init();
+#endif
 #else
     i8TKChanTemp = TK_Data[0];
     i8TKChanTemp = -1;
