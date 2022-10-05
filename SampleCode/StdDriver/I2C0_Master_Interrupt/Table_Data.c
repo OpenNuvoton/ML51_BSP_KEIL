@@ -1,4 +1,4 @@
-code unsigned char Table_Data[30] = 
+code  char Table_Data[30] = 
 {
 0x01 ,
 0xf0 ,

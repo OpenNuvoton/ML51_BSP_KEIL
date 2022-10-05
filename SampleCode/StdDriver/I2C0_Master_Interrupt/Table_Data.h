@@ -1,1 +1,1 @@
-extern code unsigned char Table_Data[256];
+extern code  char Table_Data[30];

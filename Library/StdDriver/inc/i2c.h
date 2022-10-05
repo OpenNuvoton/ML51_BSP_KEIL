@@ -12,5 +12,4 @@ unsigned char I2C_GetStatus(unsigned char u8I2CSel);
 void I2C_SetSlaveAddrMask(unsigned char u8I2CSel, unsigned char u8SlaveNo, unsigned char u8SlaveAddrMask);
 void I2C_Timeout(unsigned char u8I2CSel, unsigned char u8I2CTRStatus );
 void I2C_ClearTimeoutFlag(unsigned char u8I2CSel);
-void I2C_Slave_Address_Mask(unsigned char u8I2CSel, unsigned char u8I2CAddMaskStatus, unsigned char u8I2CAddMaskBit);
 void I2C0_SI_Check(void);

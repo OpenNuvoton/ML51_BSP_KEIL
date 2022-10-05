@@ -122,7 +122,7 @@ void Send_64byte_To_UART2(void)
   {
     clr_SC0CR0_TXOFF;
     SC0DR = uart_txbuf[count];
-    while((SC0TSR|CLR_BIT3)==CLR_BIT3);
+    while(!(SC0TSR&SET_BIT3));
     clr_SC0CR0_TXOFF;
   }
 }
@@ -130,12 +130,12 @@ void Send_64byte_To_UART2(void)
 void SMC0_ISR (void) interrupt 19  
 {
     SFRS=0;
-    if((SC0IS|CLR_BIT0)==0xFF)
+    if(SC0IS&SET_BIT0)
     {   
       uart_rcvbuf[bufhead++]=  SC0DR;
       clr_SC0IS_RDAIF;                                         // Clear RI (Receive Interrupt).
     }
-    if ((SC0IS|CLR_BIT1)==0xFF)
+    if (SC0IS&SET_BIT1)
     {       
         clr_SC0IS_TBEIF;                                         // Clear TI (Transmit Interrupt).
     }

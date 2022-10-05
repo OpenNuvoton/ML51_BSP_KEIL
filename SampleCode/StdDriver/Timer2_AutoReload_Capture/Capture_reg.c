@@ -13,13 +13,15 @@
 //  File Function: MUG51 TIMER 2 Capture function demo
 //***********************************************************************************************************
 #include "ML51.h"
+
+bit t2captureflag = 0;
+unsigned char captemph,captempl;
+
 /**
  * @brief       Timer2  interrupt subroutine
  */
 void Capture_ISR(void) interrupt 12      // Vector @  0x63
 {
-  unsigned char captemph,captempl;
-
 _push_(SFRS);
 
     SFRS = 1;
@@ -35,9 +37,8 @@ _push_(SFRS);
        captempl = C2L;
        clr_CAPCON0_CAPF2;
     }
-    
-    SFRS=0; printf ("\n capture high byte = 0x%BD", captemph);
-    SFRS=0; printf ("\n capture low byte = 0x%BD", captempl);
+    t2captureflag = 1;
+
     DISABLE_TIMER2_CAP0;
 
 _pop_(SFRS);
@@ -64,7 +65,16 @@ void main (void)
     TIMER2_Capture_Interrupt(Enable);
     Global_Interrupt(Enable);
 
-    while(1);
+    while(1)
+    {
+      if (t2captureflag)
+      {
+          t2captureflag = 0;
+          SFRS=0; 
+          printf ("\n capture high byte = 0x%BD", captemph);
+          printf ("\n capture low byte = 0x%BD", captempl);
+      }
+    }
 }
 
 

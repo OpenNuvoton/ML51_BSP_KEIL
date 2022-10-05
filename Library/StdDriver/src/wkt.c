@@ -8,6 +8,7 @@
 
 #include "ML51.h"
 
+#if 0     /* interrupt vector demo */ 
 /**
   * @brief WKT delay interrupt initial setting and timer 1 interrupt vector  
   * @param[in] u32SYSCLK define Fsys clock value. for example 8, use the real Fsys value.
@@ -25,6 +26,8 @@ _push_(SFRS);
     clr_WKCON_WKTF;
 _pop_(SFRS);
 }
+#endif 
+
 void WKT_AutoReload_Interrupt_Initial_MS(unsigned char u8WKTCLKSouce, unsigned int u8WKTRLData)
 {
    unsigned long WKTCT;
@@ -111,7 +114,7 @@ void WKT_Open(unsigned char  u8WKTCLKSouce, unsigned int u16WKTDIV, unsigned int
       case LXT:  MFP_P55_X32_IN;
                 MFP_P54_X32_OUT;
                 set_CKEN_ELXTEN;                        //step3: Enable LXT.
-                while((CKSWT|CLR_BIT6)==CLR_BIT6);      //step4: check clock source status and wait for ready
+                while(!(CKSWT&SET_BIT6));      //step4: check clock source status and wait for ready
                 WKCON |= 0x20; break;
     }
     switch (u16WKTDIV)

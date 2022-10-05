@@ -238,35 +238,6 @@ void I2C_ClearTimeoutFlag(unsigned char u8I2CSel)
     }
 }
 
-/**
- * @brief      I2C slave address mask function enable / disable.
- * @param[in]  u8I2CSel:  Specify I2C port
- * @param[in]  u8I2CAddMaskBit: I2C slave address mask bit define
- * @return     None
- * @details    This function setting the slave address mask bit.
- *
- */
-void I2C_Slave_Address_Mask(unsigned char u8I2CSel, unsigned char u8I2CAddMaskStatus, unsigned char u8I2CAddMaskBit)
-{
-    SFRS=2;
-    switch (u8I2CSel)
-    {
-      case I2C0:
-        switch (u8I2CAddMaskStatus)
-        {
-          case Enable:  I2C0ADDRM|=u8I2CAddMaskBit; break;
-          case Disable: I2C0ADDRM&=~u8I2CAddMaskBit; break;
-        }
-      break;
-      case I2C1:
-        switch (u8I2CAddMaskStatus)
-        {
-          case Enable: I2C1ADDRM|=u8I2CAddMaskBit; break;
-          case Disable:I2C1ADDRM=~u8I2CAddMaskBit; break;
-        }
-      default: break;
-    }
-}
 
 /**
  * @brief      Special design for 8051 I2C SI check

@@ -106,27 +106,27 @@ void ClockEnable(unsigned char u8FsysMode)
     /***** HXT enable part*****/
     case FSYS_HXT:
         set_CKEN_EHXTEN;                        //step1: Enable HXT.
-        while((CKSWT|CLR_BIT7)==CLR_BIT7);      //step2: check clock source status and wait for ready
+        while(!(CKSWT&SET_BIT7));      //step2: check clock source status and wait for ready
     break;    
         //***** LXT enable part******/
     case FSYS_LXT:
         set_CKEN_ELXTEN;                        //step3: Enable LXT.
-        while((CKSWT|CLR_BIT6)==CLR_BIT6);      //step4: check clock source status and wait for ready
+        while(!(CKSWT&SET_BIT6));      //step4: check clock source status and wait for ready
     break;  
         //***** HIRC enable part ******/
     case FSYS_HIRC:
         set_CKEN_HIRCEN;                        //step1: Enable extnal clock source.
-        while((CKSWT|CLR_BIT5)==CLR_BIT5);      //step2: check clock source status and wait for ready
+        while(!(CKSWT&SET_BIT5));      //step2: check clock source status and wait for ready
     break;
     //***** LIRC enable part******/
     case FSYS_LIRC:
         set_CKEN_LIRCEN;                        //step1: Enable extnal clock source.
-        while((CKSWT|CLR_BIT4)==CLR_BIT4);      //step2: check clock source status and wait for ready
+        while(!(CKSWT&SET_BIT4));      //step2: check clock source status and wait for ready
     break;
     //***** ECLK enable part ******/
     case FSYS_ECLK:
         set_CKEN_ECLKEN;                        //step1: Enable extnal clock source.
-        while((CKSWT|CLR_BIT3)==CLR_BIT3);      //step2: check clock source status and wait for ready
+        while(!(CKSWT&SET_BIT3));      //step2: check clock source status and wait for ready
     break;
   }
 }
