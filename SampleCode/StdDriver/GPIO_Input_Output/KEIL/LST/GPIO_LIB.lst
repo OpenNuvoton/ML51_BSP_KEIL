@@ -1,0 +1,82 @@
+C51 COMPILER V9.60.0.0   GPIO_LIB                                                          10/05/2022 15:23:46 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE GPIO_LIB
+OBJECT MODULE PLACED IN .\Output\GPIO_LIB.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\GPIO_LIB.C OMF2 OPTIMIZE(4,SPEED) BROWSE INCDIR(..\..\..\..\Library\D
+                    -evice\Include;..\..\..\..\Library\StdDriver\inc) DEBUG PRINT(.\LST\GPIO_LIB.lst) TABS(2) OBJECT(.\Output\GPIO_LIB.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          //********************************************************************************************************
+             -***
+   9          //  File Function: ML51 GPIO toggle demo code
+  10          //********************************************************************************************************
+             -***
+  11          #include "ML51.H"
+  12          
+  13          
+  14          //----------------------------------------------------------------------------------------------//
+  15          void main (void)
+  16          {
+  17   1      /* As defaut all multi function define as GPIO */ 
+  18   1          GPIO_SetMode(Port1,BIT0|BIT5|BIT7,GPIO_MODE_QUASI);
+  19   1          GPIO_SetMode(Port4,BIT6|BIT1,GPIO_MODE_PUSHPULL);
+  20   1          GPIO_SetMode(Port6,BIT0|BIT1,GPIO_MODE_PUSHPULL);
+  21   1        while(1)
+  22   1        {
+  23   2          P1 = ~P1;
+  24   2          P4 = ~P4;
+  25   2          SFRS=0; set_P5_3;          /* or P5 |= SET_BIT3;  for none bit-addressable port */
+  26   2          SFRS=2; P6 |= SET_BIT0;    /* or set_P6_0; for none bit-addressable port */
+  27   2          if (!(P6&SET_BIT1))        /* if P6.1 == 0 , for none bit-addressable port */
+  28   2          {
+  29   3            _nop_();
+  30   3          }
+  31   2          Timer2_Delay(24000000,4,2,1000);
+  32   2      
+  33   2          SFRS=0; clr_P5_3;          /* or P5 &= CLR_BIT3;  for none bit-addressable port */
+  34   2          SFRS=2; P6 &= CLR_BIT0;    /* or clr_P6_0;   for none bit-addressable port */
+  35   2          if (P6&SET_BIT1)           /* if P6.1 == 1  for none bit-addressable port*/
+  36   2          {
+  37   3            _nop_();
+  38   3          }
+  39   2          Timer2_Delay(24000000,4,2,1000);
+  40   2        }
+  41   1      }
+  42          
+  43          
+  44          
+
+
+C51 COMPILER V9.60.0.0   GPIO_LIB                                                          10/05/2022 15:23:46 PAGE 2   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    142    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

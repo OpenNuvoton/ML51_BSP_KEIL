@@ -39,3 +39,6 @@
 3.ADC                         Remove all ADC slow speed define.
 
 2022/8                        LCD update API for LCD view
+
+2022/10
+1. GPIO PIT                   PIT project optimize add printf

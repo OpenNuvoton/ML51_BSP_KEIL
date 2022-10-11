@@ -97,20 +97,20 @@ typedef signed long           int32_t;
     }                                  \
 }
 /*******************************************************************************
-*   POR/LVR/BOD Define
+*   BOD Define
 ********************************************************************************/
-#define    ENABLE_VBOD18                       SFRS=1;DMA0CR|=0x08    
+#define    ENABLE_VBOD18                       SFRS=1;DMA0CR|=0x08
 
 #define    ENABLE_BOD                          set_BODCON0_BODEN
 #define    DISABLE_BOD                         clr_BODCON0_BODEN
 #define    ENABLE_BOD_RESET                    set_BODCON0_BORST
 #define    DISABLE_BOD_RESET                   clr_BODCON0_BORST
- 
-#define    ENABLE_LVR                          SFRS=1;BIT_TMP=EA;EA=0;TA=0xAA;TA=0x55;LVRDIS=0x00;EA=BIT_TMP
-#define    DISABLE_LVR                         SFRS=1;BIT_TMP=EA;EA=0;TA=0xAA;TA=0x55;LVRDIS=0x5A;TA=0xAA;TA=0x55;LVRDIS=0xA5;EA=BIT_TMP
 
-#define    ENABLE_POR                          SFRS=1;BIT_TMP=EA;EA=0;TA=0xAA;TA=0x55;PORDIS=0x00;EA=BIT_TMP;
-#define    DISABLE_POR                         SFRS=1;BIT_TMP=EA;EA=0;TA=0xAA;TA=0x55;PORDIS=0x5A;TA=0xAA;TA=0x55;PORDIS=0xA5;EA=BIT_TMP
+#define    BOD_ENABLE                          set_BODCON0_BODEN
+#define    BOD_DISABLE                         clr_BODCON0_BODEN
+#define    BOD_RESET_ENABLE                    set_BODCON0_BORST
+#define    BOD_RESET_DISABLE                   clr_BODCON0_BORST
+ 
 /******************************************************************************************
 * IAP function process 
 *****************************************************************************************/

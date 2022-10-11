@@ -1,0 +1,8 @@
+".\Output\GPIO_LIB.obj",
+".\Output\common.obj",
+".\Output\delay.obj",
+".\Output\gpio.obj" 
+TO ".\Output\GPIO_Input_Output" 
+
+PRINT(".\LST\GPIO_Input_Output.map") DISABLEWARNING (16) 
+REMOVEUNUSED 

@@ -1,0 +1,134 @@
+C51 COMPILER V9.60.0.0   PININT                                                            10/11/2022 15:26:54 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE PININT
+OBJECT MODULE PLACED IN .\Output\pinint.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\..\..\Library\StdDriver\src\pinint.c OMF2 OPTIMIZE(8,SPEED) BROWSE
+                    - INCDIR(..\..\..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc) DEBUG PRINT(.\LST\pinint.lst) TABS(2) OBJE
+                    -CT(.\Output\pinint.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          //********************************************************************************************************
+             -***
+   9          //  Nuvoton Technoledge Corp. 
+  10          //  Website: http://www.nuvoton.com
+  11          //  E-Mail : MicroC-8bit@nuvoton.com
+  12          //  Date   : Apr/29/2020
+  13          //********************************************************************************************************
+             -***
+  14          
+  15          #include "ML51.h"
+  16          
+  17          //********************************************************************************************************
+             -********  
+  18          //**** GPIO interrupt enable setting step
+  19          //**** 1. Select pin interrupt channel PIT0~PIT7
+  20          //**** 2. Select trig status HIGH,LEVEL / LOW,LEVEL / RISING,EDGE / FALLING,EDGE / BOTH,EDGE /
+  21          //**** 3. Define interrupt port (PORT, BIT)
+  22          //**** For example: GPIO_EnableInt(PIT0,BOTH,EDGE,Port1,0) means P1.0 falling edge trig pin intterrupt cha
+             -nnel 0 (PIT0)
+  23          void GPIO_EnableInt(unsigned char u8PIT, unsigned char u8IntStatus,unsigned char u8IntMode, unsigned char 
+             -u8Port, unsigned char u8Bit)
+  24          {
+  25   1          switch ((u8IntMode<<4)+u8PIT)
+  26   1          {
+  27   2            case 0x00:    clr_PICON_PIT0;  break;
+  28   2            case 0x01:    clr_PICON_PIT1;  break;
+  29   2            case 0x02:    clr_PICON_PIT2;  break;
+  30   2            case 0x03:    clr_PICON_PIT3;  break;
+  31   2            case 0x04:    clr_PICON_PIT4;  break;
+  32   2            case 0x05:    clr_PICON_PIT5;  break;
+  33   2            case 0x06:    clr_PICON_PIT6;  break;
+  34   2            case 0x07:    clr_PICON_PIT7;  break;
+  35   2            
+  36   2            case 0x10:    set_PICON_PIT0;  break;
+  37   2            case 0x11:    set_PICON_PIT1;  break;
+  38   2            case 0x12:    set_PICON_PIT2;  break;
+  39   2            case 0x13:    set_PICON_PIT3;  break;
+  40   2            case 0x14:    set_PICON_PIT4;  break;
+  41   2            case 0x15:    set_PICON_PIT5;  break;
+  42   2            case 0x16:    set_PICON_PIT6;  break;
+C51 COMPILER V9.60.0.0   PININT                                                            10/11/2022 15:26:54 PAGE 2   
+
+  43   2            case 0x17:    set_PICON_PIT7;  break;
+  44   2            default: break;
+  45   2          }
+  46   1          switch((u8IntStatus<<4)+u8PIT)
+  47   1          {
+  48   2            case 0x00: set_PINEN_PINEN0;clr_PIPEN_PIPEN0; break;
+  49   2            case 0x01: set_PINEN_PINEN1;clr_PIPEN_PIPEN1; break;
+  50   2            case 0x02: set_PINEN_PINEN2;clr_PIPEN_PIPEN2; break;
+  51   2            case 0x03: set_PINEN_PINEN3;clr_PIPEN_PIPEN3; break;
+  52   2            case 0x04: set_PINEN_PINEN4;clr_PIPEN_PIPEN4; break;
+  53   2            case 0x05: set_PINEN_PINEN5;clr_PIPEN_PIPEN5; break;
+  54   2            case 0x06: set_PINEN_PINEN6;clr_PIPEN_PIPEN6; break;
+  55   2            case 0x07: set_PINEN_PINEN7;clr_PIPEN_PIPEN7; break; 
+  56   2            
+  57   2            case 0x10: clr_PINEN_PINEN0;set_PIPEN_PIPEN0; break;
+  58   2            case 0x11: clr_PINEN_PINEN1;set_PIPEN_PIPEN1; break;
+  59   2            case 0x12: clr_PINEN_PINEN2;set_PIPEN_PIPEN2; break;
+  60   2            case 0x13: clr_PINEN_PINEN3;set_PIPEN_PIPEN3; break;
+  61   2            case 0x14: clr_PINEN_PINEN4;set_PIPEN_PIPEN4; break;
+  62   2            case 0x15: clr_PINEN_PINEN5;set_PIPEN_PIPEN5; break;
+  63   2            case 0x16: clr_PINEN_PINEN6;set_PIPEN_PIPEN6; break;
+  64   2            case 0x17: clr_PINEN_PINEN7;set_PIPEN_PIPEN7; break;  
+  65   2            
+  66   2            case 0x20: set_PINEN_PINEN0;set_PIPEN_PIPEN0; break; 
+  67   2            case 0x21: set_PINEN_PINEN1;set_PIPEN_PIPEN1; break; 
+  68   2            case 0x22: set_PINEN_PINEN2;set_PIPEN_PIPEN2; break; 
+  69   2            case 0x23: set_PINEN_PINEN3;set_PIPEN_PIPEN3; break; 
+  70   2            case 0x24: set_PINEN_PINEN4;set_PIPEN_PIPEN4; break; 
+  71   2            case 0x25: set_PINEN_PINEN5;set_PIPEN_PIPEN5; break; 
+  72   2            case 0x26: set_PINEN_PINEN6;set_PIPEN_PIPEN6; break; 
+  73   2            case 0x27: set_PINEN_PINEN7;set_PIPEN_PIPEN7; break; 
+  74   2       
+  75   2            default: break;
+  76   2          }
+  77   1          switch(u8PIT)
+  78   1          {
+  79   2              case PIT0:PIPS0=0x00;PIPS0=(u8Port<<4)+(u8Bit&0x0F);break;      
+  80   2              case PIT1:PIPS1=0x00;PIPS1=(u8Port<<4)+(u8Bit&0x0F);break;                    
+  81   2              case PIT2:PIPS2=0x00;PIPS2=(u8Port<<4)+(u8Bit&0x0F);break;  
+  82   2              case PIT3:PIPS3=0x00;PIPS3=(u8Port<<4)+(u8Bit&0x0F);break;   
+  83   2              case PIT4:PIPS4=0x00;PIPS4=(u8Port<<4)+(u8Bit&0x0F);break;   
+  84   2              case PIT5:PIPS5=0x00;PIPS5=(u8Port<<4)+(u8Bit&0x0F);break;
+  85   2              case PIT6:PIPS6=0x00;PIPS6=(u8Port<<4)+(u8Bit&0x0F);break;
+  86   2              case PIT7:PIPS7=0x00;PIPS7=(u8Port<<4)+(u8Bit&0x0F);break;   
+  87   2              default: break;
+  88   2          }
+  89   1          set_EIE0_EPI;        //Pin interrupt enable bit
+  90   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    753    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+C51 COMPILER V9.60.0.0   PININT                                                            10/11/2022 15:26:54 PAGE 3   
+
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
