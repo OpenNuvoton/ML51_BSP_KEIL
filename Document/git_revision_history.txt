@@ -42,3 +42,4 @@
 
 2022/10
 1. GPIO PIT                   PIT project optimize add printf
+2. VREF                       API preload register fixed

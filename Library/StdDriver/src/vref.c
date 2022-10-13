@@ -62,7 +62,7 @@ void VREF_Open(unsigned char u8VREFValue)
 {
     VREF_Reload(u8VREFValue);
     SFRS = 1;
-    TA_REG_TMP|=(u8VREFValue<<4)|0x03;
+    TA_REG_TMP=(u8VREFValue<<4)|0x03;
     TA=0xAA;TA=0x55;
     VRFCON=TA_REG_TMP;
     _delay_();

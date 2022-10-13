@@ -1,8 +1,0 @@
-".\Output\Pin_Int.obj",
-".\Output\common.obj",
-".\Output\uart.obj",
-".\Output\STARTUP.obj" 
-TO ".\Output\GPIO_Pin_Interrupt" 
-
-PRINT(".\LST\GPIO_Pin_Interrupt.map") DISABLEWARNING (16) 
-REMOVEUNUSED 
