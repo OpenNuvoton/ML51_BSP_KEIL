@@ -7,13 +7,13 @@
 #define   VBOD_3_7           0x10
 #define   VBOD_4_4           0x00
 
-#define   BOD_Reset_Enable   0x04
-#define   BOD_Reset_Disable  0
+#define   BOD_RESET   0x04
+#define   BOD_NO_RESET  0
 
-#define   LPBOD_Mode_Normal  0
-#define   LPBOD_Mode_1       0x02
-#define   LPBOD_Mode_2       0x04
-#define   LPBOD_Mode_3       0x06
+#define   LPBOD_MODE_NORMAL  0
+#define   LPBOD_MODE_1       0x02
+#define   LPBOD_MODE_2       0x04
+#define   LPBOD_MODE_3       0x06
 
 
 void BOD_Open(unsigned char u8bodstatus, unsigned char u8bodlevel, unsigned char u8bodresetstatus);

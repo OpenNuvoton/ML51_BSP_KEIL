@@ -117,9 +117,8 @@ void Init_I2C_Slave_Interrupt(void)
 {
     MFP_P41_I2C0_SCL;
     MFP_P40_I2C0_SDA;
-    GPIO_SetMode(Port4 , BIT0|BIT1, GPIO_MODE_OPENDRAIN);  /* External pull up resister is necessary. */
-    GPIO_SchmittTrigger(Port4, BIT0|BIT1, ENABLE);
-    GPIO_Pull_Enable(Port4, BIT0|BIT1, PULLUP);
+    GPIO_SetMode(Port4 , SET_BIT0 | SET_BIT1, GPIO_MODE_OPENDRAIN);  /* External pull up resister is necessary. */
+    GPIO_SchmittTrigger(Port4, SET_BIT0 | SET_BIT1, ENABLE);
   
     SDA = 1;                                    /* set SDA and SCL pins high */
     SCL = 1;

@@ -35,7 +35,7 @@
   *                  - \ref GPIO_MODE_OPENDRAI
   * @return  None
   * @note Confirm multi function pin is defined as GPIO first. call function_define_ML51.h to define.
-  * @exmaple :   GPIO_SetMode(Port1, BIT0|BIT7, GPIO_MODE_QUASI);
+  * @exmaple :   GPIO_SetMode(Port1, SET_BIT0 | SET_BIT7, GPIO_MODE_QUASI);
   */
 void GPIO_SetMode(unsigned char u8Port, unsigned char u8PinMask, unsigned char u8Mode)
 {
@@ -108,7 +108,7 @@ void GPIO_SetMode(unsigned char u8Port, unsigned char u8PinMask, unsigned char u
   *                  - \ref PULLDOWN
   * @return  None
   * @note none
-  * @exmaple :   GPIO_Pull_Enable(Port1, BIT0|BIT5|BIT7, PullUp);
+  * @exmaple :   GPIO_Pull_Enable(Port1, SET_BIT0 | SET_BIT5 | SET_BIT7, PullUp);
   */
 void GPIO_Pull_Enable(unsigned char u8Port, unsigned char u8PinMask, unsigned char u8PullMode)
 {
@@ -227,7 +227,7 @@ void GPIO_Pull_Disable(unsigned char u8Port, unsigned char u8PinMask, unsigned c
   *                  - \ref Disable
   * @return  None
   * @note none
-  * @exmaple :   GPIO_Pull_Enable(P1,BIT0|BIT5,PullUp);
+  * @exmaple :   GPIO_Pull_Enable(P1,SET_BIT0 | SET_BIT5,PullUp);
   */
 void GPIO_SchmittTrigger(unsigned char u8Port, unsigned char u8PinMask, unsigned char u8SStauts)
 {
@@ -287,7 +287,7 @@ _pop_(SFRS);
   *                  - \ref Disable
   * @return  None
   * @note none
-  * @exmaple :   GPIO_Pull_Enable(P1,BIT0|BIT5,PullUp);
+  * @exmaple :   GPIO_Pull_Enable(P1,SET_BIT0 | SET_BIT5,PullUp);
   */
 void GPIO_SlewRate(unsigned char u8Port, unsigned char u8PinMask, unsigned char u8SRStauts)
 {

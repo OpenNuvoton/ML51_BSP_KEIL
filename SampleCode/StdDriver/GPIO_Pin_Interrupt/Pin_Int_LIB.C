@@ -46,10 +46,10 @@ void main (void)
     MFP_P17_GPIO;
     MFP_P65_GPIO;
 
-    GPIO_SetMode(Port1,BIT7,GPIO_MODE_INPUT);
-    GPIO_SetMode(Port6,BIT5,GPIO_MODE_INPUT);
-    GPIO_Pull_Enable(Port1,BIT7,PULLUP);
-    GPIO_Pull_Enable(Port6,BIT5,PULLDOWN);
+    GPIO_SetMode(Port1,SET_BIT7,GPIO_MODE_INPUT);
+    GPIO_SetMode(Port6,SET_BIT5,GPIO_MODE_INPUT);
+    GPIO_Pull_Enable(Port1,SET_BIT7,PULLUP);
+    GPIO_Pull_Enable(Port6,SET_BIT5,PULLDOWN);
     GPIO_EnableInt(PIT0,BOTH,EDGE,Port1,7);
     GPIO_EnableInt(PIT1,HIGH,LEVEL,Port6,5);
 

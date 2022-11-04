@@ -15,9 +15,9 @@
 void main (void)
 {
 /* As defaut all multi function define as GPIO */ 
-    GPIO_SetMode(Port1,BIT0|BIT5|BIT7,GPIO_MODE_QUASI);
-    GPIO_SetMode(Port4,BIT6|BIT1,GPIO_MODE_PUSHPULL);
-    GPIO_SetMode(Port6,BIT0|BIT1,GPIO_MODE_PUSHPULL);
+    GPIO_SetMode(Port1,SET_BIT0 | SET_BIT5| SET_BIT7, GPIO_MODE_QUASI);
+    GPIO_SetMode(Port4,SET_BIT6 | SET_BIT1, GPIO_MODE_PUSHPULL);
+    GPIO_SetMode(Port6,SET_BIT0 | SET_BIT1, GPIO_MODE_PUSHPULL);
   while(1)
   {
     P1 = ~P1;

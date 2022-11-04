@@ -21,11 +21,11 @@
   *                       - \ref VBOD_3_7 (3.7V)
   *                       - \ref VBOD_4_4 (4.4V)
   * @param[in] u8bodresetstatus define reset or not when BOD event trig.
-  *                       - \ref BOD_Reset_Enable
-  *                       - \ref BOD_Reset_Disable
+  *                       - \ref BOD_RESET
+  *                       - \ref BOD_NO_RESET
   * @return  None
   * @note    None
-  * @exmaple :  BOD_Open(ENBALE,VBOD_2_0, BOD_Reset_Enable);
+  * @exmaple :  BOD_Open(ENABLE,VBOD_2_0, BOD_RESET);
   * @exmaple :  BOD_Open(Disable,0,0);
 */
 void BOD_Open(unsigned char u8bodstatus, unsigned char u8bodlevel, unsigned char u8bodresetstatus)
@@ -48,7 +48,7 @@ void BOD_Open(unsigned char u8bodstatus, unsigned char u8bodlevel, unsigned char
   *                       - \ref LPBOD_MODE_3 (Turn on BOD every 25.6ms)
   * @return  None
   * @note    None
-  * @exmaple :  BOD_LowPower(LPBOD_MODE3);
+  * @exmaple :  BOD_LowPower(LPBOD_MODE_3);
 */
 void BOD_LowPower(unsigned char u8LPBDD)
 {

@@ -55,7 +55,7 @@ void UART0_Init(void)
     SFRS = 0x00;
     InitialUART0_Timer1();
     set_SCON_TI;
-    IP = IP | BIT4;
+    IP = IP | SET_BIT4;
     ES=1;
 }
 #endif
