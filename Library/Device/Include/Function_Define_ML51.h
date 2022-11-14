@@ -163,7 +163,7 @@ typedef signed long           int32_t;
 #define    ENABLE_SPI0_INTERRUPT                            set_EIE0_ESPI0
 #define    ENABLE_PWM0_FB_INTERRUPT                         set_EIE0_EFB0  
 #define    ENABLE_WDT_INTERRUPT                             set_EIE0_EWDT  
-#define    ENABLE_PWMM0_INTERRUPT                           set_EIE0_EPWM0  
+#define    ENABLE_PWM0_INTERRUPT                            set_EIE0_EPWM0  
 #define    ENABLE_CAPTURE_INTERRUPT                         set_EIE0_ECAP  
 #define    ENABLE_PIN_INTERRUPT                             set_EIE0_EPI  
 #define    ENABLE_I2C_INTERRUPT                             set_EIE0_EI2C0
@@ -213,7 +213,7 @@ typedef signed long           int32_t;
 #define    DISABLE_SPI0_INTERRUPT                           clr_EIE0_ESPI0 
 #define    DISABLE_PWM0_FB_INTERRUPT                        clr_EIE0_EFB0  
 #define    DISABLE_WDT_INTERRUPT                            clr_EIE0_EWDT  
-#define    DISABLE_PWMM0_INTERRUPT                          clr_EIE0_EPWM0  
+#define    DISABLE_PWM0_INTERRUPT                           clr_EIE0_EPWM0  
 #define    DISABLE_CAPTURE_INTERRUPT                        clr_EIE0_ECAP  
 #define    DISABLE_PIN_INTERRUPT                            clr_EIE0_EPI  
 #define    DISABLE_I2C_INTERRUPT                            clr_EIE0_EI2C0
