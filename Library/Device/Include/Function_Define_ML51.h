@@ -621,7 +621,7 @@ typedef signed long           int32_t;
 #define    PWM0_CENTER_TYPE                 SFRS=1;PWM0CON1|=0x10
 
 /*--------- PWM0 mode define ------------------------------------*/
-#define    PWM0_IMDEPENDENT_MODE            SFRS=1;PWM0CON1&=0x3F
+#define    PWM0_INDEPENDENT_MODE            SFRS=1;PWM0CON1&=0x3F
 #define    PWM0_COMPLEMENTARY_MODE          SFRS=1;PWM0CON1&=0x3F;PWM0CON1|=0x40
 #define    PWM0_SYNCHRONIZED_MODE           SFRS=1;PWM0CON1&=0x3F;PWM0CON1|=0x80
 #define    ENABLE_PWM0_GP_MODE              SFRS=1;PWM0CON1|=0x20
@@ -715,7 +715,7 @@ typedef signed long           int32_t;
 #define    PWM1_EDGE_TYPE                     SFRS=2;PWM1CON1&=0xEF
 #define    PWM1_CENTER_TYPE                   SFRS=2;PWM1CON1|=0x10
 /*--------- PWM1 mode define ------------------------------------*/ 
-#define    PWM1_IMDEPENDENT_MODE              SFRS=2;PWM1CON1&=0x3F
+#define    PWM1_INDEPENDENT_MODE              SFRS=2;PWM1CON1&=0x3F
 #define    PWM1_COMPLEMENTARY_MODE            SFRS=2;PWM1CON1&=0x3F;PWM1CON1|=0x40
 #define    PWM1_SYNCHRONIZED_MODE             SFRS=2;PWM1CON1&=0x3F;PWM1CON1|=0x80
 //--------- PWM1 clock devide define ----------------------------
