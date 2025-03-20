@@ -23,8 +23,8 @@
 #define BYTE_PROGRAM_CONFIG  0xE1
 #define READ_UID             0x04
 #define PAGE_SIZE            128
-#define APROM_SIZE           61440   /* 60K bytes AP size , 4K LD size*/
-//#define APROM_SIZE           62464   /* 61K bytes AP size, 3K LD size */
+///#define APROM_SIZE           61440   /* 60K bytes AP size , 4K LD size*/
+#define APROM_SIZE           62464   /* 61K bytes AP size, 3K LD size */
 //#define APROM_SIZE           63488   /* 62K bytes PA size, 2K LD size */
 
  
@@ -46,9 +46,9 @@ extern  bit volatile g_progarmflag;
 
 extern unsigned char PID_highB,PID_lowB,DID_highB,DID_lowB,CONF0,CONF1,CONF2,CONF4;
 extern unsigned char recv_CONF0,recv_CONF1,recv_CONF2,recv_CONF4;
-void Init_I2C(void);
+void Init_I2C1(void);
 void TM0_ini(void);
-void UART0_ini_115200_24MHz(void);
 void Package_checksum(void);
 void READ_ID(void);
 void READ_CONFIG(void);
+void Timer1_Delay10ms(UINT32 u32CNT);

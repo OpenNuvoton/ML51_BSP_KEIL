@@ -28,6 +28,7 @@
     ENABLE_GLOBAL_INTERRUPT;                                  /* Global interrupt enable */
 
 #if defined UART0_TX_only
+    DISABLE_UART0_INTERRUPT;
     while (1)
     {
       UART_Send_Data(UART0,0x55);
@@ -41,7 +42,9 @@
     if (uart0_receive_flag)
     {
       uart0_receive_flag = 0;
+	  DISABLE_UART0_INTERRUPT;
       UART_Send_Data(UART0,uart0_receive_data);
+      ENABLE_UART0_INTERRUPT;
     }
   }
 #endif 

@@ -15,44 +15,48 @@
 4. LX51                       All project use LX51 instead of BL51.
 
 2021/2
-1. WDT                        Added WDT divider 512/1024/2048 item.
-2. hex2bin                    Modified hextobin linking from startup/exe to keil/C51/NUlink and remove startup/exe folder
-3. LCD Power down             Added LCD power down for ML54 ML56 series.
+1. WDT                       Added WDT divider 512/1024/2048 item.
+2. hex2bin                   Modified hextobin linking from startup/exe to keil/C51/NUlink and remove startup/exe folder
+3. LCD Power down            Added LCD power down for ML54 ML56 series.
 
 2021/4
-1. lib folder                 lib for touch key updated
-2. pwm123                     update pwm123.c library file 
+1. lib folder                File lib for touch key updated
+2. pwm123                    Update pwm123.c library file 
 
 2021/5
-1. UART3                      lib / uart3.c modify interrupt vector.
-2. I2C                        StdDriver added I2C interrupt master/slave project
-3. DID                        lib read DID -> read DID/PID
-4. GPIO                       P6 sfrs page. Added PIT disable control in functiom_define.h
-5. PWM                        lib / pwm.c  PWM0C0H
+1. UART3                     File lib / uart3.c modify interrupt vector.
+2. I2C                       StdDriver added I2C interrupt master/slave project
+3. DID                       File lib read DID -> read DID/PID
+4. GPIO                      P6 sfrs page. Added PIT disable control in functiom_define.h
+5. PWM                       File lib / pwm.c  PWM0C0H
 
 2022/4
-1.P1.0                        MFP_P10_UART1_RXD define to 7
+1.P1.0                       MFP_P10_UART1_RXD define to 7
 
 2022/7
-1.All                         Added Apache License in all lib .c file
-2.PWM                         Added SampleCode\StdDriver\PWM0_Independent_Reload project. Added PWM_Reload() API.
-3.ADC                         Remove all ADC slow speed define.
+1.All                        Added Apache License in all lib .c file
+2.PWM                        Added SampleCode\StdDriver\PWM0_Independent_Reload project. Added PWM_Reload() API.
+3.ADC                        Remove all ADC slow speed define.
 
-2022/8                        LCD update API for LCD view
+2022/8                       LCD update API for LCD view
 
 2022/10
-1. GPIO PIT                   PIT project optimize add printf
-2. VREF                       API preload register fixed
+1. GPIO PIT                  PIT project optimize add printf
+2. VREF                      API preload register fixed
 
 2023/3
-1. eeprom_sprom               Modified eeprom_sprom.c lib onepage modify rule.
+1. eeprom_sprom              Modified eeprom_sprom.c lib onepage modify rule.
 
 2023/7
-1. Power Management           Added power management folder for power current measure. 
+1. Power Management          Added power management folder for power current measure. 
 
 2023/8
-1. WKT                        update WKT lib add ML51/ ML56 different WKT control. after py checked.
+1. WKT                       Udate WKT lib add ML51/ ML56 different WKT control. after py checked.
 
 2024/10
-1. I2C                        Modify RegBased I2C0_EEPROM_Read_Write project with start clear SI and STA.
-2. TK lib                     Added lib for LCDView TK function. Remove "calibration" and "freerun" lib only keep "massproducion" for supporting both function.
+1. I2C                       Modify RegBased I2C0_EEPROM_Read_Write project with start clear SI and STA.
+2. TK lib                    Added lib for LCDView TK function. Remove "calibration" and "freerun" lib only keep "massproducion" for supporting both function.
+
+2025/03
+1. UART0/1                   Added disable UART RX interrupt when using checkflag TX to help UART TX behavior stable.
+2. ISP_I2C                   Added I2C1 ISP project. added I2C transfer time out after last package to help quick run in APROM.

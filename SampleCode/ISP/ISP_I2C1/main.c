@@ -6,10 +6,10 @@
 /*---------------------------------------------------------------------------------------------------------*/
 
 //***********************************************************************************************************
-//  File Function: ML51/ML54/ML56 I2C ISP demo code
+//  File Function: ML51/ML54/ML56 I2C1 ISP demo code
 //***********************************************************************************************************
 #include "ml51.h"
-#include "isp_i2c0.h"
+#include "isp_i2c1.h"
 
 //#define  isp_with_wdt
 /************************************************************************************************************
@@ -17,14 +17,17 @@
 ************************************************************************************************************/
 void main (void)
 {
-    bI2CDataReady=0;
-    set_CHPCON_IAPEN;
+  bI2CDataReady=0;
+  set_CHPCON_IAPEN;
+/****************************************************************************/
+/* Need re- power on to confirm enable modify HIRC.
+/****************************************************************************/
+    Init_I2C1(); 
 
-    Init_I2C0();
-
-    TM0_ini();
+    TM0_ini();  
     g_timer0Over=0;
     g_timer0Counter=5000;
+ 
     g_progarmflag=0;
 
 while(1)
@@ -45,15 +48,14 @@ while(1)
               set_IAPTRG_IAPGO_WDCLR;
 #else
               set_IAPTRG_IAPGO;
-
 #endif
           
               IAPCN = BYTE_READ_AP;             /* program byte verify */
               TA=0xAA;TA=0x55;IAPTRG|=0x01;     /* Since EA disabled and page 0 */
               if(IAPFD!=rx_buf[count])
-              while(1);                          
-              if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
               while(1);
+              if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
+              while(1);                       /* Disable to reduce Code Size */
               g_totalchecksum=g_totalchecksum+rx_buf[count];
               flash_address++;
   
@@ -61,7 +63,7 @@ while(1)
               {
                 g_progarmflag=0;
                 g_timer1Over =1;
-                 goto END_2;          
+                goto END_2;
               }
             } 
 END_2:                
@@ -154,7 +156,7 @@ END_2:
               recv_CONF1 = rx_buf[9];
               recv_CONF2 = rx_buf[10];
               recv_CONF4 = rx_buf[12];
-/*Erase CONFIG */              
+/*Erase CONFIG */
               set_IAPUEN_CFUEN;
               IAPCN = PAGE_ERASE_CONFIG;
               IAPAL = 0x00;
@@ -234,7 +236,7 @@ END_2:
               AP_size|=(rx_buf[13]<<8);  
               g_progarmflag=1;
 
-/* Program APROM Size */				
+/* Program APROM Size */
               for(count=16;count<64;count++)
               {
                 IAPCN = BYTE_PROGRAM_AP;
@@ -242,6 +244,7 @@ END_2:
                 IAPAH = (flash_address>>8)&0xff;
                 IAPFD = 0xFF;
                 IAPFD = rx_buf[count];
+                clr_CHPCON_IAPFF;
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
@@ -251,19 +254,17 @@ END_2:
 /* Read verify APROM Size */
                 IAPCN = BYTE_READ_AP;
                 set_IAPTRG_IAPGO;
-
                 if(IAPFD!=rx_buf[count])
                 while(1);
                 if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
-                while(1);
-
+                while(1);                       /* Disable to reduce Code Size */
                 g_totalchecksum = g_totalchecksum+rx_buf[count];
                 flash_address++;
                 
                 if(flash_address==AP_size)
                 {
                   g_progarmflag=0;
-                  goto END_1;
+                   goto END_1;
                 }
               }
 END_1:                

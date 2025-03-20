@@ -8,7 +8,7 @@
 //  File Function: ML51 UART0 ISP subroutine
 //***********************************************************************************************************
 #include "ml51.h"
-#include "isp_i2c.h"
+#include "isp_i2c0.h"
 
 
 xdata volatile uint8_t rx_buf[64]; 
@@ -29,12 +29,11 @@ bit volatile g_progarmflag;
 bit BIT_TMP;
 unsigned char PID_highB,PID_lowB,DID_highB,DID_lowB,CONF0,CONF1,CONF2,CONF4;
 unsigned char recv_CONF0,recv_CONF1,recv_CONF2,recv_CONF4;
-#define ADDR_SLA              0x60<<1
+#define ADDR_SLA              0xC0  // 0x60<<1
 
 
 void READ_ID(void)
 {
-//    set_CHPCON_IAPEN;
     IAPCN = READ_DID;
     IAPAH = 0x00;
     IAPAL = 0x00;
@@ -66,7 +65,6 @@ void READ_CONFIG(void)
     IAPAL = 0x04;
     set_IAPTRG_IAPGO;
     CONF4 = IAPFD;
-//    clr_CHPCON_IAPEN;
 }
 
 void TM0_ini(void)
@@ -117,12 +115,32 @@ if(g_timer0Counter)
   }
 }
 
-void Init_I2C(void)
+
+void Timer1_Delay10ms(UINT32 u32CNT)
 {
-    SFRS=2;P2MF54&=0;P2MF54|=0x66;              //set SCL (P25) MFP //set SDA (P24) MFP
-	  SFRS=1;P2M1|=0x30;P2M2|=0x30;         //set SCL (P25) is Quasi mode//set SDA (P24) is Quasi mode
-//    SDA = 1;                                  //set SDA and SCL pins high default high remove to reduce Code Size
-//    SCL = 1;
+    clr_CKCON_T1M;                                    //T1M=0, Timer1 Clock = Fsys/12
+    TMOD |= 0x10;                                //Timer1 is 16-bit mode
+    set_TCON_TR1;                                    //Start Timer1
+    while (u32CNT != 0)
+    {
+        TL1 = LOBYTE(65536UL-13334UL);    //Find  define in "Function_define.h" "TIMER VALUE"
+        TH1 = HIBYTE(65536UL-13334UL);
+        while (TF1 != 1);                        //Check Timer1 Time-Out Flag
+        clr_TCON_TF1;
+        u32CNT --;
+    }
+    clr_TCON_TR1;                                     //Stop Timer1
+}
+
+
+void Init_I2C0(void)
+{
+    MFP_P25_I2C0_SCL;
+    MFP_P24_I2C0_SDA;
+    P25_OPENDRAIN_MODE;
+    P24_OPENDRAIN_MODE;
+    P25 = 1;                                      //SCL = 1;
+    P24 = 1;                                      //SDA = 1
     set_EIE0_EI2C0;                               //enable I2C Interrupt by setting EIE bit 0
     set_I2C0CON_I2CEN;                            //enable I2C circuit 
     I2C0ADDR0 = ADDR_SLA;                          //define own slave address    
@@ -140,8 +158,7 @@ void I2C0_ISR (void) interrupt 6
         bI2CDataReady = 0;
         bISPDataReady = 0;
         g_u8SlvDataLen = 0;
-        //I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI_AA);
-        set_I2C0CON_AA;;
+        set_I2C0CON_AA;
     } else if (I2C0STAT == 0x80)                 /* Previously address with own SLA address
                                                    Data has been received; ACK has been returned*/
     {
@@ -153,7 +170,6 @@ void I2C0_ISR (void) interrupt 6
         if (g_u8SlvDataLen == 0x3F) {
             //I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI);
         } else {
-            //I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI_AA);
           set_I2C0CON_AA;
         }
     } else if (I2C0STAT == 0xA8) {             /* Own SLA+R has been receive; ACK has been return */
@@ -169,7 +185,6 @@ void I2C0_ISR (void) interrupt 6
         
         I2C0DAT=u8data;
         g_u8SlvDataLen++;
-       // I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI_AA);
         set_I2C0CON_AA;
     } else if (I2C0STAT == 0xB8) {
         if (_bISPDataReady == 0) {
@@ -186,17 +201,14 @@ void I2C0_ISR (void) interrupt 6
         if (g_u8SlvDataLen == 0x00) {
            // I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI);
         } else {
-          //  I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI_AA);
           set_I2C0CON_AA;
         }
     } else if (I2C0STAT == 0xC8) {
-       // I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI_AA);
-      set_I2C0CON_AA;
+        set_I2C0CON_AA;
     } else if (I2C0STAT == 0xC0)                 /* Data byte or last data in I2CDAT has been transmitted
                                                    Not ACK has been received */
     {
-       // I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI_AA);
-      set_I2C0CON_AA;
+        set_I2C0CON_AA;
     } else if (I2C0STAT == 0x88)                 /* Previously addressed with own SLA address; NOT ACK has
                                                    been returned */
     {
@@ -204,14 +216,12 @@ void I2C0_ISR (void) interrupt 6
         g_u8SlvDataLen++;
         bI2CDataReady = (g_u8SlvDataLen == 64);
         g_u8SlvDataLen = 0;
-      //  I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI_AA);
-      set_I2C0CON_AA;
+        set_I2C0CON_AA;
     } else if (I2C0STAT == 0xA0)                 /* A STOP or repeated START has been received while still
                                                    addressed as Slave/Receiver*/
     {
         g_u8SlvDataLen = 0;
-        //I2C_SET_CONTROL_REG(i2c, I2C_CTL_SI_AA);
-      set_I2C0CON_AA;
+        set_I2C0CON_AA;
     } else {
         /* TO DO */
         // printf("Status 0x%x is NOT processed\n", u32Status);

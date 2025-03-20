@@ -32,6 +32,7 @@ void main (void)
     ENABLE_GLOBAL_INTERRUPT;                //Enable global interrupt
 
 #if defined UART1_TX_only
+    DISABLE_UART1_INTERRUPT;
     while(1)
     {
         UART_Send_Data(UART1,0x55);
@@ -44,10 +45,11 @@ void main (void)
       if (uart1_receive_flag)
       {   
           uart1_receive_flag = 0;
+          DISABLE_UART1_INTERRUPT;
           UART_Send_Data(UART1,uart1_receive_data);
+          ENABLE_UART1_INTERRUPT;
       }
     }
 #endif
-    while(1);
 }
   

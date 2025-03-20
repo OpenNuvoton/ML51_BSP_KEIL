@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>ISP_I2C0</TargetName>
+      <TargetName>ISP_I2C1</TargetName>
       <ToolsetNumber>0x0</ToolsetNumber>
       <ToolsetName>MCS-51</ToolsetName>
       <uAC6>0</uAC6>
@@ -46,7 +46,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\Output\</OutputDirectory>
-          <OutputName>ISP_I2C0</OutputName>
+          <OutputName>ISP_I2C1</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -173,7 +173,7 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4103</DriverSelection>
+            <DriverSelection>4101</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\Nuvoton_8051_Keil_uVision_Driver.dll</Flash2>
@@ -382,14 +382,11 @@
               <FilePath>..\main.c</FilePath>
             </File>
             <File>
-              <FileName>isp_i2c0.c</FileName>
+              <FileName>isp_i2c1.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\isp_i2c0.c</FilePath>
+              <FilePath>..\isp_i2c1.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>Common</GroupName>
         </Group>
         <Group>
           <GroupName>Startup</GroupName>
