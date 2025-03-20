@@ -68,9 +68,10 @@ unsigned char UART3_Receive_Data()
  */ 
 void UART3_Send_Data(unsigned char c)
 {
-    clr_SC1CR0_TXOFF;
+	clr_SC1CR0_TXOFF;
     SC1DR = c;
     while(!(SC1TSR&SET_BIT3));
-    clr_SC1CR0_TXOFF;
+    while(SC1TSR&SET_BIT7);
+    set_SC1CR0_TXOFF;
 }
 
