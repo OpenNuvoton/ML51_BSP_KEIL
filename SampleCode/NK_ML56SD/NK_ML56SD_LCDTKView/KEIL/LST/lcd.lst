@@ -1,0 +1,279 @@
+C51 COMPILER V9.60.0.0   LCD                                                               04/28/2025 14:43:21 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LCD
+OBJECT MODULE PLACED IN .\Output\lcd.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\..\..\Library\StdDriver\src\lcd.c LARGE OMF2 OPTIMIZE(4,SPEED) BRO
+                    -WSE INCDIR(..\..\..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\
+                    -..\..\Library\LCDLib;..\..\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\lcd.l
+                    -st) TABS(2) OBJECT(.\Output\lcd.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include "ml51.h"
+   9          
+  10          /**
+  11           *  @brief LCD Initialization routine.
+  12           *  @param[in]  u8LCDPowerType  LCD Power type: \ref TYPE_A (Standard) / \ref TYPE_B (LowPower)
+  13           *  @param[in]  u8LCDVSource    LCD VLCD source: \ref AVDD_PIN / \ref VLCD_PIN / \ref Internal_VCP  \ref L
+             -CD_VSource_Disable
+  14           *  @param[in]  u8DrivingVol    LCD driving voltage: \ref LCD_CPVOL_5_4V / \ref LCD_CPVOL_5_2V / \ref LCD_
+             -CPVOL_5_0V / 
+  15           *                                                   \ref LCD_CPVOL_4_8V / \ref LCD_CPVOL_4_6V / \ref LCD_
+             -CPVOL_4_4V / 
+  16           *                                                   \ref LCD_CPVOL_4_2V / \ref LCD_CPVOL_4_0V / \ref LCD_
+             -CPVOL_3_8V /
+  17           *                                                   \ref LCD_CPVOL_3_6V / \ref LCD_CPVOL_3_4V / \ref LCD_
+             -CPVOL_3_2V /
+  18           *                                                   \ref LCD_CPVOL_3_0V / \ref LCD_CPVOL_2_8V
+  19           *  @param[in]  u8BiasLevel     LCD bias level: \ref BIAS_1_2 (1/2 bias) / \ref BIAS_1_3 (1/3 bias) / \ref
+             - BIAS_1_4 (1/4 bias)
+  20           *  @param[in]  u8ComNum        LCD Com number: \ref LCD_4COM (1/4 Duty)/ \ref LCD_6COM (1/6 Duty)/ \ref L
+             -CD_8COM ((1/8 Duty)
+  21           *  @return None.
+  22           *  @example LCD_Open(TYPE_A, Internal_VCP, LCD_CPVOL_3_6V, BIAS_1_4, LCD_8COM );
+  23           */
+  24          void LCD_Open(unsigned char u8LCDPowerType, unsigned char u8LCDVSource, unsigned char u8DrivingVol, unsign
+             -ed char u8BiasLevel, unsigned char u8ComNum)
+  25          {
+  26   1          LCD_Disable();
+  27   1          /* Turn all segments off */
+  28   1          LCD_SetAllPixels(Disable);
+  29   1      
+  30   1          switch(u8LCDPowerType)
+  31   1          {
+  32   2            case TYPE_A: clr_LCDCON0_TYPE; break;
+  33   2            case TYPE_B: set_LCDCON0_TYPE; break;
+  34   2          }
+  35   1      
+  36   1            LCDCON0&=0xC0; LCDCON0|=u8BiasLevel;    //Setting bias 
+  37   1            LCDCON0&=0xF3; LCDCON0|=u8ComNum;       //Setting com
+  38   1            LCDCPUMP = u8DrivingVol;                //Setting charge pump voltage
+C51 COMPILER V9.60.0.0   LCD                                                               04/28/2025 14:43:21 PAGE 2   
+
+  39   1            LCDMODE = u8LCDVSource;                 // VLCD source select
+  40   1      
+  41   1      }
+  42          
+  43          
+  44          /**
+  45           *  @brief LCD Current Mode Select.
+  46           *  @param[in]  u8LCDCurrentSel   LCD Current type: \ref Resistor_Enhance_Mode/
+  47           *                                                  \ref Resistor_PowerSave_Mode /
+  48           *                                                  \ref Buffer_PowerSave_Mode /
+  49           *                                                  \ref Resistor_Mode /
+  50           *                                                  \ref Buffer_Mode /
+  51           *  @param[in]  u8LCDPSSel        LCD Power Saving Select\: \ref TurnOn_All / \ref TurnOn_1_4 / \ref TurnO
+             -n_2_4 / \ref TurnOn_3_4 /
+  52           *  @Note    (Resistor_Enhance_Mode + TurnOn_All), (Buffer_Mode + TurnOn_All), (PowerSave_Mode + TurnOn_x_
+             -4)
+  53           *  @example LCD_Current_Mode(Buffer_Mode, TurnOn_All);
+  54           */
+  55          void LCD_Current_Mode(unsigned char u8LCDCurrentSel, unsigned char u8LCDPSSel)
+  56          {
+  57   1          SFRS=3;
+  58   1          LCDMODE |= (u8LCDCurrentSel&0xc0);               // lcd Driving type
+  59   1          switch (u8LCDCurrentSel)
+  60   1          {
+  61   2            case Buffer_PowerSave_Mode: 
+  62   2            case Resistor_PowerSave_Mode: 
+  63   2              LCDPWR = u8LCDPSSel; break;
+  64   2            case Resistor_Enhance_Mode:
+  65   2              LCDMODE|=Resistor_Mode;
+  66   2              set_LCDCON1_RE_MODE;
+  67   2            case Buffer_Mode: 
+  68   2            case Resistor_Mode: 
+  69   2              LCDPWR=0; break;
+  70   2          }
+  71   1      }
+  72          
+  73          /**
+  74           *  @brief VLCD source control subrution for Power Down power consumption contorl 
+  75           *  @param[in]  u8LCDVSource    LCD VLCD source: \ref AVDD_PIN / \ref VLCD_PIN / \ref Internal_VCP  \ref L
+             -CD_VSource_Disable
+  76           *  @return None.
+  77           *  @return LCD_VSource_Control(LCD_VSource_Disable);
+  78           */
+  79          void LCD_VSource_Control(unsigned char u8LCDVSource)
+  80          {       
+  81   1          SFRS = 3;    //switch sfrs to page3
+  82   1          LCDMODE &= 0xFC;
+  83   1          LCDMODE |= u8LCDVSource;                 // VLCD source select
+  84   1      }
+  85          
+  86          /**
+  87           *  @brief LCD clock Setting.
+  88           *  @param[in]  u8LCDCLKSource  LCD Clock source select: \ref LIRC (lirc/16) / \ref LXT (lxt/16) 
+  89           *  @param[in]  u8LCDCLKDiv     LCD clock divider value: \ref LCD_FREQ_DIV1 / \ref LCD_FREQ_DIV2 / \ref LC
+             -D_FREQ_DIV4 / \ref LCD_FREQ_DIV8 /
+  90           *                                                       \ref LCD_FREQ_DIV16 / \ref LCD_FREQ_DIV32
+  91           *  @return LCD frame rate.
+  92           *  @example LCD_Clock_Setting(LIRC, LCD_FREQ_DIV2);
+  93           */
+  94          void LCD_Clock_Setting(unsigned char u8LCDCLKSource, unsigned char u8LCDCLKDiv)
+  95          {
+  96   1          SFRS=3;
+C51 COMPILER V9.60.0.0   LCD                                                               04/28/2025 14:43:21 PAGE 3   
+
+  97   1          switch (u8LCDCLKSource)
+  98   1          {
+  99   2            case LIRC: clr_LCDCLK_LCDCKS;  break;
+ 100   2            case LXT: set_LCDCLK_LCDCKS;   break;
+ 101   2          }
+ 102   1          LCDCLK&=0xF8; LCDCLK|=u8LCDCLKDiv;
+ 103   1      }
+ 104          
+ 105          /**
+ 106           *  @brief LCD blink frequrency seetting.
+ 107           *  @param[in]  u8LCDBKStatus  LCD blink enalbe: \ref Enable or 1 / \ref Disable or 0 
+ 108           *  @param[in]  u8LCDBKFEQ     LCD blink frequency set: \ref 0~7 / LCD Clock source /2 * (11 + u8LCDBKFEQ 
+             -)^
+ 109           *                                                      \ref                            blink Value =  0/1
+             -/2/3/4/5/6/7
+ 110           *                                                      \ref LCD clock = LIRC , LCD blink frequency =  16/
+             -8/4/2/1/0.5/0.25/0.125
+ 111           *                                                      \ref                    LCD blink timing    = 62.5
+             -ms/125.0ms/250ms/500ms/1s/2s/4s/8s
+ 112           *                                                      \ref LCD clock = LXT , LCD blink frequency  = 18.7
+             -50/9.375/4.688/2.344/1.172/0.586/0.293/0.146
+ 113           *                                                      \ref                   LCD blink timing      = 53m
+             -s/107ms/213ms/427ms/853ms/1.707s/3.413s/6.827s
+ 114           *  @return None.
+ 115           *  @return LCD_Blink(Enable,7);
+ 116           */
+ 117          void LCD_Blink(unsigned char u8LCDBKStatus, unsigned char u8LCDBKFEQ)
+ 118          {
+ 119   1          SFRS=3;
+ 120   1          LCDBL |= u8LCDBKFEQ;
+ 121   1          LCDBL=(u8LCDBKStatus<<3)|LCDBL;
+ 122   1      }
+ 123          
+ 124          /**
+ 125           *  @brief LCD interrupt initial.
+ 126           *  @param[in]  u8lcdIntStatus     LCD interrupt : \ref Enable / \ref Disable/
+ 127           *  @param[in]  u8lcdIntSel        LCD interrupt select: \ref LCD_CPRD_INT / \ref LCD_CPALARM_INT/
+ 128           *  @param[in]  u8lcdAlmValue      LCD charge pump alarm value
+ 129           *  @return None
+ 130           */
+ 131          void LCD_Interrupt_Initial(unsigned char u8lcdIntStatus, unsigned char u8lcdIntSel, unsigned int u8lcdAlmV
+             -alue)
+ 132          {
+ 133   1        unsigned char datatemp;
+ 134   1          SFRS=3;
+ 135   1          datatemp|= ((u8lcdIntStatus<<2)|u8lcdIntSel);
+ 136   1          TA=0xAA; TA=0x55; LCDCON1 = datatemp;
+ 137   1          datatemp = LOBYTE(u8lcdAlmValue);
+ 138   1          TA=0xAA; TA=0x55; LCDCPALCT0 = datatemp;
+ 139   1          datatemp = HIBYTE(u8lcdAlmValue);
+ 140   1          TA=0xAA; TA=0x55; LCDCPALCT1 = datatemp;
+ 141   1          LCDCON0 |= SET_BIT0;
+ 142   1      }
+ 143          
+ 144          /**
+ 145           *  @brief LCD Enable/Disable all segments
+ 146           *  @param[in] u8OnOff  Disable or 0: Disable all segments
+ 147           *                      Enable or 1: Enable all segments
+ 148           *  @return None
+ 149           */
+ 150          void LCD_SetAllPixels(unsigned char u8OnOff)
+ 151          {
+C51 COMPILER V9.60.0.0   LCD                                                               04/28/2025 14:43:21 PAGE 4   
+
+ 152   1          unsigned char u8SetValue, i;
+ 153   1        
+ 154   1          if(u8OnOff)
+ 155   1              u8SetValue = 0xFF;
+ 156   1          else
+ 157   1              u8SetValue = 0x00;
+ 158   1      
+ 159   1          SFRS = 3;
+ 160   1          for(i = 0;i<32;i++)
+ 161   1          {
+ 162   2            LCDPTR = i;                  /* all SEG  */
+ 163   2            LCDDAT = u8SetValue;         /* all COM  */
+ 164   2          }
+ 165   1      }
+ 166          
+ 167          /**
+ 168           *  @brief LCD Display mode when MCU in power down mode
+ 169           *  @param[in] u8LCDDisplay  Disable or 0: Disable display in power down mode
+ 170           *                           Enable or 1: Enable display in power down mode
+ 171           *  @return None
+ 172           */
+ 173          void LCD_PowerDown_Display(unsigned char u8LCDDisplay)
+ 174          {
+ 175   1          switch(u8LCDDisplay)
+ 176   1          {
+ 177   2            case Enable:
+ 178   2            case LCD_ON: set_LCDCLK_DISP; break;
+ 179   2            case Disable:
+ 180   2            case LCD_OFF: clr_LCDCLK_DISP; break;
+ 181   2          }
+ 182   1      }
+ 183          
+ 184          /**
+ 185           *  @brief LCD on dot disaplay setting 
+ 186           *  @param[in]  u8LCDCOM  LCD COM select: \ref 0~7 / LCD COM number
+ 187           *  @param[in]  u8LCDSEG  LCD SEG select: \ref 0~31 / LCD segment value
+ 188           *  @param[in]  u8OnOff   LCD display status: \ref Enable / 1
+ 189           *                                            \ref Disable / 0
+ 190           *  @return None.
+ 191           *  @return LCD_SetPixel(0,0,Enable);
+ 192           */
+ 193          void LCD_SetOnePixel(unsigned char u8LCDCOM, unsigned char u8LCDSEG, unsigned char u8OnOff)
+ 194          {       
+ 195   1          SFRS = 3;    //switch sfrs to page3
+ 196   1          LCDPTR = u8LCDSEG;
+ 197   1          if(u8OnOff)
+ 198   1             LCDDAT |= (1 << u8LCDCOM);
+ 199   1          else
+ 200   1             LCDDAT &= ~(1 << u8LCDCOM); 
+ 201   1      }
+ 202          
+ 203          
+ 204          
+ 205          
+ 206          void LCD_Enable(void)
+ 207          {
+ 208   1          set_LCDCON0_LCDEN;
+ 209   1      }
+ 210          
+ 211          void LCD_Disable(void)
+ 212          {
+ 213   1          clr_LCDCON0_LCDEN;
+C51 COMPILER V9.60.0.0   LCD                                                               04/28/2025 14:43:21 PAGE 5   
+
+ 214   1      }
+ 215          
+ 216          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    346    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       5
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

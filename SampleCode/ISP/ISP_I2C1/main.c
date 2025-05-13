@@ -215,7 +215,14 @@ END_2:
               set_IAPUEN_APUEN;
               IAPFD = 0xFF;                 /* Erase must set IAPFD = 0xFF */
               IAPCN = PAGE_ERASE_AP;
-
+			  
+              g_totalchecksum=0;
+              flash_address=0;
+              AP_size=0;
+              AP_size=rx_buf[12];
+              AP_size|=(rx_buf[13]<<8);  
+              g_progarmflag=1;
+			  
 /* Erase APROM Size */
               for(count=0;count<AP_size/PAGE_SIZE;count++)
               {
@@ -228,13 +235,6 @@ END_2:
               set_IAPTRG_IAPGO;
 #endif
               }
-
-              g_totalchecksum=0;
-              flash_address=0;
-              AP_size=0;
-              AP_size=rx_buf[12];
-              AP_size|=(rx_buf[13]<<8);  
-              g_progarmflag=1;
 
 /* Program APROM Size */
               for(count=16;count<64;count++)

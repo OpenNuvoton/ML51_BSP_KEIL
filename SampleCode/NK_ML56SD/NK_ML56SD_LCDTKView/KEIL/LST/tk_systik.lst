@@ -1,0 +1,212 @@
+C51 COMPILER V9.60.0.0   TK_SYSTIK                                                         04/28/2025 14:43:21 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TK_SYSTIK
+OBJECT MODULE PLACED IN .\Output\tk_systik.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\tk_systik.c LARGE OMF2 OPTIMIZE(4,SPEED) BROWSE INCDIR(..\..\..\..\Li
+                    -brary\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCDLib;..\.
+                    -.\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\tk_systik.lst) TABS(2) OBJECT(
+                    -.\Output\tk_systik.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include "ML51.h"
+   9          /******************************************************************************
+  10           * SysTick is used as system time base.
+  11           * It provided upper to install/remove callback function.
+  12           * Initial sysTick function: Init_SysTick()
+  13           * Install callback function: TickSetTickEvent()
+  14           * Remove callback function: TickClearTickEvent()
+  15           ******************************************************************************/
+  16          typedef void (*sys_pvTimeFunPtr)(void);   /* function pointer */
+  17          typedef struct timeEvent_t
+  18          {
+  19              uint8_t             active;
+  20              unsigned long       initTick;
+  21              unsigned long       curTick;
+  22              sys_pvTimeFunPtr    funPtr;
+  23          } TimeEvent_T;
+  24          
+  25          #define TRUE                    1
+  26          #define FALSE                   0
+  27          #define TICKEVENTCOUNT         (4)                      /* 1 ~ 3 */
+  28          volatile  TimeEvent_T tTime0Event[TICKEVENTCOUNT];
+  29          volatile uint8_t xdata _sys_uTime0EventCount = 0;             /* Speed up interrupt reponse time if no cal
+             -lback function */
+  30          volatile uint32_t xdata u32Tick = 0;
+  31          
+  32          #if 1 /* 45 byte */
+  33          void TickClearTickEvent(uint8_t u8TimeEventID)
+  34          {
+  35   1          if (u8TimeEventID > TICKEVENTCOUNT)
+  36   1              return;
+  37   1      
+  38   1          if (tTime0Event[u8TimeEventID].active == TRUE)
+  39   1          {
+  40   2              tTime0Event[u8TimeEventID].active = FALSE;
+  41   2              _sys_uTime0EventCount--;
+  42   2          }
+  43   1      }
+  44          #endif
+  45          #if 1  //(1124-846= 278)
+C51 COMPILER V9.60.0.0   TK_SYSTIK                                                         04/28/2025 14:43:21 PAGE 2   
+
+  46          char TickSetTickEvent(unsigned long uTimeTick, void *pvFun)
+  47          {
+  48   1          int  i;
+  49   1          int u8TimeEventID = 0;
+  50   1      
+  51   1          for (i = 0; i < TICKEVENTCOUNT; i++)
+  52   1          {
+  53   2              if (tTime0Event[i].active == FALSE)
+  54   2              {
+  55   3                  tTime0Event[i].active = TRUE;
+  56   3                  tTime0Event[i].initTick = uTimeTick;
+  57   3                  tTime0Event[i].curTick = uTimeTick;
+  58   3                  tTime0Event[i].funPtr = (sys_pvTimeFunPtr)pvFun;
+  59   3                  u8TimeEventID = i;
+  60   3                  _sys_uTime0EventCount += 1;
+  61   3                  break;
+  62   3              }
+  63   2          }
+  64   1      
+  65   1          if (i == TICKEVENTCOUNT)
+  66   1          {
+  67   2              return -1;    /* -1 means invalid channel */
+  68   2          }
+  69   1          else
+  70   1          {
+  71   2              return u8TimeEventID;    /* Event ID start from 0*/
+  72   2          }
+  73   1      }
+  74          
+  75          #endif
+  76          
+  77          
+  78          /******************************************************************************
+  79           Using Timer 2 Auto Reload as systick
+  80          
+  81           ******************************************************************************/
+  82          #if 0 // 1536 - 1124 = 412 
+              uint16_t Timer2_AutoReload(uint16_t u16SysKHz, uint16_t u16CallbackPerHz, uint8_t u32PreDiv)
+              {
+                  uint16_t u16Reload = 0xFFFF - ((1000 / u16CallbackPerHz) * (u16SysKHz / u32PreDiv));
+                  return u16Reload;
+              }
+              void Init_SysTick(void)
+              {
+                  uint8_t i;
+                  uint16_t u16Reload;
+              
+              
+                  /* Init systick */
+                  TIMER2_DIV_16;
+                  TIMER2_DELAY_MODE;                              /* Timer2 Auto Reload Mode */
+                  u16Reload = Timer2_AutoReload(24000, 50, 16);
+              
+                  SFRS = 1;                                       /* Following register located on page 1 */
+                  RCMP2H = u16Reload >> 8;
+                  RCMP2L = (uint8_t)u16Reload;
+                  SFRS = 0;
+              
+                  /* Remove all callback function */
+                  for (i = 0; i < TICKEVENTCOUNT; i++)
+                      TickClearTickEvent(i);
+              
+C51 COMPILER V9.60.0.0   TK_SYSTIK                                                         04/28/2025 14:43:21 PAGE 3   
+
+                  _sys_uTime0EventCount = 0;
+              
+                  set_EIE0_ET2;     //Enable timer 2
+                  set_T2CON_TR2;    //Start timer 2
+              }
+              #else // 1155 - 1124 = 31 
+ 114          void Init_SysTick(void)
+ 115          {
+ 116   1          uint8_t i;
+ 117   1          _sys_uTime0EventCount = 0;
+ 118   1          TIMER2_DIV_16;
+ 119   1          TIMER2_DELAY_MODE;
+ 120   1      
+ 121   1          SFRS = 1;  /* Page 1 */
+ 122   1          RCMP2H = 0x8A;
+ 123   1          RCMP2L = 0xCF;
+ 124   1          SFRS = 0;  /* Page 1 */
+ 125   1      
+ 126   1          /* Remove all callback function */
+ 127   1          for (i = 0; i < TICKEVENTCOUNT; i++)
+ 128   1              TickClearTickEvent(i);
+ 129   1      
+ 130   1          _sys_uTime0EventCount = 0;
+ 131   1      
+ 132   1          set_EIE0_ET2;     //Enable timer 2
+ 133   1          set_T2CON_TR2;    //Start timer 2
+ 134   1      }
+ 135          #endif
+ 136          
+ 137          
+ 138          #if 1  //1459 - 1155 = 304
+ 139          void Timer2_ISR(void) interrupt 5
+ 140          {
+ 141   1          uint8_t i;
+ 142   1      
+ 143   1          clr_T2CON_TF2;                                //Clear Timer2 Interrupt Flag
+ 144   1      
+ 145   1          u32Tick += 1;
+ 146   1      
+ 147   1          if (u32Tick >= 0xfffffff)
+ 148   1          {
+ 149   2              u32Tick = 0;
+ 150   2          }
+ 151   1      
+ 152   1          if (_sys_uTime0EventCount)
+ 153   1          {
+ 154   2              for (i = 0; i < TICKEVENTCOUNT; i++)
+ 155   2              {
+ 156   3                  if (tTime0Event[i].active)
+ 157   3                  {
+ 158   4                      tTime0Event[i].curTick--;
+ 159   4      
+ 160   4                      if (tTime0Event[i].curTick == 0)
+ 161   4                      {
+ 162   5                          (*tTime0Event[i].funPtr)();
+ 163   5                          tTime0Event[i].curTick = tTime0Event[i].initTick;
+ 164   5                      }
+ 165   4                  }
+ 166   3              }
+ 167   2          }
+ 168   1      }
+ 169          #endif
+C51 COMPILER V9.60.0.0   TK_SYSTIK                                                         04/28/2025 14:43:21 PAGE 4   
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    781    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     53      12
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

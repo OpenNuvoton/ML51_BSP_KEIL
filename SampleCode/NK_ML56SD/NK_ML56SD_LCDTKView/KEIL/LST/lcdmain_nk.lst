@@ -1,0 +1,164 @@
+C51 COMPILER V9.60.0.0   LCDMAIN_NK                                                        04/28/2025 14:43:22 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE LCDMAIN_NK
+OBJECT MODULE PLACED IN .\Output\lcdmain_nk.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\lcdmain_nk.c LARGE OMF2 OPTIMIZE(4,SPEED) BROWSE INCDIR(..\..\..\..\L
+                    -ibrary\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCDLib;..\
+                    -..\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\lcdmain_nk.lst) TABS(2) OBJEC
+                    -T(.\Output\lcdmain_nk.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          //********************************************************************************************************
+             -***
+   9          //  File Function: ML51 NuMaker LCD driver main
+  10          //********************************************************************************************************
+             -***
+  11          #include "ml51.h"
+  12          #include "nk_ml56.h"
+  13          #include "lcdlib.h"
+  14          
+  15          
+  16          void LCD_IO_Init(void)
+  17          {
+  18   1      
+  19   1          /* Enable COM pin MFP */
+  20   1          MFP_P25_LCD_COM0;
+  21   1          MFP_P24_LCD_COM1;
+  22   1          MFP_P23_LCD_COM2;
+  23   1          MFP_P22_LCD_COM3;
+  24   1          MFP_P45_LCD_COM4;
+  25   1          MFP_P44_LCD_COM5;
+  26   1          MFP_P43_LCD_COM6;
+  27   1          MFP_P42_LCD_COM7;
+  28   1          /* Enable SEG pin MFP */
+  29   1          MFP_P41_LCD_SEG27;
+  30   1          MFP_P40_LCD_SEG26;
+  31   1          MFP_P63_LCD_SEG25;
+  32   1          MFP_P62_LCD_SEG24;
+  33   1          MFP_P61_LCD_SEG23;
+  34   1          MFP_P60_LCD_SEG22;
+  35   1          MFP_P14_LCD_SEG21;
+  36   1          MFP_P15_LCD_SEG20;
+  37   1          MFP_P16_LCD_SEG19;
+  38   1          MFP_P17_LCD_SEG18;
+  39   1          MFP_P46_LCD_SEG17;
+  40   1          MFP_P47_LCD_SEG16;
+  41   1          MFP_P33_LCD_SEG15;
+  42   1          MFP_P32_LCD_SEG14;
+  43   1          //    MFP_P31_LCD_SEG13;
+  44   1          //    MFP_P30_LCD_SEG12;
+C51 COMPILER V9.60.0.0   LCDMAIN_NK                                                        04/28/2025 14:43:22 PAGE 2   
+
+  45   1          MFP_P67_LCD_SEG11;
+  46   1          MFP_P66_LCD_SEG10;
+  47   1          MFP_P65_LCD_SEG9;
+  48   1          MFP_P64_LCD_SEG8;
+  49   1          MFP_P27_LCD_SEG7;
+  50   1          MFP_P26_LCD_SEG6;
+  51   1          MFP_P21_LCD_SEG5;
+  52   1          MFP_P20_LCD_SEG4;
+  53   1          MFP_P35_LCD_SEG3;
+  54   1          MFP_P34_LCD_SEG2;
+  55   1          MFP_P07_LCD_SEG1;
+  56   1          MFP_P06_LCD_SEG0;
+  57   1      
+  58   1          MFP_P11_LCD_DH1;
+  59   1          MFP_P12_LCD_DH2;
+  60   1      
+  61   1      }
+  62          
+  63          //----------------------------------------------------------------------------------------------//
+  64          void LCD_Init_Setting(void)
+  65          {
+  66   1      
+  67   1          /* As defaut all multi function define as GPIO */
+  68   1          LCD_IO_Init();
+  69   1      
+  70   1          LCD_Open(TYPE_B, Internal_VCP, LCD_CPVOL_4_6V, BIAS_1_4, LCD_8COM);
+  71   1          LCD_Clock_Setting(LIRC, LCD_FREQ_DIV2);
+  72   1          LCD_Current_Mode(Buffer_PowerSave_Mode, TurnOn_2_4);
+  73   1          LCD_Blink(Disable, 0);
+  74   1          LCD_PowerDown_Display(LCD_ON);
+  75   1          LCD_Enable();
+  76   1      
+  77   1      }
+  78          
+  79          void LCD_frame1(void)
+  80          {
+  81   1          unsigned long temp;
+  82   1          LCD_SetOnePixel(0, 27, 0);
+  83   1          /* Show logo and battery level */
+  84   1          LCDLIB_SetSymbol(SYMBOL_NVT_14, 1);
+  85   1          LCDLIB_SetSymbol(SYMBOL_W_13, 1);
+  86   1          LCDLIB_SetSymbol(SYMBOL_BAT_FRAME_18, 1);
+  87   1          LCDLIB_SetSymbol(SYMBOL_BAT_1_18, 1);
+  88   1          LCDLIB_SetSymbol(SYMBOL_BAT_2_18, 1);
+  89   1          /*Show Main Zone */
+  90   1          LCDLIB_Printf(ZONE_MAIN_DIGIT, "*ML56*");
+  91   1          /* Show counter */
+  92   1          LCDLIB_PrintNumber(ZONE_PPM_DIGIT, (tkct));
+  93   1          /* Show temperature */
+  94   1          temp = internal_Temperature();
+  95   1          LCDLIB_PrintNumber(ZONE_TEMP_DIGIT, temp);
+  96   1          LCDLIB_SetSymbol(SYMBOL_TEMP_C_35, 1);
+  97   1          /* Show bsp version */
+  98   1          /* 200002 means support LCD View*/
+  99   1          LCDLIB_PrintNumber(ZONE_VER_DIGIT, 200002);
+ 100   1      
+ 101   1      }
+ 102          
+ 103          void LCD_frame2(void)
+ 104          {
+ 105   1      
+ 106   1          //  LCD_SetAllPixels(Enable);
+C51 COMPILER V9.60.0.0   LCDMAIN_NK                                                        04/28/2025 14:43:22 PAGE 3   
+
+ 107   1          /* Show logo and battery level */
+ 108   1          LCDLIB_SetSymbol(SYMBOL_NVT_14, 1);
+ 109   1          LCDLIB_SetSymbol(SYMBOL_W_13, 1);
+ 110   1          LCDLIB_SetSymbol(SYMBOL_BAT_FRAME_18, 1);
+ 111   1          LCDLIB_SetSymbol(SYMBOL_BAT_1_18, 1);
+ 112   1          LCDLIB_SetSymbol(SYMBOL_BAT_2_18, 1);
+ 113   1          /*Show Main Zone */
+ 114   1          LCDLIB_Printf(ZONE_MAIN_DIGIT, "TOUCH");
+ 115   1          /* Show counter */
+ 116   1          LCDLIB_PrintNumber(ZONE_PPM_DIGIT, (tkct));
+ 117   1          /* Show bsp version */
+ 118   1          /* 200002 means support LCD View*/
+ 119   1          LCDLIB_PrintNumber(ZONE_VER_DIGIT, 200002);
+ 120   1      }
+ 121          
+ 122          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    785    ----
+   CONSTANT SIZE    =     45    ----
+   XDATA SIZE       =    608       4
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

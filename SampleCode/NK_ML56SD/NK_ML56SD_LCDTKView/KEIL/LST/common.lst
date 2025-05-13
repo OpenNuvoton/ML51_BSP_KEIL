@@ -1,0 +1,124 @@
+C51 COMPILER V9.60.0.0   COMMON                                                            04/28/2025 14:43:23 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE COMMON
+OBJECT MODULE PLACED IN .\Output\common.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\..\..\Library\StdDriver\src\common.c LARGE OMF2 OPTIMIZE(4,SPEED) 
+                    -BROWSE INCDIR(..\..\..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\
+                    -..\..\..\Library\LCDLib;..\..\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\co
+                    -mmon.lst) TABS(2) OBJECT(.\Output\common.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include "ml51.h"
+   9          bit BIT_TMP;
+  10          unsigned char data  TA_REG_TMP,SFRS_TMP,BYTE_TMP;
+  11          
+  12          /**
+  13           * @brief       Read Dataflash
+  14           * @param       Dataflash start address
+  15           * @return      Dataflash Value
+  16           * @details     None
+  17           */
+  18           unsigned char Read_APROM_BYTE(unsigned int code *u16_addr)
+  19          {
+  20   1          unsigned char rdata;
+  21   1          rdata = *u16_addr >> 8;
+  22   1          return rdata;
+  23   1      }
+  24          
+  25          /**
+  26           * @brief       Global Interrupt Status (EA)
+  27           * @param       Enable / Disable
+  28           * @return      None
+  29           * @details     after all IP interrupt enable. Must enable gloabl interrupt.
+  30           * @Example     Global_Interrupt(ENABLE);
+  31           */
+  32          void Global_Interrupt(unsigned char u8IntStatus)
+  33          {
+  34   1          EA = u8IntStatus;
+  35   1      }
+  36          
+  37          /**
+  38           * @brief       Software reset API
+  39           * @param       Run in APROM/LDROM after reset
+  40           *                       - \ref BOOT_APROM: Run in APROM after reset .
+  41           *                       - \ref BOOT_LDROM: Run in LDROM after reset.
+  42           * @return      None
+  43           * @details     None
+  44           */
+  45          void Software_Reset(unsigned char u8Bootarea)
+  46          {
+C51 COMPILER V9.60.0.0   COMMON                                                            04/28/2025 14:43:23 PAGE 2   
+
+  47   1          unsigned char boottemp;
+  48   1          boottemp = (0x80|u8Bootarea);
+  49   1          TA = 0xAA;
+  50   1          TA = 0x55;
+  51   1          CHPCON = boottemp;                   //software reset enable
+  52   1      }
+  53          
+  54          /**
+  55           * @brief       MCU power down mode enable API
+  56           * @param       Enable power down mode
+  57           *                       - \ref ENABLE: Run into power down mode .
+  58           * @return      None
+  59           * @details     None
+  60           */
+  61          void PowerDown_Mode(bit PDStatus)
+  62          {
+  63   1          if (PDStatus)
+  64   1          {
+  65   2             POWERDOWN_MODE_ENABLE;
+  66   2             CALL_NOP;
+  67   2             CALL_NOP;
+  68   2          }
+  69   1      }
+  70          
+  71          /**
+  72           * @brief       MCU idle mode enable API
+  73           * @param       Enable idle mode
+  74           *                       - \ref ENABLE: Run into idle mode .
+  75           * @return      None
+  76           * @details     None
+  77           */
+  78          void Idle_Mode(bit IdleStatus)
+  79          {
+  80   1          if (IdleStatus)
+  81   1          {
+  82   2             IDLE_MODE_ENABLE;
+  83   2             CALL_NOP;
+  84   2             CALL_NOP;
+  85   2          }
+  86   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     50    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      3    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1       2
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,121 @@
+C51 COMPILER V9.60.0.0   VREF                                                              04/28/2025 14:43:23 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE VREF
+OBJECT MODULE PLACED IN .\Output\vref.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\..\..\Library\StdDriver\src\vref.c LARGE OMF2 OPTIMIZE(4,SPEED) BR
+                    -OWSE INCDIR(..\..\..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..
+                    -\..\..\Library\LCDLib;..\..\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\vref
+                    -.lst) TABS(2) OBJECT(.\Output\vref.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include "ml51.h"
+   9          
+  10          
+  11          /**
+  12            * @brief  Reload VREF trim value 
+  13            * @param[in]  u8VREFtrimValue only 2 level as following 
+  14            *                  - \ref LEVEL1 = 2.048V , when VDD > 2.4V
+  15            *                  - \ref LEVEL3 = 3.072V , when VDD > 3.4V
+  16          
+  17          */
+  18          void VREF_Reload(unsigned char u8VREFtrimValue)
+  19          {
+  20   1        unsigned char u8Count;
+  21   1        switch(u8VREFtrimValue)
+  22   1        {
+  23   2          case LEVEL0:
+  24   2          case LEVEL1:
+  25   2              set_CHPCON_IAPEN;
+  26   2              IAPAL = 0x43;
+  27   2              IAPAH = 0x00;
+  28   2              IAPCN = READ_UID;
+  29   2              set_IAPTRG_IAPGO;
+  30   2              u8Count = IAPFD;
+  31   2              SFRS=1;TA=0xAA;TA=0x55;
+  32   2              VRFTRIM = u8Count;
+  33   2              clr_CHPCON_IAPEN;
+  34   2          break;
+  35   2          case LEVEL2:
+  36   2          case LEVEL3:
+  37   2          case LEVEL4:
+  38   2              set_CHPCON_IAPEN;
+  39   2              IAPAL = 0x46;
+  40   2              IAPAH = 0x00;
+  41   2              IAPCN = READ_UID;
+  42   2              set_IAPTRG_IAPGO;
+  43   2              u8Count = IAPFD;
+  44   2              SFRS=1;TA=0xAA;TA=0x55;
+  45   2              VRFTRIM = u8Count;
+  46   2              clr_CHPCON_IAPEN;
+C51 COMPILER V9.60.0.0   VREF                                                              04/28/2025 14:43:23 PAGE 2   
+
+  47   2          break;
+  48   2        }
+  49   1        
+  50   1      }
+  51          
+  52          /**
+  53            * @brief  Configure the specified ACMP module
+  54            * @param[in]  u8VREFValue from 0~5
+  55            *                  - \ref LEVEL0 = 1.538V , when VDD > 1.8V
+  56            *                  - \ref LEVEL1 = 2.048V , when VDD > 2.4V
+  57            *                  - \ref LEVEL2 = 2.560V , when VDD > 2.9V
+  58            *                  - \ref LEVEL3 = 3.072V , when VDD > 3.4V
+  59            *                  - \ref LEVEL4 = 4.096V , when VDD > 4.5V
+  60          */
+  61          void VREF_Open(unsigned char u8VREFValue)
+  62          {
+  63   1          VREF_Reload(u8VREFValue);
+  64   1          SFRS = 1;
+  65   1          TA_REG_TMP=(u8VREFValue<<4)|0x03;
+  66   1          TA=0xAA;TA=0x55;
+  67   1          VRFCON=TA_REG_TMP;
+  68   1          _nopDelay_();
+  69   1          _nopDelay_();
+  70   1          TA=0xAA;TA=0x55;
+  71   1          VRFCON&=0xFD;
+  72   1      }
+  73          
+  74          /**
+  75            * @brief  Disable Internal Vref
+  76            * @param[in]  None
+  77          */
+  78          void VREF_Disable()
+  79          {
+  80   1          SFRS = 1;
+  81   1          TA=0xAA;TA=0x55;
+  82   1          VRFCON=0;
+  83   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    311    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

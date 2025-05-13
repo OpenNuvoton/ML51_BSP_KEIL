@@ -1,0 +1,471 @@
+C51 COMPILER V9.60.0.0   RTC                                                               04/28/2025 14:43:22 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE RTC
+OBJECT MODULE PLACED IN .\Output\rtc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\..\..\Library\StdDriver\src\rtc.c LARGE OMF2 OPTIMIZE(4,SPEED) BRO
+                    -WSE INCDIR(..\..\..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\
+                    -..\..\Library\LCDLib;..\..\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\rtc.l
+                    -st) TABS(2) OBJECT(.\Output\rtc.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include "ml51.h"
+   9          static volatile unsigned char g_u8Reg, g_u8Reg1,g_u8hiYear,g_u8loYear,g_u8hiMonth,g_u8loMonth,g_u8hiDay,g_
+             -u8loDay;
+  10          static volatile unsigned char g_u8hiHour,g_u8loHour,g_u8hiMin,g_u8loMin,g_u8hiSec,g_u8loSec,g_u8DataTmp;
+  11          
+  12          void _RTC_RWEN_(void)
+  13          {
+  14   1          while(!(RTCRWEN&SET_BIT0));
+  15   1      }
+  16          
+  17          void RTC_Initial_Run(void)
+  18          {
+  19   1         SFRS=3;TA=0xAA;TA=0x55;RTCINIT=0x57; 
+  20   1      }
+  21          
+  22          void RTC_Initial_Pause(void)
+  23          {
+  24   1         SFRS=3;TA=0xAA;TA=0x55;RTCINIT=0x5F;
+  25   1      }
+  26          
+  27          /**
+  28           *  @brief    RTC clock source select
+  29           *  @param[in]    u8RTCClockSource \n
+  30           *                     Specify the RTC clock source. It includes: \n
+  31           *                     LIRC: RTC clock source is LIRC                      \n
+  32           *                     LXT: RTC clock source is LXT                        \n
+  33           *  @return   None
+  34           *  @example RTC_Clock_Select(LIRC);
+  35           */
+  36          void RTC_Clock_Select(unsigned char u8RTCClockSource)
+  37          {
+  38   1          switch (u8RTCClockSource)
+  39   1          {
+  40   2              case LIRC: set_RTCCLKSEL_C32KS; break;
+  41   2              case LXT:  clr_RTCCLKSEL_C32KS; break;
+  42   2          }
+  43   1      }
+  44          
+  45          /**
+C51 COMPILER V9.60.0.0   RTC                                                               04/28/2025 14:43:22 PAGE 2   
+
+  46           *  @brief    RTC tick time select
+  47           *  @param[in]    u8RTCTickSel \n
+  48           *                     Specify the RTC tick base . It includes: \n
+  49           *                     For TK (touch key) power down scan  base suggest 3 or 4 \n
+  50           *                     0 = Time tick is 1 second.                      \n
+  51           *                     1 = Time tick is 1/2 second.                    \n
+  52           *                     2 = Time tick is 1/4 second.                    \n
+  53           *                     3 = Time tick is 1/8 second.                    \n
+  54           *                     4 = Time tick is 1/16 second.                   \n
+  55           *                     5 = Time tick is 1/32 second.                   \n
+  56           *                     6 = Time tick is 1/64 second.                   \n
+  57           *                     7 = Time tick is 1/128 second.                  \n
+  58           *  @return   None
+  59           *  @example RTC_Tick_Select(3);
+  60           */
+  61          void RTC_Tick_Select(unsigned char u8RTCTickSel)
+  62          {
+  63   1          SFRS=3; 
+  64   1          RTC_RWEN;RTCTICK=0;
+  65   1          RTC_RWEN;RTCTICK|=u8RTCTickSel;
+  66   1      }
+  67          
+  68          /**
+  69           *  @brief    RTC Interrupt enable setting
+  70           *  @param[in]    u8RTCIntType \n
+  71           *                     Specify the Interrupt type. It includes: \n
+  72           *                     RTC_TIME_TICK: interrupt base on tick select             \n
+  73           *                     RTC_ALARM: interrupt base on alarm setting               \n
+  74           *  @return   None
+  75           *  @example RTC_Interrupt_Enable(RTC_ALARM);
+  76           */
+  77          void RTC_Interrupt_Enable(unsigned char u8RTCIntType)
+  78          {
+  79   1          SFRS=3; RTC_RWEN;
+  80   1          switch (u8RTCIntType)
+  81   1          {
+  82   2            case RTC_TIME_TICK: clr_RTCINTSTS_TICKIF; set_RTCINTEN_TICKIEN; break;
+  83   2            case RTC_ALARM: clr_RTCINTSTS_ALMIF;set_RTCINTEN_ALMIEN;clr_RTCINTEN_TICKIEN; break;
+  84   2          }
+  85   1      }
+  86          
+  87          /**
+  88           *  @brief    RTC Interrupt disable setting
+  89           *
+  90           *  @param[in]    u8RTCIntType \n
+  91           *                     Specify the Interrupt should be disable type. It includes: \n
+  92           *                     RTC_TIME_TICK: interrupt base on tick                      \n
+  93           *                     RTC_ALARM: interrupt base on alarm setting                 \n
+  94           *  @return   None
+  95           *  @example RTC_Interrupt_Disable(RTC_ALARM);
+  96           */
+  97          void RTC_Interrupt_Disable(unsigned char u8RTCIntType)
+  98          {
+  99   1          SFRS=3; RTC_RWEN;
+ 100   1          switch (u8RTCIntType)
+ 101   1          {
+ 102   2            case RTC_TIME_TICK: clr_RTCINTEN_TICKIEN; break;
+ 103   2            case RTC_ALARM: clr_RTCINTEN_ALMIEN; break;
+ 104   2          }
+ 105   1      }
+ 106          
+ 107          /**
+C51 COMPILER V9.60.0.0   RTC                                                               04/28/2025 14:43:22 PAGE 3   
+
+ 108           *  @brief    This function is used to update date to RTC
+ 109           *
+ 110           *  @param[in]    u32Year       The Year Calendar Digit of Alarm Setting
+ 111           *  @param[in]    u32Month      The Month Calendar Digit of Alarm Setting
+ 112           *  @param[in]    u32Day        The Day Calendar Digit of Alarm Setting
+ 113           *  @param[in]    u32DayOfWeek  The Day of Week. [ \ref RTC_SUNDAY / \ref RTC_MONDAY / \ref RTC_TUESDAY /
+ 114           *                                                 \ref RTC_WEDNESDAY / \ref RTC_THURSDAY / \ref RTC_FRIDA
+             -Y /
+ 115           *                                                 \ref RTC_SATURDAY ]
+ 116           *  @return   None
+ 117           *  @Example  RTC_SetDate(2016,10,21,6);
+ 118           */
+ 119          void RTC_SetDate(unsigned int u16Year, unsigned int u8Month, unsigned int u8Day, unsigned char u8DayOfWeek
+             -)
+ 120          {
+ 121   1          SFRS = 3;
+ 122   1          RTC_RWEN;  RTCWEEKDAY = u8DayOfWeek; 
+ 123   1            g_u8DataTmp  = (((u16Year - RTC_YEAR2000) / 10) << 4);
+ 124   1            g_u8DataTmp |= (((u16Year - RTC_YEAR2000) % 10)& 0x0F);
+ 125   1          RTC_RWEN; RTCCALYEAR = g_u8DataTmp; 
+ 126   1            g_u8DataTmp  = ((u8Month  / 10) << 4);
+ 127   1            g_u8DataTmp |= ((u8Month  % 10) & 0x0F); 
+ 128   1          RTC_RWEN; RTCCALMON = g_u8DataTmp; 
+ 129   1            g_u8DataTmp  = ((u8Day/ 10) << 4);
+ 130   1            g_u8DataTmp |= ((u8Day    % 10) & 0x0F);
+ 131   1          RTC_RWEN; RTCCALDAY = g_u8DataTmp; 
+ 132   1      }
+ 133          
+ 134          
+ 135          /**
+ 136           *  @brief    This function is used to update time to RTC.
+ 137           *
+ 138           *  @param[in]    u8Hour     The Hour Time Digit of Alarm Setting.
+ 139           *  @param[in]    u8Minute   The Month Calendar Digit of Alarm Setting
+ 140           *  @param[in]    u8Second   The Day Calendar Digit of Alarm Setting
+ 141           *  @param[in]    u8TimeMode The 24-Hour / 12-Hour Time Scale Selection. [ \ref RTC_CLOCK_12 / \ref RTC_CL
+             -OCK_24]
+ 142           *  @param[in]    u8AmPm     12-hour time scale with AM and PM indication. Only Time Scale select 12-hour 
+             -used. [ \ref RTC_AM / \ref RTC_PM]
+ 143           *  @return       None
+ 144           *  @example      RTC_SetTime(23,59,58,RTC_CLOCK_24,0);
+ 145           *
+ 146           */
+ 147          void RTC_SetTime(unsigned int u8Hour, unsigned int u8Minute, unsigned char u8Second, unsigned char u8TimeM
+             -ode, unsigned char u8AmPm)
+ 148          {
+ 149   1        SFRS = 3;
+ 150   1          if (u8TimeMode == RTC_CLOCK_12) 
+ 151   1          {
+ 152   2            RTC_RWEN; clr_RTCCLKFMT_24HEN;
+ 153   2              if (u8AmPm == RTC_PM)    /* important, range of 12-hour PM mode is 21 upto 32 */
+ 154   2                  u8Hour += 20;
+ 155   2          } 
+ 156   1          else if(u8TimeMode == RTC_CLOCK_24) 
+ 157   1          {
+ 158   2             RTC_RWEN; set_RTCCLKFMT_24HEN;
+ 159   2          }
+ 160   1            g_u8DataTmp   = ((u8Hour / 10) << 4);
+ 161   1            g_u8DataTmp  |= ((u8Hour % 10) & 0x0F);
+ 162   1          RTC_RWEN;  RTCTIMEHR =  g_u8DataTmp;
+ 163   1            g_u8DataTmp   = ((u8Minute / 10) << 4);
+ 164   1            g_u8DataTmp  |= ((u8Minute % 10) & 0x0F);
+C51 COMPILER V9.60.0.0   RTC                                                               04/28/2025 14:43:22 PAGE 4   
+
+ 165   1          RTC_RWEN;  RTCTIMEMIN = g_u8DataTmp;
+ 166   1            g_u8DataTmp   = ((u8Second / 10) << 4);
+ 167   1            g_u8DataTmp  |= ((u8Second % 10) & 0x0F);
+ 168   1          RTC_RWEN;  RTCTIMESEC = g_u8DataTmp;
+ 169   1      }
+ 170          
+ 171          
+ 172          /**
+ 173           *  @brief    This function is used to set alarm date to RTC
+ 174           *  @param[in]    u16Year    The Year Calendar Digit of Alarm Setting
+ 175           *  @param[in]    u8month   The Month Calendar Digit of Alarm Setting
+ 176           *  @param[in]    u8Day     The Day Calendar Digit of Alarm Setting
+ 177           *  @return   None
+ 178           *  @example      RTC_SetAlarmDate(2016,10,22);
+ 179           */
+ 180          void RTC_SetAlarmDate(unsigned int u16Year, unsigned char u8Month, unsigned char u8Day)
+ 181          {
+ 182   1          SFRS = 3;
+ 183   1            g_u8DataTmp  = (((u16Year - RTC_YEAR2000) / 10) << 4);
+ 184   1            g_u8DataTmp |= (((u16Year - RTC_YEAR2000) % 10)& 0x0F);
+ 185   1          RTC_RWEN; RTCCALMYEAR = g_u8DataTmp;
+ 186   1            g_u8DataTmp  = ((u8Month  / 10) << 4);
+ 187   1            g_u8DataTmp |= ((u8Month  % 10) & 0x0F); 
+ 188   1          RTC_RWEN; RTCCALMMON = g_u8DataTmp;
+ 189   1            g_u8DataTmp  = ((u8Day    / 10) << 4);
+ 190   1            g_u8DataTmp |= ((u8Day    % 10) & 0x0F);
+ 191   1          RTC_RWEN; RTCCALMDAY = g_u8DataTmp;
+ 192   1      }
+ 193          
+ 194          
+ 195          /**
+ 196           *  @brief    This function is used to set alarm date to RTC
+ 197           *  @param[in]     u8Hour     The Hour Time Digit of Alarm Setting.
+ 198           *  @param[in]     u8Minute   The Month Calendar Digit of Alarm Setting
+ 199           *  @param[in]     u8Second   The Day Calendar Digit of Alarm Setting
+ 200           *  @param[in]     u8TimeMode The 24-Hour / 12-Hour Time Scale Selection. [ \ref RTC_CLOCK_12 / \ref RTC_C
+             -LOCK_24]
+ 201           *  @param[in]     u8AmPm     12-hour time scale with AM and PM indication. Only Time Scale select 12-hour
+             - used. [ \ref RTC_AM / \ref RTC_PM]
+ 202           *  @return   None
+ 203           *  @example        RTC_SetAlarmTime(12,00,5,RTC_CLOCK_12,RTC_AM);
+ 204           */
+ 205          void RTC_SetAlarmTime(unsigned char u8Hour, unsigned char u8Minute, unsigned char u8Second, unsigned char 
+             -u8TimeMode, unsigned char u8AmPm)
+ 206          {
+ 207   1         SFRS=3;
+ 208   1         if (u8TimeMode == RTC_CLOCK_12) 
+ 209   1          {
+ 210   2            RTC_RWEN; clr_RTCCLKFMT_24HEN;
+ 211   2              if (u8AmPm == RTC_PM)    /* important, range of 12-hour PM mode is 0x21 upto 0x32 */
+ 212   2                  u8Hour += 20;
+ 213   2          } 
+ 214   1          else if(u8TimeMode == RTC_CLOCK_24) 
+ 215   1          {
+ 216   2              RTC_RWEN; set_RTCCLKFMT_24HEN; u8AmPm =0;
+ 217   2          }
+ 218   1            g_u8DataTmp   = ((u8Hour / 10) << 4);
+ 219   1            g_u8DataTmp  |= ((u8Hour % 10) & 0x0F);
+ 220   1          RTC_RWEN;  RTCTALMHR =  g_u8DataTmp;
+ 221   1            g_u8DataTmp   = ((u8Minute / 10) << 4);
+ 222   1            g_u8DataTmp  |= ((u8Minute % 10) & 0x0F);
+ 223   1          RTC_RWEN;  RTCTALMMIN = g_u8DataTmp;
+C51 COMPILER V9.60.0.0   RTC                                                               04/28/2025 14:43:22 PAGE 5   
+
+ 224   1            g_u8DataTmp   = ((u8Second / 10) << 4);
+ 225   1            g_u8DataTmp  |= ((u8Second % 10) & 0x0F);
+ 226   1          RTC_RWEN;  RTCTALMSEC = g_u8DataTmp;
+ 227   1      }
+ 228          
+ 229          
+ 230          /**
+ 231           *  @brief    Read current date/time from RTC setting
+ 232           *  @param[out]    sPt \n
+ 233           *                     Specify the time property and current time. It includes: \n
+ 234           *                     u16Year: Year value                                      \n
+ 235           *                     u8Month: Month value                                    \n
+ 236           *                     u8Day: Day value                                        \n
+ 237           *                     u8DayOfWeek: Day of week                                \n
+ 238           *                     u8Hour: Hour value                                      \n
+ 239           *                     u8Minute: Minute value                                  \n
+ 240           *                     u8Second: Second value                                  \n
+ 241           *                     u8TimeScale: \ref RTC_CLOCK_12 / \ref RTC_CLOCK_24          \n
+ 242           *                     u8AmPm: \ref RTC_AM / \ref RTC_PM                            \n
+ 243           *  @return   None
+ 244           *  @example RTC_GetDateAndTime(&sCurTime);
+ 245           */
+ 246          void RTC_GetDateAndTime(S_RTC_TIME_DATA_T *sPt)
+ 247          {
+ 248   1          unsigned long u32Tmp;
+ 249   1          SFRS = 3;
+ 250   1          RTC_RWEN; g_u8DataTmp = RTCCLKFMT;
+ 251   1            sPt->u8TimeScale = (g_u8DataTmp&SET_BIT0);    /* 12/24-hour */
+ 252   1          RTC_RWEN;
+ 253   1            sPt->u8DayOfWeek = RTCWEEKDAY;           /* Day of week */
+ 254   1      
+ 255   1          RTC_RWEN; g_u8DataTmp = RTCCALYEAR;
+ 256   1            g_u8hiYear  = ((g_u8DataTmp&0xF0)>>4);
+ 257   1            g_u8loYear  = (g_u8DataTmp&0x0F);
+ 258   1          RTC_RWEN; g_u8DataTmp = RTCCALMON;
+ 259   1            g_u8hiMonth = ((g_u8DataTmp&0xF0)>>4);
+ 260   1            g_u8loMonth = (g_u8DataTmp&0x0F);
+ 261   1          RTC_RWEN; g_u8DataTmp = RTCCALDAY;
+ 262   1            g_u8hiDay   = ((g_u8DataTmp&0xF0)>>4);
+ 263   1            g_u8loDay   = (g_u8DataTmp&0x0F);
+ 264   1      
+ 265   1          RTC_RWEN; g_u8DataTmp = RTCTIMEHR;
+ 266   1            g_u8hiHour =  ((g_u8DataTmp&0xF0)>>4);
+ 267   1            g_u8loHour =  (g_u8DataTmp&0x0F);
+ 268   1          RTC_RWEN; g_u8DataTmp = RTCTIMEMIN;
+ 269   1            g_u8hiMin  =  ((g_u8DataTmp&0xF0)>>4);
+ 270   1            g_u8loMin  =  (g_u8DataTmp&0x0F);
+ 271   1          RTC_RWEN; g_u8DataTmp = RTCTIMESEC;
+ 272   1            g_u8hiSec  =  ((g_u8DataTmp&0xF0)>>4);
+ 273   1            g_u8loSec  =  (g_u8DataTmp&0x0F);
+ 274   1      
+ 275   1          u32Tmp  = (g_u8hiYear * 10);              /* Compute to 20XX year */
+ 276   1          u32Tmp += g_u8loYear;
+ 277   1          sPt->u16Year = (u32Tmp&0x0000FFFF) + RTC_YEAR2000;
+ 278   1      
+ 279   1          u32Tmp = (g_u8hiMonth * 10);              /* Compute 0~12 month */
+ 280   1          sPt->u8Month =  (u32Tmp&0x000000FF) + g_u8loMonth;
+ 281   1      
+ 282   1          u32Tmp = (g_u8hiDay * 10);                /* Compute 0~31 day */
+ 283   1          sPt->u8Day   =   (u32Tmp&0x000000FF)  + g_u8loDay;
+ 284   1      
+ 285   1          if (sPt->u8TimeScale == RTC_CLOCK_12) { /* Compute12/24 hour */
+C51 COMPILER V9.60.0.0   RTC                                                               04/28/2025 14:43:22 PAGE 6   
+
+ 286   2              u32Tmp = (g_u8hiHour * 10);
+ 287   2              u32Tmp+= g_u8loHour;
+ 288   2              sPt->u8Hour =  (u32Tmp&0x000000FF);                 /* AM: 1~12. PM: 0x21~0x32. */
+ 289   2      
+ 290   2              if (sPt->u8Hour > 20) {
+ 291   3                  sPt->u8AmPm = RTC_PM;
+ 292   3                  sPt->u8Hour -= 20;
+ 293   3              } else {
+ 294   3                  sPt->u8AmPm = RTC_AM;
+ 295   3              }
+ 296   2      
+ 297   2              u32Tmp = (g_u8hiMin  * 10);
+ 298   2              u32Tmp+= g_u8loMin;
+ 299   2              sPt->u8Minute =  (u32Tmp&0x000000FF);
+ 300   2      
+ 301   2              u32Tmp = (g_u8hiSec  * 10);
+ 302   2              u32Tmp+= g_u8loSec;
+ 303   2              sPt->u8Second =  (u32Tmp&0x000000FF);
+ 304   2      
+ 305   2          } else {
+ 306   2              u32Tmp  = (g_u8hiHour * 10);
+ 307   2              u32Tmp += g_u8loHour;
+ 308   2              sPt->u8Hour = (u32Tmp&0x000000FF);
+ 309   2      
+ 310   2              u32Tmp  = (g_u8hiMin * 10);
+ 311   2              u32Tmp +=  g_u8loMin;
+ 312   2              sPt->u8Minute = (u32Tmp&0x000000FF);
+ 313   2      
+ 314   2              u32Tmp  = (g_u8hiSec * 10);
+ 315   2              u32Tmp += g_u8loSec;
+ 316   2              sPt->u8Second = (u32Tmp&0x000000FF);
+ 317   2          }
+ 318   1      
+ 319   1      }
+ 320          
+ 321          /**
+ 322           *  @brief    Read alarm date/time from RTC setting
+ 323           *  @param[out]    sPt \n
+ 324           *                     Specify the time property and current time. It includes: \n
+ 325           *                     u16Year: Year value                                      \n
+ 326           *                     u32Month: Month value                                    \n
+ 327           *                     u32Day: Day value                                        \n
+ 328           *                     u32DayOfWeek: Day of week                                \n
+ 329           *                     u32Hour: Hour value                                      \n
+ 330           *                     u32Minute: Minute value                                  \n
+ 331           *                     u32Second: Second value                                  \n
+ 332           *                     u32TimeScale: \ref RTC_CLOCK_12 / \ref RTC_CLOCK_24          \n
+ 333           *                     u8AmPm: \ref RTC_AM / \ref RTC_PM                            \n
+ 334           *
+ 335           *  @return   None
+ 336           *  @example RTC_GetAlarmDateAndTime(&sCurTime);
+ 337           */
+ 338          void RTC_GetAlarmDateAndTime(S_RTC_TIME_DATA_T *sPt)
+ 339          {
+ 340   1          unsigned long u32Tmp;
+ 341   1          SFRS=3;
+ 342   1          RTC_RWEN;  g_u8DataTmp = RTCCLKFMT;
+ 343   1            sPt->u8TimeScale = (g_u8DataTmp&SET_BIT0);    /* 12/24-hour */
+ 344   1          RTC_RWEN;
+ 345   1            sPt->u8DayOfWeek = RTCWEEKDAY;          /* Day of week */
+ 346   1      
+ 347   1          RTC_RWEN; g_u8DataTmp = RTCCALMYEAR;
+C51 COMPILER V9.60.0.0   RTC                                                               04/28/2025 14:43:22 PAGE 7   
+
+ 348   1            g_u8hiYear  = ((g_u8DataTmp&0xF0)>>4);
+ 349   1            g_u8loYear  = (g_u8DataTmp&0x0F);
+ 350   1          RTC_RWEN; g_u8DataTmp = RTCCALMMON;
+ 351   1            g_u8hiMonth = ((g_u8DataTmp&0xF0)>>4);
+ 352   1            g_u8loMonth = (g_u8DataTmp&0x0F);
+ 353   1          RTC_RWEN; g_u8DataTmp = RTCCALMDAY;
+ 354   1            g_u8hiDay   = ((g_u8DataTmp&0xF0)>>4);
+ 355   1            g_u8loDay   = (g_u8DataTmp&0x0F);
+ 356   1      
+ 357   1          RTC_RWEN; g_u8DataTmp = RTCTALMHR;
+ 358   1            g_u8hiHour =  ((g_u8DataTmp&0xF0)>>4);
+ 359   1            g_u8loHour =  (g_u8DataTmp&0x0F);
+ 360   1          RTC_RWEN; g_u8DataTmp = RTCTALMMIN;
+ 361   1            g_u8hiMin  =  ((g_u8DataTmp&0xF0)>>4);
+ 362   1            g_u8loMin  =  (g_u8DataTmp&0x0F);
+ 363   1          RTC_RWEN; g_u8DataTmp = RTCTALMSEC;
+ 364   1            g_u8hiSec  =  ((g_u8DataTmp&0xF0)>>4);
+ 365   1            g_u8loSec  =  (g_u8DataTmp&0x0F);
+ 366   1        
+ 367   1         u32Tmp  = (g_u8hiYear * 10);              /* Compute to 20XX year */
+ 368   1          u32Tmp += g_u8loYear;
+ 369   1          sPt->u16Year = (u32Tmp&0x0000FFFF) + RTC_YEAR2000;
+ 370   1      
+ 371   1          u32Tmp = (g_u8hiMonth * 10);              /* Compute 0~12 month */
+ 372   1          sPt->u8Month =  (u32Tmp&0x000000FF) + g_u8loMonth;
+ 373   1      
+ 374   1          u32Tmp = (g_u8hiDay * 10);                /* Compute 0~31 day */
+ 375   1          sPt->u8Day   =   (u32Tmp&0x000000FF)  + g_u8loDay;
+ 376   1      
+ 377   1          if (sPt->u8TimeScale == RTC_CLOCK_12) { /* Compute12/24 hour */
+ 378   2              u32Tmp = (g_u8hiHour * 10);
+ 379   2              u32Tmp+= g_u8loHour;
+ 380   2              sPt->u8Hour =  (u32Tmp&0x000000FF);                 /* AM: 1~12. PM: 21~32. */
+ 381   2      
+ 382   2              if (sPt->u8Hour >  20) {
+ 383   3                  sPt->u8AmPm = RTC_PM;
+ 384   3                  sPt->u8Hour -= 20;
+ 385   3              } else {
+ 386   3                  sPt->u8AmPm = RTC_AM;
+ 387   3              }
+ 388   2      
+ 389   2              u32Tmp = (g_u8hiMin  * 10);
+ 390   2              u32Tmp+= g_u8loMin;
+ 391   2              sPt->u8Minute =  (u32Tmp&0x000000FF);
+ 392   2      
+ 393   2              u32Tmp = (g_u8hiSec  * 10);
+ 394   2              u32Tmp+= g_u8loSec;
+ 395   2              sPt->u8Second =  (u32Tmp&0x000000FF);
+ 396   2      
+ 397   2          } else {
+ 398   2              u32Tmp  = (g_u8hiHour * 10);
+ 399   2              u32Tmp += g_u8loHour;
+ 400   2              sPt->u8Hour = (u32Tmp&0x000000FF);
+ 401   2      
+ 402   2              u32Tmp  = (g_u8hiMin * 10);
+ 403   2              u32Tmp +=  g_u8loMin;
+ 404   2              sPt->u8Minute = (u32Tmp&0x000000FF);
+ 405   2      
+ 406   2              u32Tmp  = (g_u8hiSec * 10);
+ 407   2              u32Tmp += g_u8loSec;
+ 408   2              sPt->u8Second = (u32Tmp&0x000000FF);
+ 409   2              sPt->u8AmPm = 0;
+C51 COMPILER V9.60.0.0   RTC                                                               04/28/2025 14:43:22 PAGE 8   
+
+ 410   2          }
+ 411   1      }
+ 412           
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   3224    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     15      36
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

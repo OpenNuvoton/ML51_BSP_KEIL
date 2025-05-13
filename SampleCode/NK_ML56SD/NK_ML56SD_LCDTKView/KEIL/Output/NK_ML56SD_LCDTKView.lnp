@@ -1,0 +1,22 @@
+".\Output\main.obj",
+".\Output\tk_data.obj",
+".\Output\tk_debuguart.obj",
+".\Output\tk_led.obj",
+".\Output\tk_massproduction.obj",
+".\Output\tk_multpinfunctions.obj",
+".\Output\tk_systik.obj",
+"..\..\..\..\Library\TKlib\TKLib_MassProduction_LX51.LIB",
+".\Output\lcd.obj",
+".\Output\lcdlib.obj",
+".\Output\lcdmain_nk.obj",
+".\Output\rtc.obj",
+".\Output\adc_vtemp.obj",
+".\Output\adc.obj",
+".\Output\vref.obj",
+".\Output\common.obj",
+".\Output\STARTUP.obj" 
+TO ".\Output\NK_ML56SD_LCDTKView" 
+
+PRINT(".\LST\NK_ML56SD_LCDTKView.map") DISABLEWARNING (16) 
+REMOVEUNUSED 
+SEGMENTS ( ?CO?TK_DATA(C:0xEE80) ) 

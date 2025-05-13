@@ -1,0 +1,102 @@
+C51 COMPILER V9.60.0.0   TK_LED                                                            04/28/2025 14:43:20 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TK_LED
+OBJECT MODULE PLACED IN .\Output\tk_led.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\tk_led.c LARGE OMF2 OPTIMIZE(4,SPEED) BROWSE INCDIR(..\..\..\..\Libra
+                    -ry\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCDLib;..\..\.
+                    -.\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\tk_led.lst) TABS(2) OBJECT(.\Outp
+                    -ut\tk_led.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include "ML51.h"
+   9          #include "TK_Demo.h"
+  10          
+  11          #define OPT_USE_LED
+  12          /**********************************************************************************
+  13          Tim:
+  14           P25 = LED3 for TK3
+  15           P24 = LED2 for TK4
+  16           P23 = LED1 for TK5
+  17           P22 = LED0 for TK6
+  18          
+  19           PY:
+  20           P13 = LED3 for TK3
+  21           P12 = LED2 for TK4
+  22           P11 = LED1 for TK5
+  23           P10 = LED0 for TK6
+  24           **********************************************************************************/
+  25          #ifdef OPT_USE_LED
+  26          typedef struct tagLEG
+  27          {
+  28              unsigned char u8Addr;
+  29              unsigned char u8Msk;
+  30          } LED_T;
+  31          
+  32          /**
+  33            * @brief      Light the led(s)
+  34            * @param[in]  onOff    0: Touch Key LED turn off
+  35            *                      1: Touch Key LED turn on
+  36            * @param[in]  chanN    the channel number to be configured. (TK1 = 1, TK2 = 2, TK3 = 3, TK4 = 4)
+  37            * @retval     None.
+  38            * @details    This function is used to light the led(s)
+  39            */
+  40          void TK_lightLED(bit onOff, int chanN)
+  41          {
+  42   1          unsigned char temp;
+  43   1      #ifdef BOARD_NUMAKER
+  44   1          P00 = onOff;
+  45   1          temp = chanN;
+  46   1      #endif
+C51 COMPILER V9.60.0.0   TK_LED                                                            04/28/2025 14:43:20 PAGE 2   
+
+  47   1      }
+  48          
+  49          /**
+  50            * @brief      Initialize touch key LED output state
+  51            * @param      None.
+  52            * @retval     None.
+  53            * @details    This function is used to initialize touch key LED output state. Default MFP is GPIO
+  54            *             Foe code size, not to set MFP regster.
+  55            */
+  56          void InitLEDIO(void)
+  57          {
+  58   1      
+  59   1      #ifdef BOARD_NUMAKER   /*For NuMaker */
+  60   1          P00_QUASI_MODE;
+  61   1          P00 = 0;
+  62   1      #endif
+  63   1      }
+  64          #endif
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     25    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       3
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

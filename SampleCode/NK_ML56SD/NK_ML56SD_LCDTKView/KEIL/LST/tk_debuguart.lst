@@ -1,0 +1,325 @@
+C51 COMPILER V9.60.0.0   TK_DEBUGUART                                                      04/28/2025 14:43:20 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TK_DEBUGUART
+OBJECT MODULE PLACED IN .\Output\tk_debuguart.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\tk_debuguart.c LARGE OMF2 OPTIMIZE(4,SPEED) BROWSE INCDIR(..\..\..\..
+                    -\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCDLib;.
+                    -.\..\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\tk_debuguart.lst) TABS(2) O
+                    -BJECT(.\Output\tk_debuguart.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          //********************************************************************************************************
+             -***
+   9          //  ML56 simple UART0 using timer 1
+  10          //  Using UART0 to communication with NuSenAdj tool which is used for calibration the specified touch key.
+  11          //  Further, use the tool for RAW data view for each key.
+  12          //********************************************************************************************************
+             -***
+  13          
+  14          #include "ML51.h"
+  15          #include "TK_Demo.h"
+  16          
+  17          #ifdef DEMO_CALIBRATION
+              #define set_SMOD    PCON    |= SET_BIT7
+              #define set_T1M     CKCON   |= SET_BIT4
+              #define clr_BRCK    T3CON   &= ~SET_BIT5
+              #define set_TR1     TR1     = 1
+              void InitialUART0_Timer1(void)
+              {
+                  SCON = 0x52;     //UART0 Mode1,REN=1,TI=1
+                  TMOD |= 0x20;    //Timer1 Mode1
+              
+                  set_SMOD;
+                  set_T1M;         //FOSC/ 1
+                  clr_BRCK;        //Serial port 0 baud rate clock source = Timer1
+              
+                  //TH1 = 256-((Fsys>>4)/u32Baudrate);
+                  TH1 = 0xF3;
+                  set_TR1;
+              }
+              #ifdef CAL_UART1
+              void InitialUART1_Timer3(unsigned long u32SysClock, UINT32 u32Baudrate)
+              {
+                  SFRS = 0x00;
+                  S1CON = 0x50;           /*UART1 Mode1,REN_1=1 */
+                  T3CON = 0x88;           /*T3PS2=0,T3PS1=0,T3PS0=0(Prescale=1), UART1 in MODE 1*/
+                  RH3    = HIBYTE(65536 - (u32SysClock / 16 / u32Baudrate));
+                  RL3    = LOBYTE(65536 - (u32SysClock / 16 / u32Baudrate));
+                  set_T3CON_TR3;          /* Trigger Timer3 */
+              }
+C51 COMPILER V9.60.0.0   TK_DEBUGUART                                                      04/28/2025 14:43:20 PAGE 2   
+
+              #endif
+              
+              void UART0_Init(void)
+              {
+              #ifdef BOARD_NUMAKER
+                  MFP_P30_UART0_RXD;      /* set P3.0 and P3.1 as Quasi mode for UART0 trasnfer */
+                  MFP_P31_UART0_TXD;
+                  P30_INPUT_MODE;
+                  P31_QUASI_MODE;
+              
+                  //    MFP_P52_UART0_RXD;
+                  //    MFP_P53_UART0_TXD;
+                  //    P52_INPUT_MODE;
+                  //    P53_QUASI_MODE;
+              #endif
+                  SFRS = 0x00;
+                  InitialUART0_Timer1();
+                  set_SCON_TI;
+                  IP = IP | SET_BIT4;
+                  ES = 1;
+              }
+              #endif
+  67          
+  68          #ifdef CAL_UART1
+              void UART1_Init(void)
+              {
+                  MFP_P26_UART1_RXD;
+                  MFP_P03_UART1_TXD;
+                  P26_INPUT_MODE;
+                  P03_QUASI_MODE;
+              
+                  InitialUART1_Timer3(24000000, 115200);
+                  SFRS = 0;
+                  set_EIP1_PS1;                   // Set UART INT priority first.
+                  TI_1 = 1;
+                  ENABLE_UART1_INTERRUPT;                 //For interrupt enable , interrupt subroutine is in uart.c fil
+             -e
+              }
+              #endif
+  83          
+  84          #ifdef UART1_DBG
+  85          //********************************************************************************************************
+             -***
+  86          //  ML56 simple UART1 using timer 3
+  87          //  Using UART1 for debug purpose.
+  88          //
+  89          //********************************************************************************************************
+             -***
+  90          #define set_TR3     T3CON   |= SET_BIT3
+  91          void InitialUART1_Timer3() //use timer3 as Baudrate generator
+  92          {
+  93   1          S1CON = 0x52;          //UART1 Mode1,REN_1=1,TI_1=1
+  94   1          T3CON &= 0xF8;         //T3PS2=0,T3PS1=0,T3PS0=0(Prescale=1)
+  95   1      
+  96   1          //RH3 = HIBYTE(65536-((Fsys>>4)/u32Baudrate));
+  97   1          //RL3 = LOBYTE(65536-((Fsys>>4)/u32Baudrate));
+  98   1          RH3 = 0xFF;
+  99   1          RL3 = 0xF3;
+ 100   1          set_TR3;               //Trigger Timer3
+ 101   1      }
+ 102          
+ 103          void UART1_Init(void)
+C51 COMPILER V9.60.0.0   TK_DEBUGUART                                                      04/28/2025 14:43:20 PAGE 3   
+
+ 104          {
+ 105   1      #ifdef BOARD_NUMAKER  /* For NuMaker UART1 debug */
+ 106   1          // MFP_P10_UART1_RXD;      /* set P1.0 and P2.7 as Quasi mode for UART0 trasnfer */
+ 107   1          MFP_P03_UART1_TXD;
+ 108   1          // P10_QUASI_MODE;
+ 109   1          P03_QUASI_MODE;
+ 110   1      #else
+                  MFP_P26_UART1_RXD;      /* set P2.6 and P2.7 as Quasi mode for UART0 trasnfer */
+                  MFP_P27_UART1_TXD;
+                  P26_QUASI_MODE;
+                  P27_QUASI_MODE;
+              #endif
+ 116   1          SFRS = 0x00;
+ 117   1          InitialUART1_Timer3();
+ 118   1          SFRS = 0x00;
+ 119   1          set_SCON_TI;
+ 120   1      }
+ 121          
+ 122          
+ 123          #define clr_TI_1    TI_1  = 0
+ 124          #define clr_RI_1    RI_1  = 0
+ 125          #if 0
+              #define XON             0x11
+              #define XOFF            0x13
+              /***********************************************************************/
+              /* putchar (full version):  expands '\n' into CR LF and handles        */
+              /*                          XON/XOFF (Ctrl+S/Ctrl+Q) protocol          */
+              /* %d     int     2 bytes                                              */
+              /* %bd    char    1 bytes                                              */
+              /* %ld    long    4 bytes                                              */
+              /* %x     int     2 bytes                                              */
+              /* %bx    char    1 bytes                                              */
+              /* %lx    long    4 bytes                                              */
+              /***********************************************************************/
+              char putchar(char c)
+              {
+                  if (c == '\n')
+                  {
+                      if (RI_1)
+                      {
+                          if (SBUF1 == XOFF)
+                          {
+                              do
+                              {
+                                  clr_RI_1;
+              
+                                  while (!RI_1);
+                              } while (SBUF1 != XON);
+              
+                              clr_RI_1;
+                          }
+                      }
+              
+                      while (!TI_1);
+              
+                      clr_TI_1;
+                      SBUF1 = 0x0d;                          /* output CR  */
+                  }
+              
+                  if (RI_1)
+                  {
+                      if (SBUF1 == XOFF)
+C51 COMPILER V9.60.0.0   TK_DEBUGUART                                                      04/28/2025 14:43:20 PAGE 4   
+
+                      {
+                          do
+                          {
+                              clr_RI_1;
+              
+                              while (!RI_1);
+                          } while (SBUF1 != XON);
+              
+                          clr_RI_1;
+                      }
+                  }
+              
+                  while (!TI_1);
+              
+                  clr_TI_1;
+              
+                  return (SBUF1 = c);
+              }
+              #endif
+ 185          #if 1 /* code size is less about 49 bytes than above */
+ 186          /***********************************************************************/
+ 187          /* putchar (basic version): expands '\n' into CR LF                    */
+ 188          /***********************************************************************/
+ 189          char putchar(char c)
+ 190          {
+ 191   1      #if 1 /* UART1 */
+ 192   1      
+ 193   1          if (c == '\n')
+ 194   1          {
+ 195   2              while (!TI_1);
+ 196   2      
+ 197   2              TI_1 = 0;
+ 198   2              SBUF1 = 0x0d;                         /* output CR  */
+ 199   2          }
+ 200   1      
+ 201   1          while (!TI_1);
+ 202   1      
+ 203   1          TI_1 = 0;
+ 204   1          return (SBUF1 = c);
+ 205   1      #else /* UART0 */
+              
+                  if (c == '\n')
+                  {
+                      while (!TI);
+              
+                      TI = 0;
+                      SBUF = 0x0d;                         /* output CR  */
+                  }
+              
+                  while (!TI);
+              
+                  TI = 0;
+                  return (SBUF = c);
+              #endif
+ 220   1      }
+ 221          #endif
+ 222          /***********************************************************************/
+ 223          /*  putchar (mini version): outputs charcter only                      */
+ 224          /***********************************************************************/
+ 225          #if 0
+              char putchar(char c)
+              {
+C51 COMPILER V9.60.0.0   TK_DEBUGUART                                                      04/28/2025 14:43:20 PAGE 5   
+
+              #if 1
+              
+                  while (!TI_1);
+              
+                  TI_1 = 0;
+                  return (SBUF1 = c);
+              #else
+              
+                  while (!TI);
+              
+                  TI = 0;
+                  return (SBUF = c);
+              #endif
+              }
+              #endif /* #if 0 */
+ 243          
+ 244          /***********************************************************************/
+ 245          /*  This file is part of the C51 Compiler package                      */
+ 246          /*  Copyright KEIL ELEKTRONIK GmbH 1993 - 2002                         */
+ 247          /***********************************************************************/
+ 248          /*                                                                     */
+ 249          /*  GETKEY.C:  This routine is the general character input of C51.     */
+ 250          /*  You may add this file to a uVision2 project.                       */
+ 251          /*                                                                     */
+ 252          /*  To translate this file use C51 with the following invocation:      */
+ 253          /*     C51 GETKEY.C  <memory model>                                    */
+ 254          /*                                                                     */
+ 255          /*  To link the modified GETKEY.OBJ file to your application use the   */
+ 256          /*  following Lx51 invocation:                                         */
+ 257          /*     Lx51 <your object file list>, GETKEY.OBJ <controls>             */
+ 258          /*                                                                     */
+ 259          /***********************************************************************/
+ 260          char _getkey()
+ 261          {
+ 262   1          char c;
+ 263   1      
+ 264   1          while (!RI_1);
+ 265   1      
+ 266   1          c = SBUF1;
+ 267   1          RI_1 = 0;
+ 268   1          return (c);
+ 269   1      }
+ 270          
+ 271          
+ 272          
+ 273          
+ 274          #endif /* OPT_UART1 */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     74    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+C51 COMPILER V9.60.0.0   TK_DEBUGUART                                                      04/28/2025 14:43:20 PAGE 6   
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

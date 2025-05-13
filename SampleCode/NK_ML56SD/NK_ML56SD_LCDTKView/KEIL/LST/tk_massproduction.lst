@@ -1,0 +1,130 @@
+C51 COMPILER V9.60.0.0   TK_MASSPRODUCTION                                                 04/28/2025 14:43:20 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE TK_MASSPRODUCTION
+OBJECT MODULE PLACED IN .\Output\tk_massproduction.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\tk_massproduction.c LARGE OMF2 OPTIMIZE(4,SPEED) BROWSE INCDIR(..\..\
+                    -..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCD
+                    -Lib;..\..\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\tk_massproduction.lst)
+                    - TABS(2) OBJECT(.\Output\tk_massproduction.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include <stdio.h>
+   9          #include <stdlib.h>
+  10          #include <string.h>
+  11          #include "ML51.h"
+  12          #include "TKLib.h"
+  13          #include "TK_Demo.h"
+  14          
+  15          volatile uint8_t xdata gbIsFineTuneDone;
+  16          volatile uint8_t xdata gFineTuneDoneTimeOut;
+  17          int8_t i8MpTickEventID = 0;
+  18          
+  19          /**
+  20            * The function was called if time out only to make sure no risk condition
+  21            *
+  22            *
+  23            */
+  24          void TK_MP_Close()
+  25          {
+  26   1          TickClearTickEvent(i8MpTickEventID);                    /* Stop time out timer */
+  27   1      }
+  28          /**
+  29            * The function is time out callback function.
+  30            *
+  31            *
+  32            */
+  33          void TickCallback_FineTuneTimeOut(void)
+  34          {
+  35   1          S_TKFEAT *psTkFeat;
+  36   1      
+  37   1          psTkFeat = TK_GetFeaturePtr();
+  38   1          gFineTuneDoneTimeOut = 1;
+  39   1          gbIsFineTuneDone = 1;
+  40   1          TK_MP_Close();
+  41   1      }
+  42          
+  43          void TK_MP_Open()
+  44          {
+  45   1          gFineTuneDoneTimeOut = 0x0;
+  46   1          gbIsFineTuneDone = 0x0;
+C51 COMPILER V9.60.0.0   TK_MASSPRODUCTION                                                 04/28/2025 14:43:20 PAGE 2   
+
+  47   1          i8MpTickEventID = TickSetTickEvent(150, TickCallback_FineTuneTimeOut);    /* 3 second time out */
+  48   1      }
+  49          
+  50          void TK_MassProduction(int8_t *pai8Signal)
+  51          {
+  52   1          uint16_t u16ChnMsk;             /* Only 15 channels, save code size */
+  53   1          uint8_t i;
+  54   1          //S_KEYINFO* psKeyInfo;
+  55   1          S_TKFEAT *psTkFeat;
+  56   1      
+  57   1          //psKeyInfo = TK_GetKeyInfoPtr();
+  58   1          psTkFeat = TK_GetFeaturePtr();
+  59   1      
+  60   1          if (gFineTuneDoneTimeOut == 1)        /* Time out return directly */
+  61   1              return;
+  62   1      
+  63   1          if (psTkFeat->u8BaseLineRound == 1)   /* Set by UART command - 'A': modify to update baseline time  */
+  64   1          {
+  65   2              //Check fine tune CCB stable?
+  66   2      
+  67   2              u16ChnMsk = TK_GetEnabledChannelMask(TK_KEY);
+  68   2              u16ChnMsk |= TK_GetEnabledChannelMask(TK_SLIDER);
+  69   2              u16ChnMsk |= TK_GetEnabledChannelMask(TK_WHEEL);
+  70   2      
+  71   2              gbIsFineTuneDone = 0xFF;
+  72   2      
+  73   2              for (i = 0; i < TKLIB_TOL_NUM_KEY ; i++)
+  74   2              {
+  75   3                  if (u16ChnMsk & (1ul << i))
+  76   3                  {
+  77   4                      if (abs(pai8Signal[i]) > 4) /* Change to 4 from 2 @2020/09/02 */
+  78   4                      {
+  79   5                          gbIsFineTuneDone = 0;   /* If any channel's signal > 2, fine tune not yet complete */
+  80   5                          break;
+  81   5                      }
+  82   4                  }
+  83   3              }
+  84   2      
+  85   2              if (gbIsFineTuneDone == 0xFF)
+  86   2              {
+  87   3                  /* callback function if fine tune done */
+  88   3                  gbIsFineTuneDone = 1;                                   /* Fine tune done */
+  89   3              }
+  90   2          }
+  91   1      }
+  92          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    278    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      3       9
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

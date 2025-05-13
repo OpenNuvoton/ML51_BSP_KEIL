@@ -1,0 +1,419 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              04/28/2025 14:43:19 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Output\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\main.c LARGE OMF2 OPTIMIZE(4,SPEED) BROWSE INCDIR(..\..\..\..\Library
+                    -\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCDLib;..\..\..\
+                    -..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\main.lst) TABS(2) OBJECT(.\Output\m
+                    -ain.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include "ml51.h"
+   9          #include "tklib.h"
+  10          #include "tk_demo.h"
+  11          #include "lcdlib.h"
+  12          #include "nk_ml56.H"
+  13          
+  14          #define TK0 0
+  15          //#define TK1 1
+  16          //#define TK2 2
+  17          //#define TK3 3
+  18          //#define TK4 4
+  19          //#define TK5 5
+  20          //#define TK6 6
+  21          //#define TK8 8
+  22          //#define TK9 9
+  23          //#define TK10 10
+  24          //#define TK11 11
+  25          //#define TK12 12
+  26          //#define TK14 14
+  27          
+  28          volatile uint8_t u8EventKeyScan = 0;
+  29          volatile int8_t i8SliderPercentage = 0;
+  30          volatile int8_t i8WheelPercentage = 0;
+  31          volatile int8_t i8KeyScanId;
+  32          
+  33          unsigned char g_u8MainState;
+  34          unsigned char g_u8IsPress;
+  35          unsigned char tkct = 1;
+  36          
+  37          typedef enum
+  38          {
+  39              eMAIN_APP_IDLE_STATE,
+  40              eMAIN_APP_TK_STATE,
+  41              eMAIN_APP_BLINK_STATE,
+  42          } E_MAIN_APP_STATE;
+  43          
+  44          #ifdef MASS_FINETUNE
+  45              void TK_MassProduction(int8_t *pai8Signal);
+  46          #endif
+C51 COMPILER V9.60.0.0   MAIN                                                              04/28/2025 14:43:19 PAGE 2   
+
+  47          
+  48          void TickCallback_KeyScan(void)
+  49          {
+  50   1          u8EventKeyScan = 1;
+  51   1      }
+  52          
+  53          /**
+  54            *  Power down wakeup each 6s for define TK power down calibration
+  55          */
+  56          
+  57          /**
+  58            *  Report touching or un-touching state depends on debounce parameter you set on calibration statge
+  59            *  For example,
+  60            *      TK_ScanKey() may report someone key pressed but its signal is less than threshold of the key.
+  61            *      The root cause is the key still under debouce stage.
+  62            */
+  63          
+  64          void TK_RawDataView(void)
+  65          {
+  66   1      
+  67   1      #ifndef BOARD_NUMAKER
+                  static int8_t i8LedChan = 0;
+                  uint8_t u8ch;
+              #endif
+  71   1          int8_t i8Ret = 0;
+  72   1          xdata int8_t ai8Signal[TKLIB_TOL_NUM_KEY];
+  73   1          int8_t ai8TmpSignal[TKLIB_TOL_NUM_KEY];
+  74   1      
+  75   1          if (u8EventKeyScan == 1)
+  76   1          {
+  77   2              //        uint8_t i;
+  78   2              u8EventKeyScan = 0;
+  79   2              /**
+  80   2                * TK_ScanKey() scan all enable key, slider and wheel channels.
+  81   2                * i8Ret : Key/slider/wheel channel with max amplitude. -1: means no any key's amplitude over the
+             - key's threshold.
+  82   2                * ai8Signal[]: The buffer size is equal to the ML56 TK channels. It reports the signal amplitude
+             - on this round
+  83   2                */
+  84   2              i8Ret = TK_ScanKey(&ai8Signal[0]);
+  85   2      
+  86   2      #ifdef MASS_FINETUNE
+  87   2              TK_MassProduction(ai8Signal);
+  88   2      #endif
+  89   2      
+  90   2      #if defined(OPT_SLIDER)
+  91   2              {
+  92   3                  /** To save buffer size, re-used the ai8Signal[] buffer
+  93   3                    * Remember that the buffer will be destroied
+  94   3                    */
+  95   3                  uint16_t u16ChnMsk; /* ML56 is only 15 TK channels */
+  96   3                  uint8_t u8Count = 0, i;
+  97   3                  static uint8_t updatecount = 0;
+  98   3      
+  99   3                  updatecount = updatecount + 1;
+ 100   3      
+ 101   3                  if (updatecount < 5)
+ 102   3                      return;
+ 103   3      
+ 104   3                  updatecount = 0;
+ 105   3      
+ 106   3                  u16ChnMsk = TK_GetEnabledChannelMask(TK_SLIDER);
+C51 COMPILER V9.60.0.0   MAIN                                                              04/28/2025 14:43:19 PAGE 3   
+
+ 107   3      
+ 108   3                  if (TK_CheckSliderWheelPressed(TK_SLIDER) == 1)
+ 109   3                  {
+ 110   4                      for (i = 0; i < TKLIB_TOL_NUM_KEY ; i++)
+ 111   4                      {
+ 112   5                          if (u16ChnMsk & (1ul << i))
+ 113   5                          {
+ 114   6                              ai8TmpSignal[u8Count] = ai8Signal[i];
+ 115   6                              u8Count = u8Count + 1;
+ 116   6                          }
+ 117   5                      }
+ 118   4      
+ 119   4                      i8SliderPercentage = TK_SliderPercentage(ai8TmpSignal, u8Count);
+ 120   4                  }
+ 121   3              }
+ 122   2      #endif
+ 123   2      #if defined(OPT_WHEEL)
+ 124   2              {
+ 125   3                  /** To save buffer size, re-used the ai8Signal[] buffer
+ 126   3                    * Remember that the buffer will be destroied
+ 127   3                    */
+ 128   3                  uint32_t u32ChnMsk; /* ML56 is only 15 TK channels */
+ 129   3                  uint8_t u8Count = 0, i;
+ 130   3      
+ 131   3                  u32ChnMsk = TK_GetEnabledChannelMask(TK_WHEEL);
+ 132   3      
+ 133   3                  if (TK_CheckSliderWheelPressed(TK_WHEEL)  == 1)
+ 134   3                  {
+ 135   4                      for (i = 0; i < TKLIB_TOL_NUM_KEY ; i++)
+ 136   4                      {
+ 137   5                          if (u32ChnMsk & (1ul << i))
+ 138   5                          {
+ 139   6                              ai8TmpSignal[u8Count] = ai8Signal[i];
+ 140   6                              u8Count = u8Count + 1;
+ 141   6                          }
+ 142   5                      }
+ 143   4      
+ 144   4                      i8WheelPercentage = TK_WheelPercentage(ai8TmpSignal, u8Count);
+ 145   4                      DBG_PRINTF("Wheel %bd\n", i8WheelPercentage);
+ 146   4                  }
+ 147   3              }
+ 148   2      #endif
+ 149   2          }
+ 150   1      }
+ 151          
+ 152          
+ 153          void main(void)
+ 154          {
+ 155   1          uint32_t u32ChanelMsk;
+ 156   1          int8_t i8Ret = -1;
+ 157   1      
+ 158   1          int8_t i8TKChan = -1;
+ 159   1      #ifdef  DEMO_FREERUN
+ 160   1          int8_t i8TKChanTemp;
+ 161   1      #endif
+ 162   1      
+ 163   1          bit lcdct = 0;
+ 164   1      
+ 165   1      #ifdef  DEMO_CALIBRATION
+              #ifdef  CAL_UART0
+                  UART0_Init();
+              #endif
+C51 COMPILER V9.60.0.0   MAIN                                                              04/28/2025 14:43:19 PAGE 4   
+
+              #ifdef  CAL_UART1
+                  UART1_Init();
+              #endif
+              #else
+ 173   1          i8TKChanTemp = TK_Data[0];
+ 174   1          i8TKChanTemp = -1;
+ 175   1      #endif
+ 176   1      
+ 177   1      #ifdef UART1_DBG
+ 178   1          UART1_Init();
+ 179   1          printf("START\r\n");
+ 180   1      #endif
+ 181   1      
+ 182   1      #ifdef BOARD_NUMAKER
+ 183   1          InitLEDIO();
+ 184   1      #endif
+ 185   1      
+ 186   1      
+ 187   1          /* Initialize FMC to Load TK setting and calibration data from flash */
+ 188   1          FMC_Open();
+ 189   1      
+ 190   1          i8Ret = TK_LoadPara(&u32ChanelMsk);
+ 191   1      #ifdef DEMO_CALIBRATION
+              
+                  EA = 1;
+              
+                  if (i8Ret == -1)
+                  {
+                      /** i8Ret = -1 means that no any calibration data stored in flash
+                        * If no any data stored in flash. Get TK setting and calibration data from UART port
+                        * Program will be blocked in the function until received START_CALIBRATION command. The return v
+             -lue will be 1
+                        */
+                      i8Ret = TK_GetPacket(&u32ChanelMsk);
+                  }
+              
+                  /* Init TK Controller */
+                  TK_Init();
+              
+                  /* Initialize Multiple Function Pins for TK */
+                  SetTkMultiFun(u32ChanelMsk);
+              
+                  /* Init systick 20ms/tick */
+                  Init_SysTick();
+              
+                  /* Install Tick Event Handler To Drive Key Scan */
+                  i8KeyScanId = TickSetTickEvent(1, TickCallback_KeyScan);
+              
+                  do
+                  {
+                      if (i8Ret == 1)
+                      {
+                          /** Receive Start calibration command
+                            * The function will be blocked until calibration done
+                            */
+                          TK_Calibration_Untouch();
+                          /* Inform UART module calibration done */
+                          UART_SetCalibrationDone();
+                      }
+              
+                      i8Ret = TK_GetPacket(&u32ChanelMsk);
+              
+C51 COMPILER V9.60.0.0   MAIN                                                              04/28/2025 14:43:19 PAGE 5   
+
+                      /** May change configurations through UART port
+                        * Init TK Controller again
+                        */
+                      TK_Init();
+              
+                      /* Initialize Multiple Function Pins for TK again */
+                      SetTkMultiFun(u32ChanelMsk);
+                  } while (1);
+              
+              #endif /* DEMO_CALIBRATION */
+ 240   1      
+ 241   1      #ifdef DEMO_FREERUN
+ 242   1          {
+ 243   2              int8_t i8TKChan = -1;
+ 244   2              static int8_t i8LedChan = -1;
+ 245   2              int8_t ai8Signal[TKLIB_TOL_NUM_KEY];
+ 246   2      
+ 247   2              if (i8Ret < 0)
+ 248   2              {
+ 249   3                  /* DBG_PRINTF("Please run target TK_Application first to calibrate touchkey\n"); */
+ 250   3                  while (1);
+ 251   3              }
+ 252   2      
+ 253   2              /* Initialize Multiple Function Pins for TK */
+ 254   2              SetTkMultiFun(u32ChanelMsk);
+ 255   2      
+ 256   2              /* Init systick 20ms/tick */
+ 257   2              Init_SysTick();
+ 258   2      
+ 259   2              /* Install Tick Event Handler To Drive Key Scan */
+ 260   2              TickSetTickEvent(1, TickCallback_KeyScan);
+ 261   2         
+ 262   2              /* Initial LCD Sub board */
+ 263   2              LCD_Init_Setting();
+ 264   2      
+ 265   2              /*RTC initial for poewr down scan*/
+ 266   2              RTC_Clock_Select(LIRC);   /* RTC clock source select */ /* one tick time still 1 sec. the deviatio
+             -n is same as the lirc deviation */ 
+ 267   2              RTC_Initial_Pause();
+ 268   2              RTC_Tick_Select(4);
+ 269   2              RTC_Initial_Run();
+ 270   2      
+ 271   2              /* Init TK Controller */
+ 272   2              TK_Init();
+ 273   2              
+ 274   2              g_u8IsPress = 0;
+ 275   2              g_u8MainState = eMAIN_APP_IDLE_STATE;
+ 276   2              ENABLE_GLOBAL_INTERRUPT;
+ 277   2       
+ 278   2              do
+ 279   2              {
+ 280   3                  /* Key press check */
+ 281   3                  if (u8EventKeyScan == 1)
+ 282   3                  {
+ 283   4                      u8EventKeyScan = 0;
+ 284   4      
+ 285   4                      if (g_u8IsPress == 0) i8LedChan = -1;
+ 286   4      
+ 287   4      TKRECHECK:
+ 288   4                      i8Ret = TK_ScanKey(&ai8Signal[0]);
+ 289   4      
+ 290   4                      if (i8Ret != -1)                    /* TK0 was pressed  */
+C51 COMPILER V9.60.0.0   MAIN                                                              04/28/2025 14:43:19 PAGE 6   
+
+ 291   4                      {
+ 292   5                          TK_lightLED(FALSE, i8LedChan);    /* TK0 LEDG2 display ON status */
+ 293   5      
+ 294   5                          if (i8LedChan != i8Ret)
+ 295   5                          {
+ 296   6                              i8LedChan = i8Ret;
+ 297   6                              i8TKChan = i8Ret;
+ 298   6                           
+ 299   6                              goto TKCHECKEND;           /* to avoid continues counting, only the first press ac
+             -tion  */
+ 300   6                          }
+ 301   5                          else
+ 302   5                          {
+ 303   6                              nop;
+ 304   6                              goto TKRECHECK;
+ 305   6                          }
+ 306   5                      }
+ 307   4                      else
+ 308   4                      {
+ 309   5                          LCDLIB_SetSymbol(SYMBOL_A_12, 0);  
+ 310   5                          i8LedChan = i8Ret;
+ 311   5                          TK_lightLED(TRUE, i8LedChan);    /* TK0 LEDG2 display OFF status */
+ 312   5                      }
+ 313   4      
+ 314   4      #if 0    /* for LCDView with TK demo. The power down function should not be enable. */
+                               TK_ConfigPowerDown(5);              /* Small value will get more sensitivity performance 
+             -than larger value. Suggest range from 0 ~ 5*/
+                               set_PCON_PD;  
+              #endif                
+ 318   4                  }
+ 319   3      
+ 320   3                  i8TKChan = -1;
+ 321   3      
+ 322   3      TKCHECKEND:
+ 323   3      
+ 324   3                  /* LCD Display base on TK check result*/
+ 325   3                  if (i8TKChan != -1)
+ 326   3                  {
+ 327   4                      g_u8IsPress = 1;
+ 328   4                      g_u8MainState = eMAIN_APP_TK_STATE;
+ 329   4      
+ 330   4                     //
+ 331   4                  }
+ 332   3      
+ 333   3                  switch (g_u8MainState)
+ 334   3                  {
+ 335   4                      case eMAIN_APP_IDLE_STATE:
+ 336   4                          LCD_frame1();
+ 337   4      
+ 338   4                          break;
+ 339   4      
+ 340   4                      case eMAIN_APP_TK_STATE:
+ 341   4      
+ 342   4                          //LED toggle
+ 343   4                          switch (i8TKChan)
+ 344   4                          {
+ 345   5                              case TK0:
+ 346   5                                  if (lcdct)
+ 347   5                                  {
+ 348   6                                      LCD_frame2();
+ 349   6                                  }
+ 350   5                                  else
+C51 COMPILER V9.60.0.0   MAIN                                                              04/28/2025 14:43:19 PAGE 7   
+
+ 351   5                                  {
+ 352   6                                      LCD_frame1();                                
+ 353   6                                  }
+ 354   5                                  tkct++;
+ 355   5                                  lcdct ^= 1;
+ 356   5                                  break;
+ 357   5                          }
+ 358   4      
+ 359   4                          break;
+ 360   4                  }
+ 361   3              } while (1);
+ 362   2          }
+ 363   1      
+ 364   1      #endif  /* DEMO_FREERUN */
+ 365   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    766    ----
+   CONSTANT SIZE    =     51    ----
+   XDATA SIZE       =    617      59
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

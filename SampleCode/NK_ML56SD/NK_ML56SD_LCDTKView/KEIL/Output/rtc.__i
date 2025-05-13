@@ -1,0 +1,1 @@
+"..\..\..\..\Library\StdDriver\src\rtc.c" LARGE OMF2 OPTIMIZE (4,SPEED) BROWSE INCDIR(..\..\..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCDLib;..\..\..\..\Library\TKlib) DEFINE (DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\rtc.lst) TABS (2) OBJECT(.\Output\rtc.obj)

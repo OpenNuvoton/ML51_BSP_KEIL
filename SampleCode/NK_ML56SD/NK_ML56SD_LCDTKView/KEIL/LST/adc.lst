@@ -1,0 +1,268 @@
+C51 COMPILER V9.60.0.0   ADC                                                               04/28/2025 14:43:23 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\Output\adc.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\..\..\..\Library\StdDriver\src\adc.c LARGE OMF2 OPTIMIZE(4,SPEED) BRO
+                    -WSE INCDIR(..\..\..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\
+                    -..\..\Library\LCDLib;..\..\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\adc.l
+                    -st) TABS(2) OBJECT(.\Output\adc.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          
+   9          #include "ml51.h"
+  10          
+  11            
+  12            /**
+  13            * @brief This API configures ADC module to be ready for convert the input from selected channel
+  14            * @param[in] u8OpMode Decides the ADC operation mode. Valid values are:
+  15            *                       - \ref ADC_SINGLE               :Single mode.
+  16            *                       - \ref ADC_CONTINUOUS           :Continuous scan mode.
+  17            * @param[in] u8ChMask Channel enable bit. Each bit corresponds to a input channel. 0 is channel 0, 1 is 
+             -channel 1..., 7 is channel 7.
+  18            *              VBG means band-gap voltage, VTEMP means temperature sensor, VLDO means LDO voltage.
+  19            * @return  None
+  20            * @note ML56 series MCU ADC can only convert 1 channel at a time. If more than 1 channels are enabled, o
+             -nly channel
+  21            *       with smallest number will be convert.
+  22            * @exmaple :  ADC_Open(ADC_SINGLE,11);
+  23            */
+  24          void ADC_Open(unsigned int u8ADCOpMode, unsigned char u8ADCChMask)
+  25          {
+  26   1        switch (u8ADCOpMode)                            //ADC signle mode or continus mode select
+  27   1        {
+  28   2          case ADC_SINGLE: SFRS=0;ADCCON1&=0xEF; break;
+  29   2          case ADC_CONTINUOUS: SFRS=0;ADCCON1|=0x10; break;
+  30   2          default: break;
+  31   2        }
+  32   1      
+  33   1        switch (u8ADCChMask)                            /* ADC input channel digtial function disable */
+  34   1        {
+  35   2          case 0:  ENABLE_ADC_CH0;   break;
+  36   2          case 1:  ENABLE_ADC_CH1;   break;
+  37   2          case 2:  ENABLE_ADC_CH2;   break;
+  38   2          case 3:  ENABLE_ADC_CH3;   break;
+  39   2          case 4:  ENABLE_ADC_CH4;   break;
+  40   2          case 5:  ENABLE_ADC_CH5;   break;
+  41   2          case 6:  ENABLE_ADC_CH6;   break;
+  42   2          case 7:  ENABLE_ADC_CH7;   break;
+  43   2          case 10: ENABLE_ADC_CH10;  break;
+  44   2          case 11: ENABLE_ADC_CH11;  break;
+C51 COMPILER V9.60.0.0   ADC                                                               04/28/2025 14:43:23 PAGE 2   
+
+  45   2          case 12: ENABLE_ADC_CH12;  break;
+  46   2          case 13: ENABLE_ADC_CH13;  break;
+  47   2          case 14: ENABLE_ADC_CH14;  break;
+  48   2          case 15: ENABLE_ADC_CH15;  break;
+  49   2          case VBG:   clr_ADCCON1_ADCEN;set_ADCCON0_ADCS;ENABLE_ADC_BANDGAP; break;
+  50   2          case VTEMP: ENABLE_ADC_VTEMP; break;
+  51   2          case VLDO:  ENALBE_ADC_VLDO; break;
+  52   2          default: break;
+  53   2        }
+  54   1        set_ADCCON1_ADCEN;                              /* enable ADC circuit*/
+  55   1      
+  56   1      }
+  57          
+  58          /**
+  59            * @brief Disable ADC module
+  60            * @param[in] adc Base address of ADC module
+  61            * @return None
+  62            */
+  63          void ADC_Close(void)
+  64          {
+  65   1          clr_ADCCON1_ADCEN;
+  66   1      }
+  67          
+  68          
+  69           /**
+  70            * @brief This configures ADC module to be ready for convert the input from selected channel
+  71            * @param[in] u16ADCRBase Decides the ADC RAM Base Address High byte + Low byte total
+  72            * @param[in] u8ADCRLength Decides the ADC continui The total sampling numbers for ADC continue sampling 
+             -select. 
+  73            * @param[in] u8ADCSpeed is the ADCSR.7 Setting for select ADC low speed. 
+  74            * @return  None
+  75            * @note ML56 series MCU ADC can only convert 1 channel at a time. If more than 1 channels are enabled, o
+             -nly channel
+  76            *       with smallest number will be convert.
+  77            * @example ADC_InitialContinous(0x0300,128);
+  78            */
+  79          void ADC_InitialContinous(unsigned int u16ADCRBase, unsigned char u8ADCRLength)
+  80          {
+  81   1        SFRS=0;
+  82   1        ADCBAL = LOBYTE(u16ADCRBase);
+  83   1        ADCBAH = HIBYTE(u16ADCRBase);
+  84   1        ADCSN  = u8ADCRLength - 1;   //Offset value, since the actually sampling number= ADCSN[7:0] + 1
+  85   1      }
+  86          
+  87          
+  88           /**
+  89            * @brief This configures ADC Sampling time 
+  90            * @param[in] u8ADCDIV Decides the ADC clock devider value. Value from 0 ~ 7, devider is from 1 ~ 128, de
+             -fault value is 0 means Fadc = Fsys/1 
+  91            * @param[in] u8ADCAQT Decides the ADC acquisition time base to add sampling time for ADC input, value is
+             - from 0 ~ 7, time = (4*u8ADCAQT+10)/Fadc, default value is 10/Fsys = 417ns.
+  92            * @return  None
+  93            * @note 
+  94            * @example ADC_SamplingTime(2,7);
+  95            */
+  96          void ADC_SamplingTime(unsigned char u8ADCDIV, unsigned char u8ADCAQT)
+  97          {
+  98   1        SFRS=0;
+  99   1        ADCSR &= 0x8F;
+ 100   1        ADCSR |= (u8ADCDIV&0x07)<<4;
+ 101   1        ADCCON2&=0xF1;
+ 102   1        ADCCON2|=(u8ADCAQT&0x07)<<1;
+C51 COMPILER V9.60.0.0   ADC                                                               04/28/2025 14:43:23 PAGE 3   
+
+ 103   1      }
+ 104          
+ 105          /**
+ 106            * @brief Configure the hardware trigger condition and enable hardware trigger
+ 107            * @param[in] adc Base address of ADC module
+ 108            * @param[in] u8Source Decides the hardware trigger source. Valid values are:
+ 109            *                       - \ref ADC_HWT_PWM0CH0            :A/D conversion is started by PWM0CH0 status.
+ 110            *                       - \ref ADC_HWT_PWM0CH2            :A/D conversion is started by PWM0CH2 status.
+ 111            *                       - \ref ADC_HWT_PWM0CH4            :A/D conversion is started by PWM0CH4 status.
+ 112            *                       - \ref ADC_HWT_STADC              :A/D conversion is started by STADC pin status
+             -.
+ 113            * @param[in] u8Param While ADC trigger by PWM, this parameter is used to set the delay between PWM
+ 114            *                     trigger and ADC conversion. Valid values are from 0 ~ 0xFF, and actual delay
+ 115            *                     time is (4 * u32Param * HCLK). While ADC trigger by external pin, this parameter
+ 116            *                     is used to set trigger condition. Valid values are:
+ 117            *                      - \ref ADC_HWT_FALLINGEDGE     :STADC pin or PWM channel falling edge active
+ 118            *                      - \ref ADC_HWT_RISINGEDGE      :STADC pin or PWM channel rising edge active
+ 119            *                      - \ref ADC_HWT_CENTRAL          :PWM channel period central active
+ 120            *                      - \ref ADC_HWT_END             :PWM channel period end active
+ 121            * @param[in] u8ADCHWTDelay Define External trigger delay time between PWM
+ 122            *                     External trigger delay time = FADC / ADCDLY
+ 123            * @return None
+ 124            * @note ADC hardware trigger source does not support PWM trigger (M05xxBN only).
+ 125            * @example ADC_EnableHWTrigger(ADC_HWT_STADC, ADC_HWT_FALLINGEDGE,0);
+ 126            */
+ 127          void ADC_EnableHWTrigger(unsigned char u8ADCSHWTource, unsigned char u8ADCHWTParam, unsigned char u8ADCHWT
+             -Delay)
+ 128          {
+ 129   1        SFRS=0;
+ 130   1        switch(u8ADCSHWTource)
+ 131   1        {
+ 132   2          case ADC_HWT_PWM0CH0: ADCCON0&=0xCF; break;
+ 133   2          case ADC_HWT_PWM0CH2: ADCCON0&=0xCF;ADCCON0|=0x10;break;
+ 134   2          case ADC_HWT_PWM0CH4: ADCCON0&=0xCF;ADCCON0|=0x20;break;
+ 135   2          case ADC_HWT_STADC:   ADCCON0&=0xCF;ADCCON0|=0x30;break;
+ 136   2          default: break;
+ 137   2        }
+ 138   1        switch(u8ADCHWTParam)
+ 139   1        {
+ 140   2          case ADC_HWT_FALLINGEDGE: ADCCON1&=0xF3;break;
+ 141   2          case ADC_HWT_RISINGEDGE:  ADCCON1&=0xF3;ADCCON1|=0x04;break;
+ 142   2          case ADC_HWT_CENTRAL:     ADCCON1&=0xF3;ADCCON1|=0x08;break;
+ 143   2          case ADC_HWT_END:         ADCCON1&=0xF3;ADCCON1|=0x0C;break;
+ 144   2          default: break;
+ 145   2        }
+ 146   1        ADCDLY = u8ADCHWTDelay;
+ 147   1        clr_ADCCON0_ADCS;
+ 148   1        ADCCON1|=0x02;              //ADC external conversion trigger enable bit
+ 149   1      }
+ 150          
+ 151          void ADC_DisableHWTrigger(void)
+ 152          {
+ 153   1        clr_ADCCON1_ADCEX;
+ 154   1      }
+ 155          
+ 156          /**
+ 157            * @brief Enable the interrupt(s) selected by u8IntSource parameter.
+ 158            * @param[in] adc Base address of ADC module
+ 159            * @param[in] u8ADCINT Select Enable or disable 
+ 160            *                     - \ref Enable :then difine ADC interrupt source.
+ 161            *                     - \ref Disable
+ 162            * @param[in] u8IntSource The combination of interrupt status bits listed below. Each bit
+C51 COMPILER V9.60.0.0   ADC                                                               04/28/2025 14:43:23 PAGE 4   
+
+ 163            *                    corresponds to a interrupt status. This parameter decides which
+ 164            *                    interrupts will be enabled.
+ 165            *                     - \ref ADC_INT_HALFDONE :ADC convert continuse mode half done interrupt mode
+ 166            *                     - \ref ADC_INT_CONTDONE :ADC convert continuse mode full complete interrupt mode
+ 167            *                     - \ref ADC_INT_SINGLE   :ADC convert signle mode complete
+ 168            * @return None
+ 169            * @example ADC_EnableInt(ADC_INT_SINGLE);
+ 170            */
+ 171          void ADC_Interrupt(unsigned char u8ADCINT, unsigned char u8ADCIntSource)
+ 172          {
+ 173   1          SFRS=0;
+ 174   1          switch (u8ADCINT)
+ 175   1          {
+ 176   2            case Disable: 
+ 177   2              clr_IE_EADC; 
+ 178   2            break;
+ 179   2            
+ 180   2            case Enable: 
+ 181   2              switch (u8ADCIntSource)
+ 182   2                {
+ 183   3                  case ADC_INT_HALFDONE:  ADCCON1|=0x30; break;
+ 184   3                  case ADC_INT_CONTDONE:  ADCCON1|=0x01; ADCCON1&=0xDF; break;
+ 185   3                  case ADC_INT_SINGLE:    ADCCON1&=0xCF; break;
+ 186   3                  default: break;
+ 187   3                }
+ 188   2              set_IE_EADC;
+ 189   2            break;
+ 190   2            default: break;
+ 191   2          }
+ 192   1      }
+ 193          
+ 194          /**
+ 195            * @brief Read the bandgap value base on Vref = 3.072V storage address after UID area.
+ 196            * @param[in] none
+ 197            * @return 12bit bandgap value
+ 198            * @example temp = READ_BANDGAP();
+ 199            */
+ 200          unsigned int READ_BANDGAP()
+ 201          {
+ 202   1          unsigned char BandgapHigh,BandgapLow;
+ 203   1          unsigned int u16bgvalue;
+ 204   1          set_CHPCON_IAPEN;
+ 205   1          IAPCN = READ_UID;
+ 206   1          IAPAL = 0x0D;
+ 207   1          IAPAH = 0x00;
+ 208   1          set_IAPTRG_IAPGO;
+ 209   1          BandgapLow = IAPFD&0x0F;
+ 210   1          IAPAL = 0x0C;
+ 211   1          set_IAPTRG_IAPGO;
+ 212   1          BandgapHigh = IAPFD;
+ 213   1          u16bgvalue = (BandgapHigh<<4)+BandgapLow;
+ 214   1          clr_CHPCON_IAPEN;
+ 215   1          return (u16bgvalue);
+ 216   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1049    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+C51 COMPILER V9.60.0.0   ADC                                                               04/28/2025 14:43:23 PAGE 5   
+
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

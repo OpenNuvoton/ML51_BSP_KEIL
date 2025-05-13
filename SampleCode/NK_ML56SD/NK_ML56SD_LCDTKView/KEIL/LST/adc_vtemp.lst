@@ -1,0 +1,109 @@
+C51 COMPILER V9.60.0.0   ADC_VTEMP                                                         04/28/2025 14:43:22 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE ADC_VTEMP
+OBJECT MODULE PLACED IN .\Output\adc_vtemp.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE ..\adc_vtemp.c LARGE OMF2 OPTIMIZE(4,SPEED) BROWSE INCDIR(..\..\..\..\Li
+                    -brary\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCDLib;..\.
+                    -.\..\..\Library\TKlib) DEFINE(DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\adc_vtemp.lst) TABS(2) OBJECT(
+                    -.\Output\adc_vtemp.obj)
+
+line level    source
+
+   1          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   2          /*                                                                                                        
+             - */
+   3          /* SPDX-License-Identifier: Apache-2.0                                                                    
+             - */
+   4          /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                        
+             - */
+   5          /*                                                                                                        
+             - */
+   6          /*--------------------------------------------------------------------------------------------------------
+             --*/
+   7          
+   8          #include "ml51.h"
+   9          
+  10          /* When Temperatue 25C, temperature voltage = 675mV, 1.83mV /per C */
+  11          /* TemperatureVoltage = ADC_result*VREF / 4096                     */
+  12          /* Temperature = 25 + ((673 - TemperatureVoltage)/1.83)            */
+  13          /* so Temperture = 25 + (TTMPCAL - ADC_result*VREF)/VTEMPCOMDIV    */
+  14          
+  15          #define   TMPCAL        0x2A3000       /*    675*4096     */
+  16          #define   VTEMPCOMDIV   7694           /*    4096*1.83    */
+  17          
+  18          unsigned long  internal_Temperature()
+  19          {
+  20   1          /* GPIO initial setting
+  21   1            * include gpio.c in Library for GPIO mode setting
+  22   1          */
+  23   1          unsigned int  u16bgvalue, ADC_BG_Result;
+  24   1          double  VREF_Voltage, RealTemperature;
+  25   1      
+  26   1      
+  27   1      
+  28   1          /* ADC initial setting
+  29   1            * include adc.c in Library for ADC setting.
+  30   1          */
+  31   1          /* Base on internal VREF 2560mV */
+  32   1          VREF_Open(LEVEL3);
+  33   1          ADC_Open(ADC_SINGLE, VBG);
+  34   1          /* For the best result wait 10us delay for each sampling, ADCDIV=3, ADCAQT=7 is better */
+  35   1          ADC_SamplingTime(7, 7);
+  36   1          clr_ADCCON0_ADCF;
+  37   1          set_ADCCON0_ADCS;
+  38   1      
+  39   1          while (!(ADCCON0 & SET_BIT7));
+  40   1      
+  41   1          ADC_BG_Result = (ADCRH << 4) + ADCRL;
+  42   1      
+  43   1          /***************************************************************************************/
+  44   1          /*                  VDD  Now                         READ_BANDGAP() VALUE
+  45   1          /*    ------------------------------------- = ----------------------------------
+  46   1          /*    3072mV(Storage value test condition)      NOW ADC Bandgap convert reuslt
+C51 COMPILER V9.60.0.0   ADC_VTEMP                                                         04/28/2025 14:43:22 PAGE 2   
+
+  47   1          /***************************************************************************************/
+  48   1          VREF_Voltage = ((float)READ_BANDGAP() / (float)ADC_BG_Result) * 3072;
+  49   1          //    VREF_Voltage = 2048;
+  50   1          /* ADC temperature calculate */
+  51   1          ADC_SamplingTime(3, 7);
+  52   1          ADC_Open(ADC_SINGLE, VTEMP);
+  53   1      
+  54   1          clr_ADCCON0_ADCF;                              /*Clear ADC flag before ADC start */
+  55   1          set_ADCCON0_ADCS;                              /* Each time ADC start trig signal*/
+  56   1      
+  57   1          while (!(ADCCON0 & SET_BIT7));                 /* wait ADCF = 1 */
+  58   1      
+  59   1          u16bgvalue = (ADCRH << 4) + ADCRL;
+  60   1      
+  61   1          RealTemperature = 25 + ((TMPCAL - (u16bgvalue * VREF_Voltage)) / VTEMPCOMDIV);
+  62   1          RealTemperature = abs(RealTemperature);
+  63   1          ADC_Close();
+  64   1          VREF_Disable();
+  65   1      
+  66   1          return (RealTemperature);
+  67   1      
+  68   1          while (1);
+  69   1      }
+  70          
+  71          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    306    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      10
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,1 @@
+"..\lcdmain_nk.c" LARGE OMF2 OPTIMIZE (4,SPEED) BROWSE INCDIR(..\..\..\..\Library\Device\Include;..\..\..\..\Library\StdDriver\inc;..\..\..\..\Library\StdDriver\lib;..\..\..\..\Library\LCDLib;..\..\..\..\Library\TKlib) DEFINE (DEMO_FREERUN,BOARD_NUMAKER,MASS_FINETUNE) DEBUG PRINT(.\LST\lcdmain_nk.lst) TABS (2) OBJECT(.\Output\lcdmain_nk.obj)
