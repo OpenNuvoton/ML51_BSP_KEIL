@@ -47,15 +47,15 @@ while(1)
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
           
               IAPCN = BYTE_READ_AP;             /* program byte verify */
-              TA=0xAA;TA=0x55;IAPTRG|=0x01;     /* Since EA disabled and page 0 */
+              trig_iap;     /* Since EA disabled and page 0 */
               if(IAPFD!=rx_buf[count])
-              while(1);
-              if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
-              while(1);                       /* Disable to reduce Code Size */
+                while(1);
+//              if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
+//              while(1);                       /* Disable to reduce Code Size */
               g_totalchecksum=g_totalchecksum+rx_buf[count];
               flash_address++;
   
@@ -126,7 +126,7 @@ END_2:
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               }            
               
@@ -165,33 +165,33 @@ END_2:
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
 
 /*Program CONFIG*/  
               IAPCN = BYTE_PROGRAM_CONFIG;
               IAPFD = recv_CONF0;
-              set_IAPTRG_IAPGO;
+              trig_iap;
               IAPFD = recv_CONF1;
               IAPAL = 0x01;
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               IAPAL = 0x02;
               IAPFD = recv_CONF2;
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               IAPAL = 0x04;
               IAPFD = recv_CONF4;
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               clr_IAPUEN_CFUEN;
 /*Read new CONFIG*/  
@@ -215,14 +215,14 @@ END_2:
               set_IAPUEN_APUEN;
               IAPFD = 0xFF;                 /* Erase must set IAPFD = 0xFF */
               IAPCN = PAGE_ERASE_AP;
-			  
+
               g_totalchecksum=0;
               flash_address=0;
               AP_size=0;
               AP_size=rx_buf[12];
               AP_size|=(rx_buf[13]<<8);  
               g_progarmflag=1;
-			  
+
 /* Erase APROM Size */
               for(count=0;count<AP_size/PAGE_SIZE;count++)
               {
@@ -232,7 +232,7 @@ END_2:
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               }
 
@@ -248,16 +248,16 @@ END_2:
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
 
 /* Read verify APROM Size */
                 IAPCN = BYTE_READ_AP;
-                set_IAPTRG_IAPGO;
+                trig_iap;
                 if(IAPFD!=rx_buf[count])
-                while(1);
-                if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
-                while(1);                       /* Disable to reduce Code Size */
+                   while(1);
+//                if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
+//                while(1);                       /* Disable to reduce Code Size */
                 g_totalchecksum = g_totalchecksum+rx_buf[count];
                 flash_address++;
                 
@@ -294,9 +294,6 @@ END_1:
 _APROM:
     EA = 0;
     clr_CHPCON_IAPEN;
-    TA = 0xAA;
-    TA = 0x55;
-    CHPCON = 0x00;                  //set boot from AP
     TA = 0xAA;
     TA = 0x55;
     CHPCON = 0x80;                   //software reset enable

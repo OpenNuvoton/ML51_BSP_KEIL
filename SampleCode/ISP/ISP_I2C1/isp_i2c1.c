@@ -38,16 +38,16 @@ void READ_ID(void)
     IAPCN = READ_DID;
     IAPAH = 0x00;
     IAPAL = 0x00;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     DID_lowB = IAPFD;
     IAPAL = 0x01;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     DID_highB = IAPFD;
     IAPAL = 0x02;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     PID_lowB = IAPFD;
     IAPAL = 0x03;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     PID_highB = IAPFD;
 }
 void READ_CONFIG(void)
@@ -55,16 +55,16 @@ void READ_CONFIG(void)
     IAPCN = BYTE_READ_CONFIG;
     IAPAL = 0x00;
     IAPAH = 0x00;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     CONF0 = IAPFD;
     IAPAL = 0x01;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     CONF1 = IAPFD;
     IAPAL = 0x02;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     CONF2 = IAPFD;
     IAPAL = 0x04;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     CONF4 = IAPFD;
 //    clr_CHPCON_IAPEN;
 }
@@ -106,15 +106,6 @@ if(g_timer0Counter)
     g_timer0Over=1;
     }
   }
-  
-  if(g_timer1Counter)
-  {
-  g_timer1Counter--;
-    if(!g_timer1Counter)
-    {
-    g_timer1Over=1;
-    }
-  }
 }
 
 void Timer1_Delay10ms(UINT32 u32CNT)
@@ -135,11 +126,12 @@ void Timer1_Delay10ms(UINT32 u32CNT)
 
 void Init_I2C1(void)
 {
-    MFP_P23_I2C1_SCL;                    //set SCL (P23) MFP
-    MFP_P22_I2C1_SDA;                    //set SDA (P22) MFP
-    P23_OPENDRAIN_MODE;
-    P22_OPENDRAIN_MODE;
-    
+    MFP_P21_I2C1_SCL;                    //set SCL (P23) MFP
+    MFP_P20_I2C1_SDA;                    //set SDA (P22) MFP
+    P21_OPENDRAIN_MODE;
+    P20_OPENDRAIN_MODE;
+    P21_ST_ENABLE;
+    P20_ST_ENABLE;
     set_EIE1_EI2C1;                      //enable I2C Interrupt by setting EIE bit 0
     set_I2C1CON_I2CEN;                   //enable I2C circuit 
     I2C1ADDR0 = ADDR_SLA;                //define own slave address    

@@ -26,7 +26,7 @@
 ///#define APROM_SIZE           61440   /* 60K bytes AP size , 4K LD size*/
 #define APROM_SIZE           62464   /* 61K bytes AP size, 3K LD size */
 //#define APROM_SIZE           63488   /* 62K bytes PA size, 2K LD size */
-
+#define trig_iap             TA=0xAA;TA=0x55;IAPTRG|=0x01
  
 extern  xdata volatile uint8_t rx_buf[64]; 
 extern  xdata volatile uint8_t tx_buf[64];

@@ -37,16 +37,16 @@ void READ_ID(void)
     IAPCN = READ_DID;
     IAPAH = 0x00;
     IAPAL = 0x00;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     DID_lowB = IAPFD;
     IAPAL = 0x01;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     DID_highB = IAPFD;
     IAPAL = 0x02;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     PID_lowB = IAPFD;
     IAPAL = 0x03;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     PID_highB = IAPFD;
 }
 void READ_CONFIG(void)
@@ -54,16 +54,16 @@ void READ_CONFIG(void)
     IAPCN = BYTE_READ_CONFIG;
     IAPAL = 0x00;
     IAPAH = 0x00;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     CONF0 = IAPFD;
     IAPAL = 0x01;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     CONF1 = IAPFD;
     IAPAL = 0x02;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     CONF2 = IAPFD;
     IAPAL = 0x04;
-    set_IAPTRG_IAPGO;
+    trig_iap;
     CONF4 = IAPFD;
 }
 
@@ -82,14 +82,14 @@ void Package_checksum(void)
   g_checksum=0;
    for(count=0;count<64;count++)
   {
-    g_checksum =g_checksum+ rx_buf[count];    
+    g_checksum =g_checksum+ rx_buf[count];
   }
   tx_buf[0]=g_checksum&0xff;
   tx_buf[1]=(g_checksum>>8)&0xff;
   tx_buf[4]=rx_buf[4]+1;
   tx_buf[5]=rx_buf[5];
   if(tx_buf[4]==0x00)
-  tx_buf[5]++;
+    tx_buf[5]++;
   
 }
 
@@ -105,27 +105,19 @@ if(g_timer0Counter)
     }
   }
   
-  if(g_timer1Counter)
-  {
-  g_timer1Counter--;
-    if(!g_timer1Counter)
-    {
-    g_timer1Over=1;
-    }
-  }
 }
 
 
 void Timer1_Delay10ms(UINT32 u32CNT)
 {
     clr_CKCON_T1M;                                    //T1M=0, Timer1 Clock = Fsys/12
-    TMOD |= 0x10;                                //Timer1 is 16-bit mode
-    set_TCON_TR1;                                    //Start Timer1
+    TMOD |= 0x10;                                     //Timer1 is 16-bit mode
+    set_TCON_TR1;                                     //Start Timer1
     while (u32CNT != 0)
     {
-        TL1 = LOBYTE(65536UL-13334UL);    //Find  define in "Function_define.h" "TIMER VALUE"
-        TH1 = HIBYTE(65536UL-13334UL);
-        while (TF1 != 1);                        //Check Timer1 Time-Out Flag
+        TL1 = 0xED;  //LOBYTE(65536UL-13334UL);       //Find  define in "Function_define.h" "TIMER VALUE"
+        TH1 = 0xCB;  //HIBYTE(65536UL-13334UL);
+        while (TF1 != 1);                             //Check Timer1 Time-Out Flag
         clr_TCON_TF1;
         u32CNT --;
     }
@@ -139,8 +131,8 @@ void Init_I2C0(void)
     MFP_P24_I2C0_SDA;
     P25_OPENDRAIN_MODE;
     P24_OPENDRAIN_MODE;
-    P25 = 1;                                      //SCL = 1;
-    P24 = 1;                                      //SDA = 1
+    P25_ST_ENABLE;
+    P24_ST_ENABLE;
     set_EIE0_EI2C0;                               //enable I2C Interrupt by setting EIE bit 0
     set_I2C0CON_I2CEN;                            //enable I2C circuit 
     I2C0ADDR0 = ADDR_SLA;                          //define own slave address    

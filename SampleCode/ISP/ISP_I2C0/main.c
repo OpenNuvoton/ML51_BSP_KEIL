@@ -4,10 +4,6 @@
 /* Copyright(c) 2020 Nuvoton Technology Corp. All rights reserved.                                         */
 /*                                                                                                         */
 /*---------------------------------------------------------------------------------------------------------*/
-
-//***********************************************************************************************************
-//  File Function: ML51/ML54/ML56 I2C ISP demo code
-//***********************************************************************************************************
 #include "ml51.h"
 #include "isp_i2c0.h"
 
@@ -44,16 +40,16 @@ while(1)
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 
 #endif
           
               IAPCN = BYTE_READ_AP;             /* program byte verify */
-              TA=0xAA;TA=0x55;IAPTRG|=0x01;     /* Since EA disabled and page 0 */
+              trig_iap;     /* Since EA disabled and page 0 */
               if(IAPFD!=rx_buf[count])
-              while(1);                          
-              if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
-              while(1);
+                while(1);
+//              if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
+//              while(1);
               g_totalchecksum=g_totalchecksum+rx_buf[count];
               flash_address++;
   
@@ -61,7 +57,7 @@ while(1)
               {
                 g_progarmflag=0;
                 g_timer1Over =1;
-                 goto END_2;          
+                 goto END_2;
               }
             } 
 END_2:                
@@ -78,7 +74,7 @@ END_2:
             case CMD_SYNC_PACKNO:
             {
               Package_checksum();
-              bISPDataReady = 1;              
+              bISPDataReady = 1;
               g_timer0Counter=0;                  /* clear timer 0 for no reset */
               g_timer0Over=0;
             break;
@@ -87,7 +83,7 @@ END_2:
             case CMD_GET_FWVER:
             {
               Package_checksum();
-              tx_buf[8]=FW_VERSION;  
+              tx_buf[8]=FW_VERSION;
               bISPDataReady = 1;
             break;
             }
@@ -99,7 +95,7 @@ END_2:
             }
     
             /* Base on ISP programmer GUI, ID always use following rule to transmit. */
-            case CMD_GET_DEVICEID:            
+            case CMD_GET_DEVICEID:
             {
               READ_ID();
               Package_checksum();
@@ -124,7 +120,7 @@ END_2:
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               }            
               
@@ -154,7 +150,7 @@ END_2:
               recv_CONF1 = rx_buf[9];
               recv_CONF2 = rx_buf[10];
               recv_CONF4 = rx_buf[12];
-/*Erase CONFIG */              
+/*Erase CONFIG */
               set_IAPUEN_CFUEN;
               IAPCN = PAGE_ERASE_CONFIG;
               IAPAL = 0x00;
@@ -163,33 +159,33 @@ END_2:
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
 
 /*Program CONFIG*/  
               IAPCN = BYTE_PROGRAM_CONFIG;
               IAPFD = recv_CONF0;
-              set_IAPTRG_IAPGO;
+              trig_iap;
               IAPFD = recv_CONF1;
               IAPAL = 0x01;
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               IAPAL = 0x02;
               IAPFD = recv_CONF2;
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               IAPAL = 0x04;
               IAPFD = recv_CONF4;
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               clr_IAPUEN_CFUEN;
 /*Read new CONFIG*/  
@@ -216,7 +212,7 @@ END_2:
 
               g_totalchecksum=0;
               flash_address=0;
-              AP_size=0;
+//              AP_size=0;
               AP_size=rx_buf[12];
               AP_size|=(rx_buf[13]<<8);
               g_progarmflag=1;
@@ -231,7 +227,7 @@ END_2:
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
               }
 
@@ -246,13 +242,12 @@ END_2:
 #ifdef isp_with_wdt
               set_IAPTRG_IAPGO_WDCLR;
 #else
-              set_IAPTRG_IAPGO;
+              trig_iap;
 #endif
 
 /* Read verify APROM Size */
                 IAPCN = BYTE_READ_AP;
-                clr_CHPCON_IAPFF;
-                set_IAPTRG_IAPGO;
+                trig_iap;
                 if(IAPFD!=rx_buf[count])
                     while(1);
 //                if (CHPCON==0x43)               /* if error flag set, program error stop ISP */
@@ -294,9 +289,6 @@ END_1:
 _APROM:
     EA = 0;
     clr_CHPCON_IAPEN;
-    TA = 0xAA;
-    TA = 0x55;
-    CHPCON = 0x00;                  //set boot from AP
     TA = 0xAA;
     TA = 0x55;
     CHPCON = 0x80;                   //software reset enable
